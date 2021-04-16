@@ -2,13 +2,13 @@
 # FILE DESCRIPTION
 # ----------------------------------------------------------------------------------------------------------------------
 
-# File:  misc_utils.py
+# File:  utils.py
 # Author:  Billy Carson
 # Date written:  01-27-2020
-# Last modified:  01-27-2020
+# Last modified:  04-15-2021
 
 """
-Description:  Miscellaneous utilities.
+Description:  Utility functions.
 """
 
 

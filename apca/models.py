@@ -304,7 +304,7 @@ class _APCA(ABC):
             self.D_ = eigvecs[p:p + q, :self.n_components]
             self.V_ = None
         
-        # Generate encoding matrix
+        # Generate encoding matrix for encoded formulation
         if self._form == 'encoded':
             diag_reg = self.diag_const_ * identity(n=X_.shape[1])
             inv_XT_X = inv((X_.T @ X_) + diag_reg)
@@ -312,6 +312,8 @@ class _APCA(ABC):
             A_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg)
             A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
             self.A_ = A_1 @ A_2 @ X_ @ inv_XT_X
+        
+        # Generate encoding matrix for jointly-encoded formulation
         elif self._form == 'joint':
             diag_reg = self.diag_const_ * identity(n=Z_.shape[1])
             inv_ZT_Z = inv((Z_.T @ Z_) + diag_reg)
@@ -319,6 +321,8 @@ class _APCA(ABC):
             A_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg)
             A_2 = ((self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)) @ Z_ @ inv_ZT_Z
             self.A_ = A_1 @ A_2
+        
+        # No encoding matrix for local formulation
         else:
             self.A_ = None
         
