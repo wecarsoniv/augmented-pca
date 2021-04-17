@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  04-15-2021
+# Last modified:  04-17-2021
 
 """
 Description:  Augmented Principal Component Analysis (APCA) model definitions file. Class definitions for both
