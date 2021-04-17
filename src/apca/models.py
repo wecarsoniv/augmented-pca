@@ -40,16 +40,16 @@ class _APCA(ABC):
     ----------
     n_components : int; number of components; if None then reduce to minimum dimension of primary data
     mu : float; adversary strength
-    form : str; indicates model form
+    inference : str; indicates model approximate inference strategy
     diag_const : float; constant added to diagonals of matrix prior to inversion
 
     Attributes
     ----------
     n_components : int; number of components; if None then reduce to minimum dimension of primary data
     mu : float; augmenting objective strength
-    _form : str; indicates model form
+    _inference : str; indicates model approximate inference strategy
     diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; augmenting objective strength; None if _form is 'local' or 'encoded'
+    mu_star : float; augmenting objective strength; None if _inference is 'local' or 'encoded'
     mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
     mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
     mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and augmenting data matrices
@@ -57,7 +57,7 @@ class _APCA(ABC):
     W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
     D_ : numpy.ndarray; 2-dimensional augmenting data loadings matrix
     V_ : numpy.ndarray; 2-dimensional combined primary and augmenting data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _form is 'local'
+    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
     eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
     is_fitted_ : bool; indicates whether model has been fitted
     
@@ -77,7 +77,7 @@ class _APCA(ABC):
     """
 
     # Instantiation method of augmented PCA base class
-    def __init__(self, n_components, mu, form, diag_const):
+    def __init__(self, n_components, mu, inference, diag_const):
         """
         Description
         -----------
@@ -87,7 +87,7 @@ class _APCA(ABC):
         ----------
         n_components : int; number of components; if None then reduce to minimum dimension of primary data
         mu : float; adversary strength
-        form : str; indicates model form
+        inference : str; indicates model approximate inference strategy
         diag_const : float; constant added to diagonals of matrix prior to inversion
 
         Returns
@@ -117,13 +117,13 @@ class _APCA(ABC):
             raise ValueError('Augmenting objective strength must be an numeric value greater than or equal to 0.0.')
         self.mu = mu
         
-        # Check for proper type/value and assign APCA formulation attribute
-        if not isinstance(form, str):
-            raise TypeError('Model form must be type string.')
-        elif (form != 'local') & (form != 'encoded') & (form != 'joint'):
-            raise ValueError(('Model form not recognized. Acceptable forms include \"local\", \"encoded\", and ' + 
-                             '\"joint\".'))
-        self._form = form
+        # Check for proper type/value and assign APCA approximate inference strategy attribute
+        if not isinstance(inference, str):
+            raise TypeError('Approximate inference strategy must be type string.')
+        elif (inference != 'local') & (inference != 'encoded') & (inference != 'joint'):
+            raise ValueError(('Approximate inference strategy not recognized. Acceptable strategies include ' +
+                              '\"local\", \"encoded\", and \"joint\".'))
+        self._inference = inference
         
         # Check for proper type/value and assign diagonal regularization constant attribute
         if (not isinstance(diag_const, float)) & (not isinstance(diag_const, int)):
@@ -132,8 +132,8 @@ class _APCA(ABC):
             raise ValueError('Diagonal regularization constant must be a positive numeric value.')
         self.diag_const_ = diag_const
         
-        # Assign attributes dependent on APCA form
-        if form == 'joint':
+        # Assign attributes dependent on APCA approximate inference strategy
+        if inference == 'joint':
             self.mu_star = mu + 1.0
         else:
             self.mu_star = None
@@ -213,7 +213,7 @@ class _APCA(ABC):
         
         # Check that encoding matrix attribute has been assigned
         if self.A_ is None:
-            if self._form == 'local':
+            if self._strategy == 'local':
                 raise AttributeError('Local APCA object does not have an encoding matrix attribute.')
             else:
                 raise AttributeError('Encoding matrix attribute not yet assigned.')
@@ -264,7 +264,7 @@ class _APCA(ABC):
         Y_ -= self.mean_Y_
         
         # Define Z as concatenation of primary data and concomitant data matrices
-        if self._form == 'joint':
+        if self._inference == 'joint':
             Z_ = concatenate((X_, Y_), axis=1)
             self.mean_Z_ = mean(Z_, axis=0)
             Z_ -= self.mean_Z_
@@ -277,7 +277,7 @@ class _APCA(ABC):
         _, q = Y_.shape
         
         # Get decomposition matrix
-        if self._form == 'joint':
+        if self._inference == 'joint':
             self.B_ = self._get_B(M_=Z_, N_=Y_)
         else:
             self.B_ = self._get_B(M_=X_, N_=Y_)
@@ -297,7 +297,7 @@ class _APCA(ABC):
         
         # Define loadings W, D, and V
         self.W_ = eigvecs[:p, :self.n_components]
-        if self._form == 'joint':
+        if self._inference == 'joint':
             self.D_ = eigvecs[p + q:, :self.n_components]
             self.V_ = eigvecs[:p + q, :self.n_components]
         else:
@@ -305,7 +305,7 @@ class _APCA(ABC):
             self.V_ = None
         
         # Generate encoding matrix for encoded formulation
-        if self._form == 'encoded':
+        if self._inference == 'encoded':
             diag_reg = self.diag_const_ * identity(n=X_.shape[1])
             inv_XT_X = inv((X_.T @ X_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
@@ -314,7 +314,7 @@ class _APCA(ABC):
             self.A_ = A_1 @ A_2 @ X_ @ inv_XT_X
         
         # Generate encoding matrix for jointly-encoded formulation
-        elif self._form == 'joint':
+        elif self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(n=Z_.shape[1])
             inv_ZT_Z = inv((Z_.T @ Z_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
@@ -362,13 +362,13 @@ class _APCA(ABC):
         X_ -= self.mean_X_
 
         # Generate scores
-        if self._form == 'local':
+        if self._inference == 'local':
             Y_ = Y.copy()
             Y_ -= self.mean_Y_
             S_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_))
             S_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
             S = (S_1 @ S_2).T
-        elif self._form == 'encoded':
+        elif self._inference == 'encoded':
             S = (self.A_ @ X_.T).T
         else:
             Y_ = Y.copy()
@@ -496,16 +496,16 @@ class aAPCA(_APCA):
     ----------
     n_components : int; number of components; if None then reduce to minimum dimension of primary data; default = None
     mu : float; adversary strength; default = 1.0
-    form : str; indicates model form
+    inference : str; indicates model approximate inference strategy
     diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
 
     Attributes
     ----------
     n_components : int; number of components; if None then reduce to minimum dimension of primary data
     mu : float; adversary strength
-    _form : str; indicates model form
+    _inference : str; indicates model approximate inference strategy
     diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; adversary strength; None if _form is 'local' or 'encoded'
+    mu_star : float; adversary strength; None if _inference is 'local' or 'encoded'
     mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
     mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
     mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and concomitant data matrices
@@ -513,7 +513,7 @@ class aAPCA(_APCA):
     W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
     D_ : numpy.ndarray; 2-dimensional concomitant data loadings matrix
     V_ : numpy.ndarray; 2-dimensional combined primary and concomitant data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _form is 'local'
+    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
     eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
     is_fitted_ : bool; indicates whether model has been fitted
     
@@ -533,7 +533,7 @@ class aAPCA(_APCA):
     """
     
     # Instantiation method of adversarial augmented PCA base class
-    def __init__(self, n_components=None, mu=1.0, form='joint', diag_const=1e-8):
+    def __init__(self, n_components=None, mu=1.0, inference='joint', diag_const=1e-8):
         """
         Description
         -----------
@@ -543,7 +543,7 @@ class aAPCA(_APCA):
         ----------
         n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
         mu : float; adversary strength; default = 1.0
-        form : str; indicates model form
+        inference : str; indicates model approximate inference strategy
         diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
 
         Returns
@@ -552,7 +552,7 @@ class aAPCA(_APCA):
         """
         
         # Inherit from augmented PCA base class
-        super().__init__(n_components=n_components, mu=mu, form=form, diag_const=diag_const)
+        super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get concomitant data loadings
     def get_D(self):
@@ -621,7 +621,7 @@ class aAPCA(_APCA):
         B_11 = M_.T @ M_
         B_12 = M_.T @ N_
         B_21 = B_12.T
-        if (self._form == 'encoded') | (self._form == 'joint'):
+        if (self._inference == 'encoded') | (self._inference == 'joint'):
             diag_reg = self.diag_const_ * identity(M_.shape[1])
             inv_MT_M = inv((M_.T @ M_) + diag_reg)
             B_22 = B_12.T @ inv_MT_M @ B_12
@@ -647,16 +647,16 @@ class sAPCA(_APCA):
     ----------
     n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
     mu : float; supervision strength; default = 1.0
-    form : str; indicates model form
+    inference : str; v
     diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
 
     Attributes
     ----------
     n_components : int; number of components; if None then reduce to minimum dimension of primary data
     mu : float; supervision strength
-    _form : str; indicates model form
+    _inference : str; indicates model approximate inference strategy
     diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; supervision strength; None if _form is 'local' or 'encoded'
+    mu_star : float; supervision strength; None if _inference is 'local' or 'encoded'
     mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
     mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
     mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and supervised data matrices
@@ -664,7 +664,7 @@ class sAPCA(_APCA):
     W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
     D_ : numpy.ndarray; 2-dimensional supervised data loadings matrix
     V_ : numpy.ndarray; 2-dimensional combined primary and supervised data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _form is 'local'
+    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
     eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
     is_fitted_ : bool; indicates whether model has been fitted
     
@@ -684,7 +684,7 @@ class sAPCA(_APCA):
     """
     
     # Instantiation method of supervised augmented PCA base class
-    def __init__(self, n_components=None, mu=1.0, form='joint', diag_const=1e-8):
+    def __init__(self, n_components=None, mu=1.0, inference='joint', diag_const=1e-8):
         """
         Description
         -----------
@@ -694,7 +694,7 @@ class sAPCA(_APCA):
         ----------
         n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
         mu : float; supervision strength; default = 1.0
-        form : str; indicates model form
+        inference : str; indicates model approximate inference strategy
         diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
 
         Returns
@@ -703,7 +703,7 @@ class sAPCA(_APCA):
         """
     
         # Inherit from augmented PCA base class
-        super().__init__(n_components=n_components, mu=mu, form=form, diag_const=diag_const)
+        super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get supervised data loadings
     def get_D(self):
@@ -772,7 +772,7 @@ class sAPCA(_APCA):
         B_11 = M_.T @ M_
         B_12 = M_.T @ N_
         B_21 = B_12.T
-        if (self._form == 'encoded') | (self._form == 'joint'):
+        if (self._inference == 'encoded') | (self._inference == 'joint'):
             diag_reg = self.diag_const_ * identity(M_.shape[1])
             inv_MT_M = inv((M_.T @ M_) + diag_reg)
             B_22 = B_12.T @ inv_MT_M @ B_12
