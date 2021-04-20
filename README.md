@@ -16,17 +16,6 @@ In adversarial APCA (aAPCA), the augmenting objective is to make the factors *or
 In supervised APCA (sAPCA), the augmenting objective is to make the factors *predictive* of a label, condition, or outcome.
 
 
-### Approximate Inference Strategies
-
-In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
-
-#### Local
-
-#### Encoded
-
-#### Jointly-Encoded
-
-
 ## Documentation
 
 Documentation for APCA is available on this [documentation site]().
@@ -64,6 +53,30 @@ Please use the [Github issue tracker](https://github.com/wecarsoniv/augmented-pc
 
 
 ## Quick Introduction
+
+### Importing APCA Models
+
+APCA models can be imported by importing the `models.py` module or by importing the models themselves from the `models.py` module.
+
+    < screenshot here >
+
+
+### Instantiating an APCA Model
+
+APCA models are instantiated by defining the model parameters `n_components`, `mu`, which represent the number of components and the augmenting objective strength, respectively. Additionally, the approximate inference strategy can be defined through the `inference` parameter.
+
+    < screenshot here >
+
+
+### Approximate Inference Strategies
+
+In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
+
+#### Local
+
+#### Encoded
+
+#### Jointly-Encoded
 
 
 
