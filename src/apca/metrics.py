@@ -8,7 +8,7 @@
 # Last modified:  04-20-2021
 
 """
-Description:  Augmented Principal Component Analysis (APCA) metrics definitions file.
+Description:  Augmented Principal Component Analysis (APCA) evaluation metrics definitions file.
 """
 
 

@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  04-17-2021
+# Last modified:  04-20-2021
 
 """
 Description:  Augmented Principal Component Analysis (APCA) model definitions file. Class definitions for both
@@ -99,7 +99,7 @@ class _APCA(ABC):
         if n_components is not None:
             if (not isinstance(n_components, float)) & (not isinstance(n_components, int)):
                 raise TypeError('Number of components must be an integer value greater than or equal to 1.')
-            elif n_components < 1:
+            elif n_components < 1.0:
                 raise ValueError('Number of components must be an integer value greater than or equal to 1.')
             elif not isinstance(n_components, int):
                 if (n_components - round(n_components)) < 1e-10:
@@ -119,7 +119,8 @@ class _APCA(ABC):
         
         # Check for proper type/value and assign APCA approximate inference strategy attribute
         if not isinstance(inference, str):
-            raise TypeError('Approximate inference strategy must be type string.')
+            raise TypeError('Approximate inference strategy must be type string. Acceptable strategies include ' +
+                            '\"local\", \"encoded\", and \"joint\".')
         elif (inference != 'local') & (inference != 'encoded') & (inference != 'joint'):
             raise ValueError(('Approximate inference strategy not recognized. Acceptable strategies include ' +
                               '\"local\", \"encoded\", and \"joint\".'))
@@ -304,7 +305,7 @@ class _APCA(ABC):
             self.D_ = eigvecs[p:p + q, :self.n_components]
             self.V_ = None
         
-        # Generate encoding matrix for encoded formulation
+        # Generate encoding matrix for encoded approximate inference
         if self._inference == 'encoded':
             diag_reg = self.diag_const_ * identity(n=X_.shape[1])
             inv_XT_X = inv((X_.T @ X_) + diag_reg)
@@ -313,7 +314,7 @@ class _APCA(ABC):
             A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
             self.A_ = A_1 @ A_2 @ X_ @ inv_XT_X
         
-        # Generate encoding matrix for jointly-encoded formulation
+        # Generate encoding matrix for jointly-encoded approximate inference
         elif self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(n=Z_.shape[1])
             inv_ZT_Z = inv((Z_.T @ Z_) + diag_reg)
@@ -322,7 +323,7 @@ class _APCA(ABC):
             A_2 = ((self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)) @ Z_ @ inv_ZT_Z
             self.A_ = A_1 @ A_2
         
-        # No encoding matrix for local formulation
+        # No encoding matrix for local approximate inference
         else:
             self.A_ = None
         
@@ -361,15 +362,19 @@ class _APCA(ABC):
         # Mean-center primary data
         X_ -= self.mean_X_
 
-        # Generate scores
+        # Generate scores - local approximate inference
         if self._inference == 'local':
             Y_ = Y.copy()
             Y_ -= self.mean_Y_
             S_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_))
             S_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
             S = (S_1 @ S_2).T
+            
+        # Generate scores - encoded approximate inference
         elif self._inference == 'encoded':
             S = (self.A_ @ X_.T).T
+            
+        # Generate scores - jointly-encoded approximate inference
         else:
             Y_ = Y.copy()
             Y_ -= self.mean_Y_
@@ -617,7 +622,7 @@ class aAPCA(_APCA):
         B : numpy.ndarray; 2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix
         """
         
-        # Define components of B
+        # Define components of decomposition matrix B
         B_11 = M_.T @ M_
         B_12 = M_.T @ N_
         B_21 = B_12.T
@@ -628,10 +633,12 @@ class aAPCA(_APCA):
         else:
             B_22 = N_.T @ N_
         
-        # Form decomposition matrix with negative augmenting objective strength
+        # Decomposition matrix with negative augmenting objective strength - jointly-encoded approximate inference
         if self._inference == 'joint':
             B = concatenate((concatenate((B_11, -self.mu_star * B_12), axis=1),
                              concatenate((B_21, -self.mu_star * B_22), axis=1)), axis=0)
+        
+        # Decomposition matrix with negative augmenting objective strength - local or encoded approximate inference
         else:
             B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
                              concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
@@ -772,7 +779,7 @@ class sAPCA(_APCA):
         B : numpy.ndarray; 2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix
         """
         
-        # Define components of B
+        # Define components of decomposition matrix B
         B_11 = M_.T @ M_
         B_12 = M_.T @ N_
         B_21 = B_12.T
@@ -783,10 +790,12 @@ class sAPCA(_APCA):
         else:
             B_22 = N_.T @ N_
         
-        # Form decomposition matrix with positive augmenting objective strength
+        # Decomposition matrix with positive augmenting objective strength - jointly-encoded approximate inference
         if self._inference == 'joint':
             B = concatenate((concatenate((B_11, self.mu_star * B_12), axis=1),
                              concatenate((B_21, self.mu_star * B_22), axis=1)), axis=0)
+        
+        # Decomposition matrix with positive augmenting objective strength - local or encoded approximate inference
         else:
             B = concatenate((concatenate((B_11, self.mu * B_12), axis=1),
                              concatenate((B_21, self.mu * B_22), axis=1)), axis=0)
