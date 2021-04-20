@@ -18,13 +18,13 @@ In supervised APCA (sAPCA), the augmenting objective is to make the factors *pre
 
 ### Approximate Inference Strategies
 
-In this section, we give a brief overview of the different approximate inference strategies offered for APCA.
+In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
 
 #### Local
 
 #### Encoded
 
-#### Joint
+#### Jointly-Encoded
 
 
 ## Documentation
@@ -74,7 +74,7 @@ Plase cite our paper if you find this library helpful in your research:
 
     @article{carson_augmentedpca,
     title={Augmented Principal Component Analysis},
-    author={{Carson IV}, William E. and Talbott, Austin and Carlson, David},
+    author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     journal={},
     year={2021}}
 
