@@ -628,9 +628,13 @@ class aAPCA(_APCA):
         else:
             B_22 = N_.T @ N_
         
-        # Form decomposition matrix with negative mu
-        B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
-                         concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
+        # Form decomposition matrix with negative augmenting objective strength
+        if self._inference == 'joint':
+            B = concatenate((concatenate((B_11, -self.mu_star * B_12), axis=1),
+                             concatenate((B_21, -self.mu_star * B_22), axis=1)), axis=0)
+        else:
+            B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
+                             concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
         
         # Return decomposition matrix
         return B
@@ -779,9 +783,13 @@ class sAPCA(_APCA):
         else:
             B_22 = N_.T @ N_
         
-        # Form decomposition matrix with positive mu
-        B = concatenate((concatenate((B_11, self.mu * B_12), axis=1),
-                         concatenate((B_21, self.mu * B_22), axis=1)), axis=0)
+        # Form decomposition matrix with positive augmenting objective strength
+        if self._inference == 'joint':
+            B = concatenate((concatenate((B_11, self.mu_star * B_12), axis=1),
+                             concatenate((B_21, self.mu_star * B_22), axis=1)), axis=0)
+        else:
+            B = concatenate((concatenate((B_11, self.mu * B_12), axis=1),
+                             concatenate((B_21, self.mu * B_22), axis=1)), axis=0)
         
         # Return decomposition matrix
         return B
