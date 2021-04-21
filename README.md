@@ -3,17 +3,21 @@
 
 ## Overview
 
-This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of factor models that fit data according to an augmenting objective in addition to the canonical PCA objective of finding factors that maximize the explained data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
+This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of linear factor models that find a set of factors according to an *augmenting objective* in addition to the canonical PCA objective of finding factors that maximize the explained data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
 
 
 ### Adversarial APCA
 
 In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data.
 
+    < model graphic here >
+
 
 ### Supervised APCA
 
 In supervised APCA (sAPCA), the augmenting objective is to make the factors *predictive* of a label, condition, or outcome.
+
+    < model graphic here >
 
 
 ## Documentation
@@ -54,6 +58,7 @@ Please use the [Github issue tracker](https://github.com/wecarsoniv/augmented-pc
 
 ## Quick Introduction
 
+
 ### Importing APCA Models
 
 APCA models can be imported by importing the `models.py` module or by importing the models themselves from the `models.py` module. APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality.
@@ -79,24 +84,32 @@ APCA models are fit using the `fit()` method. `fit()` takes two parameters: `X` 
 
 In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
 
+
 #### Local
+
+    < inference strategy graphic here >
+
 
 #### Encoded
 
+    < inference strategy graphic here >
+
+
 #### Jointly-Encoded
 
-
+    < inference strategy graphic here >
 
 
 ## Citation
 
-Plase cite our paper if you find this library helpful in your research:
+Plase cite our paper if you find this library or model helpful in your research:
 
-    @article{carson_augmentedpca,
+    @inproceedings{carson_augmentedpca,
     title={Augmented Principal Component Analysis},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
-    journal={},
-    year={2021}}
+    year={2021},
+    maintitle={Conference},
+    booktitle={Workshop}}
 
 
 ## Funding
