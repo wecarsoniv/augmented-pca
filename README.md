@@ -102,7 +102,7 @@ In this section, we give a brief overview of the different approximate inference
 
 ## Citation
 
-Plase cite our paper if you find this library or model helpful in your research:
+Please cite our paper if you find this library or model helpful in your research:
 
     @inproceedings{carson_augmentedpca,
     title={Augmented Principal Component Analysis},
