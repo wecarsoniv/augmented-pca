@@ -92,12 +92,12 @@ In this section, we give a brief overview of the different approximate inference
 
 #### Encoded
 
-    < inference strategy graphic here >
+![encoded inference diagram](docs/images/encoded_inference_diagram.png)
 
 
 #### Jointly-Encoded
 
-    < inference strategy graphic here >
+![jointly-encoded inference diagram](docs/images/joint_inference_diagram.png)
 
 
 ## Citation
