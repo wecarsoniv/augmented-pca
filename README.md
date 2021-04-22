@@ -194,7 +194,7 @@ S_test = sapca.transform(X=X_test)
 
 #### Jointly-Encoded
 
-The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix $$A(\cdot)$$. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
+The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix A(\cdot). However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
 
 ![jointly-encoded inference diagram](docs/images/joint_inference_diagram.png)
 
