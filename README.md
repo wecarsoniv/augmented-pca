@@ -58,10 +58,11 @@ Please use the [Github issue tracker](https://github.com/wecarsoniv/augmented-pc
 
 ## Quick Introduction
 
+A quick guide to using APCA is given in this section. For a more in-depth guide, see our [documentation]().
 
-### Importing APCA Models
+### Importing APCA and Instantiating Models
 
-APCA models can be imported by importing the `models.py` module or by importing the models themselves from the `models.py` module. APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality.
+APCA models can be imported from the `models.py` module or by importing the models themselves from the `models.py` module. 
 
 ```python
 # Import all APCA models
@@ -72,20 +73,46 @@ from apca.models import *
 
 ### Instantiating APCA
 
-APCA models are instantiated by assigning either an aAPCA or sAPCA object to a variable. During instantiation, one has the option to define parameters `n_components`, `mu`, which represent the number of components and the augmenting objective strength, respectively. The approximate inference strategy can be defined through the `inference` parameter.
+APCA models are instantiated by assigning either an aAPCA or sAPCA object to a variable. During instantiation, one has the option to define parameters `n_components`, `mu`, which represent the number of components and the augmenting objective strength, respectively. Additionally, approximate inference strategy can be defined through the `inference` parameter.
 
 ```python
+# Define model parameters
+n_components = 2        # factors will have dimensionality of 2
+mu = 1.0                # augmenting objective strength equal to 1 
+inference = 'encoded'   # encoded approximate inference strategy
+
 # Instantiate adversarial APCA model
-aapca = aAPCA(n_components=2, mu=1.0, inference='joint')
+aapca = aAPCA(n_components=n_components, mu=mu, inference=inference)
 
 ```
 
 
 ### Fitting APCA
 
-APCA models are fit using the `fit()` method. `fit()` takes two parameters: `X` which represents the matrix of primary data and `Y` which represents the matrix of augmenting data. Alternatively, APCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or scores.
+APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality. Similar to scikit-learn models, APCA models are fit using the `fit()` method. `fit()` takes two parameters: `X` which represents the matrix of primary data and `Y` which represents the matrix of augmenting data.
 
-    < code block here >
+```python
+# Import numpy
+import numpy as np
+
+# Generate synthetic data
+# Note: primary and augmenting data must have same number of samples/same first dimension size
+n_samp = 100
+X = np.random.randn(n_samp, 20)   # primary data, 100 samples with dimensionality of 20
+Y = np.random.randn(n_samp, 3)    # concomitant data, 100 samples with dimensionality of 3
+
+# Fit adversarial APCA instance
+aapca.fit(X=X, Y=Y)
+
+```
+
+Alternatively, APCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or scores.
+
+```python
+# Fit adversarial APCA instance and generate components
+S = aapca.fit_transform(X=X, Y=Y)
+
+```
 
 
 ### Approximate Inference Strategies
@@ -95,7 +122,48 @@ In this section, we give a brief overview of the different approximate inference
 
 #### Local
 
+In the local approximate inference strategy, the factors (local variables associated with each observation) are included in both the likelihood relating and the augmenting objective. Below is a diagram of the local inference strategy.
+
 ![local inference diagram](docs/images/local_inference_diagram.png)
+
+Here, $X$ represents the matrix of primary data, $Y$ represents the matrix of augmenting data, $\theta$ are the loadings, $\mathcal{L}$ is the log-likelihood, and $\mathcal{D}$ is the augmenting objective. Because the local variables are included in the augmenting objective, given new data we must know $\X_{new}$ *and* augmenting data $Y_{new}$ to obtain factors $S_{new}$. Thus, the local inference strategy should only be used for inference on new data when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local approximate inference strategy to training data and obtain factors for test data.
+
+```python
+# Import numpy
+import numpy as np
+
+# Import supervised APCA
+from apca.models import sAPCA
+
+# Generate synthetic data and labels
+n_samp = 100
+X = np.random.randn(n_samp, 20)
+Y = np.random.randint(low=0, high=1, size=(n_samp, 1), dtype=int)
+
+# Generate test/train splits
+train_pct = 0.7
+idx = np.arange(start=0, stop=101, step=1, dtype=int)
+np.random.shuffle(idx)
+n_train = int(train_pct * len(idx))
+train_idx = idx[:n_train]
+test_idx = idx[n_train:]
+
+# Split data into test/train sets
+X_train = X[train_idx, :]
+X_test = X[test_idx, :]
+Y_train = Y[train_idx, :]
+Y_test = Y[test_idx, :]
+
+# Instantiate supervised APCA model
+sapca = sAPCA(n_components=3, mu=5.0, inference='local')
+
+# Fit supervised APCA model
+sapca.fit(X=X_train, Y_train)
+
+# Generate components for test set
+S_test = sapca.transform(X=X_test, Y=Y_test)
+
+```
 
 
 #### Encoded
