@@ -3,7 +3,7 @@
 
 ## Overview
 
-This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of linear factor models that find a set of factors according to an *augmenting objective* in addition to the canonical PCA objective of finding factors that maximize the explained data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
+This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
 
 
 ### Adversarial APCA
@@ -53,16 +53,25 @@ To install the latest stable release, use [pip](https://pip.pypa.io/en/stable/re
 
 ## Issue Tracking and Reports
 
-Please use the [Github issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the APCA repository for issue tracking, filing bug reports, and asking general questions about the library or project.
+Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the APCA repository for issue tracking, filing bug reports, and asking general questions about the library or project.
 
 
 ## Quick Introduction
 
 A quick guide to using APCA is given in this section. For a more in-depth guide, see our [documentation]().
 
+
 ### Importing APCA and Instantiating Models
 
-APCA models can be imported from the `models.py` module or by importing the models themselves from the `models.py` module. 
+APCA models can be imported from the `models.py` module. Below we show an example of importing the aAPCA model.
+
+```python
+# Import all APCA models
+from apca.models import aAPCA
+
+```
+
+Alternatively, all offered APCA models can be imported at once.
 
 ```python
 # Import all APCA models
@@ -122,7 +131,7 @@ In this section, we give a brief overview of the different approximate inference
 
 #### Local
 
-In the local approximate inference strategy, the factors (local variables associated with each observation) are included in both the likelihood relating and the augmenting objective. Below is a diagram of the local inference strategy.
+In the local approximate inference strategy, the factors (local variables associated with each observation) are included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the local inference strategy.
 
 ![local inference diagram](docs/images/local_inference_diagram.png)
 
@@ -166,12 +175,12 @@ S_test = sapca.transform(X=X_test, Y=Y_test)
 
 ```
 
-Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters. For a more in-depth description of the local approximate inference strategy, see our [paper]() or the corresponding [documentation section].
+Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters. For a more in-depth description of the local approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
 
 
 #### Encoded
 
-In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or components. This inference strategy is termed ``encoded'' because the augmenting objective is enforced via the encoder. Below is a diagram of the encoded inference strategy.
+In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or components. This inference strategy is termed "encoded" because the augmenting objective is enforced via the encoder. Below is a diagram depicting the encoded inference strategy.
 
 ![encoded inference diagram](docs/images/encoded_inference_diagram.png)
 
@@ -191,12 +200,12 @@ S_test = sapca.transform(X=X_test)
 
 ```
 
-For a more in-depth description of the encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section].
+For a more in-depth description of the encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
 
 
 #### Jointly-Encoded
 
-The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
+The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram depicting the jointly-encoded inference strategy.
 
 ![jointly-encoded inference diagram](docs/images/joint_inference_diagram.png)
 
@@ -216,7 +225,7 @@ S_test = sapca.transform(X=X_test)
 
 ```
 
-For a more in-depth description of the jointly-encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section].
+For a more in-depth description of the jointly-encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
 
 
 ## Citation
