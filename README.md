@@ -154,26 +154,65 @@ X_test = X[test_idx, :]
 Y_train = Y[train_idx, :]
 Y_test = Y[test_idx, :]
 
-# Instantiate supervised APCA model
+# Instantiate supervised APCA model with local approximate inference strategy
 sapca = sAPCA(n_components=3, mu=5.0, inference='local')
 
 # Fit supervised APCA model
 sapca.fit(X=X_train, Y_train)
 
 # Generate components for test set
+# Note: both primary and augmenting data are needed to obtain factors
 S_test = sapca.transform(X=X_test, Y=Y_test)
 
 ```
 
+Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters.
+
 
 #### Encoded
 
+In the encoded approximate inference strategy, a linear encoder $$A(\cdot)$$ is used to transform the data into factors or components, $$A(X) = S$$. This inference strategy is termed ``encoded'' because the augmenting objective is enforced via the encoder $$A(\cdot)$$. Below is a diagram of the encoded inference strategy.
+
 ![encoded inference diagram](docs/images/encoded_inference_diagram.png)
+
+In contrast to the local inference strategy, when factors are generated for the test set under the encoded inference strategy the `transform()` method only requires the primary data `X_test`. Below we show an example of how to fit a sAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.
+
+```python
+# Instantiate supervised APCA model model with encoded approximate inference strategy
+sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
+
+# Fit supervised APCA model
+# Note: both primary and augmenting data are required to fit the model
+sapca.fit(X=X_train, Y_train)
+
+# Generate components for test set
+# Note: only primary data are needed to obtain factors
+S_test = sapca.transform(X=X_test)
+
+```
 
 
 #### Jointly-Encoded
 
+The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix $$A(\cdot)$$. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
+
 ![jointly-encoded inference diagram](docs/images/joint_inference_diagram.png)
+
+Similar to the local inference strategy, when factors are generated for the test set under the jointly-encoded inference strategy the `transform()` method requires both the primary data `X_test` and augmenting data `Y_test`. Below we show an example of how to fit a sAPCA model with jointly-encoded approximate inference strategy to training data and obtain factors for test data.
+
+```python
+# Instantiate supervised APCA model model with encoded approximate inference strategy
+sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
+
+# Fit supervised APCA model
+# Note: both primary and augmenting data are required to fit the model
+sapca.fit(X=X_train, Y_train)
+
+# Generate components for test set
+# Note: only primary data are needed to obtain factors
+S_test = sapca.transform(X=X_test)
+
+```
 
 
 ## Citation
