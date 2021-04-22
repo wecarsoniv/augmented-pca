@@ -8,14 +8,14 @@ This library provides Python implementation of Augmented Principal Component Ana
 
 ### Adversarial APCA
 
-In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data.
+In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
-    < model graphic here >
+![alt text](docs/images/aapca_diagmram.pdf)
 
 
 ### Supervised APCA
 
-In supervised APCA (sAPCA), the augmenting objective is to make the factors *predictive* of a label, condition, or outcome.
+In supervised APCA (sAPCA), the augmenting objective is to make the factors *predictive* of a label, condition, or outcome. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
 
     < model graphic here >
 
