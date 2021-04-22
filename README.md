@@ -106,7 +106,7 @@ aapca.fit(X=X, Y=Y)
 
 ```
 
-Alternatively, APCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or scores.
+Alternatively, APCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or factors.
 
 ```python
 # Fit adversarial APCA instance and generate components
@@ -126,7 +126,7 @@ In the local approximate inference strategy, the factors (local variables associ
 
 ![local inference diagram](docs/images/local_inference_diagram.png)
 
-Here, $X$ represents the matrix of primary data, $Y$ represents the matrix of augmenting data, $\theta$ are the loadings, $\mathcal{L}$ is the log-likelihood, and $\mathcal{D}$ is the augmenting objective. Because the local variables are included in the augmenting objective, given new data we must know $\X_{new}$ *and* augmenting data $Y_{new}$ to obtain factors $S_{new}$. Thus, the local inference strategy should only be used for inference on new data when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local approximate inference strategy to training data and obtain factors for test data.
+Because the local variables are included in the augmenting objective, given new data we must have both primary *and* augmenting data to obtain factors. Thus, the local inference strategy should only be used for inference on new data when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local approximate inference strategy to training data and obtain factors for test data.
 
 ```python
 # Import numpy
@@ -166,12 +166,12 @@ S_test = sapca.transform(X=X_test, Y=Y_test)
 
 ```
 
-Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters.
+Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters. For a more in-depth description of the local approximate inference strategy, see our [paper]() or the corresponding [documentation section].
 
 
 #### Encoded
 
-In the encoded approximate inference strategy, a linear encoder $$A(\cdot)$$ is used to transform the data into factors or components, $$A(X) = S$$. This inference strategy is termed ``encoded'' because the augmenting objective is enforced via the encoder $$A(\cdot)$$. Below is a diagram of the encoded inference strategy.
+In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or components. This inference strategy is termed ``encoded'' because the augmenting objective is enforced via the encoder. Below is a diagram of the encoded inference strategy.
 
 ![encoded inference diagram](docs/images/encoded_inference_diagram.png)
 
@@ -191,10 +191,12 @@ S_test = sapca.transform(X=X_test)
 
 ```
 
+For a more in-depth description of the encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section].
+
 
 #### Jointly-Encoded
 
-The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix A(\cdot). However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
+The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram of the jointly-encoded inference strategy.
 
 ![jointly-encoded inference diagram](docs/images/joint_inference_diagram.png)
 
@@ -213,6 +215,8 @@ sapca.fit(X=X_train, Y_train)
 S_test = sapca.transform(X=X_test)
 
 ```
+
+For a more in-depth description of the jointly-encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section].
 
 
 ## Citation
