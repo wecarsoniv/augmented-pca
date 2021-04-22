@@ -63,14 +63,22 @@ Please use the [Github issue tracker](https://github.com/wecarsoniv/augmented-pc
 
 APCA models can be imported by importing the `models.py` module or by importing the models themselves from the `models.py` module. APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality.
 
-    < code block here >
+```python
+# Import all APCA models
+from apca.models import *
+
+```
 
 
 ### Instantiating APCA
 
 APCA models are instantiated by assigning either an aAPCA or sAPCA object to a variable. During instantiation, one has the option to define parameters `n_components`, `mu`, which represent the number of components and the augmenting objective strength, respectively. The approximate inference strategy can be defined through the `inference` parameter.
 
-    < code block here >
+```python
+# Instantiate adversarial APCA model
+aapca = aAPCA(n_components=2, mu=1.0, inference='joint')
+
+```
 
 
 ### Fitting APCA
