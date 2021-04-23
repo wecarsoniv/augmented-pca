@@ -4,3 +4,9 @@
 Installation
 ============
 
+To install the latest stable release, use `pip <https://pip.pypa.io/en/stable/>`_:
+
+.. code-block:: none
+
+   $ pip install augmented-pca
+

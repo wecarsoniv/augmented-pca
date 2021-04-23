@@ -46,7 +46,7 @@ The APCA library is written in [Python](https://www.python.org/), and requires P
 
 ## Installation
 
-To install the latest stable release, use [pip](https://pip.pypa.io/en/stable/reference/pip_install/). Use the following command to install:
+To install the latest stable release, use [pip](https://pip.pypa.io/en/stable/). Use the following command to install:
 
     $ pip install augmented-pca
 
