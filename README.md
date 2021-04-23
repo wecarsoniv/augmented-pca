@@ -22,7 +22,7 @@ In supervised APCA (sAPCA), the augmenting objective is to make the factors *ali
 
 ## Documentation
 
-Documentation for APCA is available on this [documentation site]().
+Documentation for APCA is available on this [documentation site](https://augmented-pca.readthedocs.io/en/latest/index.html).
 
 Provided documentation includes:
 
@@ -175,7 +175,7 @@ S_test = sapca.transform(X=X_test, Y=Y_test)
 
 ```
 
-Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters. For a more in-depth description of the local approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
+Note that when factors are generated for the test set that the `transform()` method requires both the primary data `X_test` and labels `Y_test` be passed as parameters. For a more in-depth description of the local approximate inference strategy, see our [paper]() or the corresponding [documentation section](https://augmented-pca.readthedocs.io/en/latest/index.html).
 
 
 #### Encoded
@@ -200,7 +200,7 @@ S_test = sapca.transform(X=X_test)
 
 ```
 
-For a more in-depth description of the encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
+For a more in-depth description of the encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section](https://augmented-pca.readthedocs.io/en/latest/index.html).
 
 
 #### Jointly-Encoded
@@ -225,7 +225,7 @@ S_test = sapca.transform(X=X_test)
 
 ```
 
-For a more in-depth description of the jointly-encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section]().
+For a more in-depth description of the jointly-encoded approximate inference strategy, see our [paper]() or the corresponding [documentation section](https://augmented-pca.readthedocs.io/en/latest/index.html).
 
 
 ## Citation
