@@ -5,12 +5,12 @@
 
 
 Introduction
-============
+=========================================================================================================================
 
 This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
 
 
-APCA Model Variants
+Models Overview
 -------------------
 
 APCA has two main variants: adversarial APCA (aAPCA) and supervised APCA (sAPCA). A brief introduction to the two variants is given in the following sections.
@@ -22,7 +22,7 @@ Adversarial APCA
 In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
 .. image:: ../_static/img/aapca_diagram.png
-  :alt: aAPCA diagram
+    :alt: aAPCA diagram
 
 
 Supervised APCA
@@ -31,7 +31,7 @@ Supervised APCA
 In supervised APCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
 
 .. image:: ../_static/img/sapca_diagram.png
-  :alt: sAPCA diagram
+    :alt: sAPCA diagram
 
 
 Quick Introduction

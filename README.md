@@ -37,11 +37,11 @@ Provided documentation includes:
 
 ## Dependencies
 
-The APCA library is written in [Python](https://www.python.org/), and requires Python >= 3.6 to run. APCA relies on the following libraries and version numbers:
+The APCA library is written in Python, and requires Python >= 3.6 to run. APCA relies on the following libraries and version numbers:
 
-* Python >= 3.6
-* NumPy >= 1.19.2
-* SciPy >= 1.5.2
+* [Python](https://www.python.org/) >= 3.6
+* [NumPy](https://numpy.org/) >= 1.19.2
+* [SciPy](https://www.scipy.org/) >= 1.5.2
 
 
 ## Installation

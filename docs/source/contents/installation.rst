@@ -18,7 +18,7 @@ It is possible APCA models will still work with installed dependencies with vers
 
 
 Installation Instructions
--------------------------
+-------------------------------------------------------------------------------------------------------------------------
 
 To install the latest stable release, use `pip <https://pip.pypa.io/en/stable/>`_:
 
