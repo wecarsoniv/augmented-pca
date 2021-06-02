@@ -1,0 +1,73 @@
+/* FONT STYLE -----------------------------------*/
+
+/* Import font */
+/* @import "https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:700&amp;subset=latin-ext"; */
+
+/* Header font sizes */
+h1 {font-size: 32px;}
+h2 {font-size: 26px;}
+h3 {font-size: 22px;}
+h4 {font-size: 18px;}
+
+/* Header font style */
+h1, h2, h3, h4 {
+    margin-top: 0;
+    font-family: "Arial", Helvetica, sans-serif;
+}
+
+/* Header font weight */
+h1 {
+    font-weight: 200;
+}
+h2, h3, h4 {
+    font-weight: 600;
+}
+
+
+/* Header font color */
+h1, h2, h3, h4 {
+    color: #000000;
+}
+
+/* Toctree caption font */
+.toctree-wrapper > .caption > span.caption-text {
+    color: #000000;
+    font-weight: 600;
+    font-family: "Arial", Helvetica, sans-serif;
+    font-size: 26px;
+}
+
+/* Side bar caption font */
+.wy-menu > .caption > span.caption-text {
+    /* font-size: 15.5px; */
+    /* color: #fe4f68; */
+    color: #6369e7;
+}
+
+/* Hyperlink colors */
+body > a {
+    color: #fe4f68;
+}
+body > a:visited {
+    color: #653c84;
+}
+body > a:hover {
+    color: #eca5a9;
+}
+body > a:active {
+    color: #fe4f68;
+}
+
+/* COLOR SCHEME -----------------------------------*/
+
+/* Top navigation */
+.wy-side-nav-search, .wy-nav-top {
+    /* background: #c9c9c9; */
+    background: #e3e3e3;
+}
+
+/* Sidebar */
+    .wy-nav-side {
+    background: #1f1f1f;
+}
+

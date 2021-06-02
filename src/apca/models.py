@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  04-20-2021
+# Last modified:  04-29-2021
 
 """
 Description:  Augmented Principal Component Analysis (APCA) model definitions file. Class definitions for both
@@ -20,6 +20,7 @@ adversarial APCA (aAPCA) and supervised APCA (sAPCA).
 # Import modules
 from abc import ABC, abstractmethod
 from warnings import warn
+import numpy
 from numpy import mean, real, real_if_close, concatenate, identity
 from numpy.linalg import inv, eig
 from scipy.sparse import issparse
@@ -31,68 +32,86 @@ from scipy.sparse import issparse
 
 # Augmented PCA abstract base class
 class _APCA(ABC):
-    """
-    Description
-    -----------
+    r"""
     Augmented PCA abstract base class
 
     Parameters
-    ----------
-    n_components : int; number of components; if None then reduce to minimum dimension of primary data
-    mu : float; adversary strength
-    inference : str; indicates model approximate inference strategy
-    diag_const : float; constant added to diagonals of matrix prior to inversion
+    -----------
+    n_components : int
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float
+        Adversary strength.
+    inference : str
+        Indicates model approximate inference strategy.
+    diag_const : float
+        Constant added to diagonals of matrix prior to inversion.
 
     Attributes
     ----------
-    n_components : int; number of components; if None then reduce to minimum dimension of primary data
-    mu : float; augmenting objective strength
-    _inference : str; indicates model approximate inference strategy
-    diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; augmenting objective strength; None if _inference is 'local' or 'encoded'
-    mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
-    mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
-    mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and augmenting data matrices
-    B_ : numpy.ndarray; 2-dimensional decomposition matrix
-    W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
-    D_ : numpy.ndarray; 2-dimensional augmenting data loadings matrix
-    V_ : numpy.ndarray; 2-dimensional combined primary and augmenting data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
-    eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
-    is_fitted_ : bool; indicates whether model has been fitted
+    n_components : int
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float
+        Augmenting objective strength.
+    diag_const : float
+        Constant added to diagonals of matrix prior to inversion.
+    mean_X_ : numpy.ndarray
+        1-dimensional (p,) mean array of primary data matrix.
+    mean_Y_ : numpy.ndarray
+        1-dimensional (q,) mean array of primary data matrix.
+    mean_Z_ : numpy.ndarray
+        1-dimensional (p + q,) mean array of combined primary and augmenting data matrices.
+    B_ : numpy.ndarray
+        2-dimensional decomposition matrix.
+    W_ : numpy.ndarray
+        2-dimensional primary data loadings matrix.
+    D_ : numpy.ndarray
+        2-dimensional augmenting data loadings matrix.
+    V_ : numpy.ndarray
+        2-dimensional combined primary and augmenting data loadings matrix.
+    A_ : numpy.ndarray
+        2-dimensional encoding matrix; None if `inference` is set to 'local'.
+    eigvals_ : numpy.ndarray
+        1-dimensional array of sorted decomposition matrix eigenvalues.
+    is_fitted_ : bool
+        Indicates whether model has been fitted.
     
     Methods
     -------
-    __init_ : abstract base class instantiation method
-    get_eigvals : returns 1-dimensional array of sorted decomposition matrix eigenvalues
-    get_W : returns primary data loadings
-    get_A : returns encoding matrix
-    fit : fits augmented PCA model to data
-    transform : transforms data into scores using augmented PCA formulation
-    fit_transform : fits augumented PCA model to data and transforms data into scores
-    reconstruct : reconstructs primary and augmenting data
-    get_D : abstract method; returns augmenting data loadings
-    get_V : abstract method; returns combined primary and augmenting data loadings
-    _get_B : abstract method; calculates and returns decomposition matrix
+    fit(X, Y)
+        Fits augmented PCA model to data.
+    fit_transform(X, Y)
+        Fits augumented PCA model to data and transforms data into scores.
+    get_A()
+        Returns encoding matrix.
+    get_D()
+        Abstract method. Returns augmenting data loadings.
+    get_V()
+        Abstract method. Returns combined primary and augmenting data loadings.
+    get_W()
+        Returns primary data loadings.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
+    reconstruct(X, Y)
+        Reconstructs primary and augmenting data.
+    transform(X, Y)
+        Transforms data into scores using augmented PCA formulation.
     """
 
     # Instantiation method of augmented PCA base class
-    def __init__(self, n_components, mu, inference, diag_const):
-        """
-        Description
-        -----------
-        Instantiation method of augmented PCA base class
+    def __init__(self, n_components: int, mu: float, inference: str, diag_const: float):
+        r"""
+        Instantiation method of augmented PCA base class.
 
         Parameters
         ----------
-        n_components : int; number of components; if None then reduce to minimum dimension of primary data
-        mu : float; adversary strength
-        inference : str; indicates model approximate inference strategy
-        diag_const : float; constant added to diagonals of matrix prior to inversion
-
-        Returns
-        -------
-        N/A
+        n_components : int
+            Number of components. If None then reduce to minimum dimension of primary data.
+        mu : float
+            Adversary strength.
+        inference : str
+            Indicates model approximate inference strategy.
+        diag_const : float
+            Constant added to diagonals of matrix prior to inversion.
         """
         
         # Check for proper type/value and assign number of components attribute
@@ -135,9 +154,9 @@ class _APCA(ABC):
         
         # Assign attributes dependent on APCA approximate inference strategy
         if inference == 'joint':
-            self.mu_star = mu + 1.0
+            self._mu_star = mu + 1.0
         else:
-            self.mu_star = None
+            self._mu_star = None
         
         # Initialize all other attributes
         self.mean_X_ = None
@@ -151,19 +170,18 @@ class _APCA(ABC):
         self.is_fitted_ = False
 
     # Get eigenvalues
-    def get_eigvals(self):
-        """
-        Description
-        -----------
-        Returns 1-dimensional array of sorted decomposition matrix eigenvalues
+    def get_eigvals(self) -> numpy.ndarray:
+        r"""
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
 
         Parameters
         ----------
-        N/A
+        none
 
         Returns
         -------
-        self.eigvals_ : numpy.ndarray; 1-dimensional array of sorted eigenvalues
+        self.eigvals_.copy() : numpy.ndarray
+            1-dimensional array of sorted eigenvalues.
         """
 
         # Check that encoding matrix attribute has been assigned
@@ -171,22 +189,21 @@ class _APCA(ABC):
             raise AttributeError('Eigenvalues attribute not yet assigned.')
 
         # Return encoding matrix
-        return self.eigvals_
+        return self.eigvals_.copy()
 
     # Get primary data loadings
-    def get_W(self):
-        """
-        Description
-        -----------
-        Returns primary data loadings
+    def get_W(self) -> numpy.ndarray:
+        r"""
+        Returns primary data loadings.
 
         Parameters
         ----------
-        N/A
+        none
 
         Returns
         -------
-        self.W_ : numpy.ndarray; 2-dimensional (p x k) primary data loadings matrix
+        self.W_.copy() : numpy.ndarray
+            2-dimensional (p x k) primary data loadings matrix.
         """
 
         # Check that primary data loadings attribute has been assigned
@@ -194,22 +211,21 @@ class _APCA(ABC):
             raise AttributeError('Primary data loadings attribute not yet assigned.')
         
         # Return primary data loadings
-        return self.W_
+        return self.W_.copy()
 
     # Get encoding matrix
-    def get_A(self):
-        """
-        Description
-        -----------
-        Returns encoding matrix
+    def get_A(self) -> numpy.ndarray:
+        r"""
+        Returns encoding matrix.
 
         Parameters
         ----------
-        N/A
+        none
 
         Returns
         -------
-        self.A_ : numpy.ndarray; 2-dimensional (d x p) encoding matrix
+        self.A_.copy() : numpy.ndarray
+            2-dimensional (d x p) encoding matrix.
         """
         
         # Check that encoding matrix attribute has been assigned
@@ -220,23 +236,19 @@ class _APCA(ABC):
                 raise AttributeError('Encoding matrix attribute not yet assigned.')
         
         # Return encoding matrix
-        return self.A_
+        return self.A_.copy()
 
     # Fits augmented PCA model to data
-    def fit(self, X, Y):
-        """
-        Description
-        -----------
+    def fit(self, X: numpy.ndarray, Y: numpy.ndarray):
+        r"""
         Fits augmented PCA model to data
 
         Parameters
         ----------
-        X : numpy.ndarray; 2-dimensional (n x p) primary data matrix
-        Y : numpy.ndarray; 2-dimensional (n x q) concomitant data matrix
-        
-        Returns
-        -------
-        self : _APCA instance; reference to abstract base class augmented PCA instance
+        X : numpy.ndarray
+            2-dimensional (n x p) primary data matrix.
+        Y : numpy.ndarray
+            2-dimensional (n x q) concomitant data matrix.
         """
         
         # Create deep copies of primary and concomitant data matrices
@@ -334,20 +346,21 @@ class _APCA(ABC):
         return self
 
     # Transforms data into scores using augmented PCA formulation
-    def transform(self, X, Y):
-        """
-        Description
-        -----------
-        Transforms data into scores using augmented PCA formulation
+    def transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Transforms data into scores using augmented PCA formulation.
 
         Parameters
         ----------
-        X : numpy.ndarray; 2-dimensional (n x p) primary data matrix
-        Y : numpy.ndarray; 2-dimensional (n x q) concomitant data matrix
+        X : numpy.ndarray
+            2-dimensional (n x p) primary data matrix.
+        Y : numpy.ndarray
+            2-dimensional (n x q) concomitant data matrix.
 
         Returns
         -------
-        S : numpy.ndarray; 2-dimensional (n x k) scores matrix
+        S : numpy.ndarray
+            2-dimensional (n x k) scores matrix.
         """
 
         # Check that model is fitted
@@ -385,20 +398,21 @@ class _APCA(ABC):
         return S
 
     # Fit adversarial PCA model to data and transform data into scores
-    def fit_transform(self, X, Y):
-        """
-        Description
-        -----------
-        Fits augumented PCA model to data and transforms data into scores
+    def fit_transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Fits augumented PCA model to data and transforms data into scores.
 
         Parameters
         ----------
-        X : numpy.ndarray; 2-dimensional (n x p) primary data matrix
-        Y : numpy.ndarray; 2-dimensional (n x q) concomitant data matrix
+        X : numpy.ndarray
+            2-dimensional (n x p) primary data matrix.
+        Y : numpy.ndarray
+            2-dimensional (n x q) concomitant data matrix.
 
         Returns
         -------
-        S : numpy.ndarray; 2-dimensional (n x k) scores matrix
+        S : numpy.ndarray
+            2-dimensional (n x k) scores matrix.
         """
 
         # Fit local adversarial PCA instance
@@ -411,21 +425,23 @@ class _APCA(ABC):
         return S
 
     # Reconstruct primary and augmenting data
-    def reconstruct(self, X, Y):
-        """
-        Description
-        -----------
-        Reconstruct primary and augmenting data
+    def reconstruct(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Reconstruct primary and augmenting data.
 
         Parameters
         ----------
-        X : numpy.ndarray; 2-dimensional (n x p) primary data matrix
-        Y : numpy.ndarray; 2-dimensional (n x q) augmenting data matrix
+        X : numpy.ndarray
+            2-dimensional (n x p) primary data matrix.
+        Y : numpy.ndarray
+            2-dimensional (n x q) augmenting data matrix.
 
         Returns
         -------
-        X_recon : numpy.ndarray; 2-dimensional (n x p) reconstruction of primary data
-        Y_recon : numpy.ndarray; 2-dimensional (n x q) reconstruction of augmenting data
+        X_recon : numpy.ndarray
+            2-dimensional (n x p) reconstruction of primary data.
+        Y_recon : numpy.ndarray
+            2-dimensional (n x q) reconstruction of augmenting data.
         """
 
         # Get scores
@@ -441,295 +457,125 @@ class _APCA(ABC):
     # Get augmenting data loadings
     @abstractmethod
     def get_D(self):
-        """
-        Description
-        -----------
-        Abstract method : Returns augmenting data loadings
-
-        Parameters
-        ----------
-        N/A
-
-        Returns
-        -------
-        N/A
+        r"""
+        Abstract method : Returns augmenting data loadings.
         """
 
     # Get combined primary and augmenting data loadings
     @abstractmethod
     def get_V(self):
-        """
-        Description
-        -----------
-        Abstract method : Returns combined primary and augmenting data loadings
-
-        Parameters
-        ----------
-        N/A
-
-        Returns
-        -------
-        N/A
+        r"""
+        Abstract method : Returns combined primary and augmenting data loadings.
         """
 
     # Returns decomposition matrix given primary data matrix and augmenting data matrix
     @abstractmethod
     def _get_B(self):
-        """
-        Description
-        -----------
+        r"""
         Abstract method : Calculates and returns decomposition matrix
-
-        Parameters
-        ----------
-        N/A
-
-        Returns
-        -------
-        N/A
         """
 
 
-# Adversarial augmented PCA class
-class aAPCA(_APCA):
-    """
-    Description
-    -----------
-    Adversarial augmented PCA class
-
-    Parameters
-    ----------
-    n_components : int; number of components; if None then reduce to minimum dimension of primary data; default = None
-    mu : float; adversary strength; default = 1.0
-    inference : str; indicates model approximate inference strategy
-    diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
-
-    Attributes
-    ----------
-    n_components : int; number of components; if None then reduce to minimum dimension of primary data
-    mu : float; adversary strength
-    _inference : str; indicates model approximate inference strategy
-    diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; adversary strength; None if _inference is 'local' or 'encoded'
-    mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
-    mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
-    mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and concomitant data matrices
-    B_ : numpy.ndarray; 2-dimensional decomposition matrix
-    W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
-    D_ : numpy.ndarray; 2-dimensional concomitant data loadings matrix
-    V_ : numpy.ndarray; 2-dimensional combined primary and concomitant data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
-    eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
-    is_fitted_ : bool; indicates whether model has been fitted
-    
-    Methods
-    -------
-    __init_ : augmented PCA instantiation method
-    get_eigvals : returns 1-dimensional array of sorted decomposition matrix eigenvalues
-    get_W : returns primary data loadings
-    get_A : returns encoding matrix
-    fit : fits augmented PCA model to data
-    transform : transforms data into scores using augmented PCA formulation
-    fit_transform : fits augumented PCA model to data and transforms data into scores
-    reconstruct : reconstructs primary and concomitant data
-    get_D : returns concomitant data loadings
-    get_V : returns combined primary and concomitant data loadings
-    _get_B : calculates and returns decomposition matrix
-    """
-    
-    # Instantiation method of adversarial augmented PCA base class
-    def __init__(self, n_components=None, mu=1.0, inference='joint', diag_const=1e-8):
-        """
-        Description
-        -----------
-        Instantiation method of adversarial augmented PCA class
-
-        Parameters
-        ----------
-        n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
-        mu : float; adversary strength; default = 1.0
-        inference : str; indicates model approximate inference strategy
-        diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
-
-        Returns
-        -------
-        N/A
-        """
-        
-        # Inherit from augmented PCA base class
-        super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
-
-    # Get concomitant data loadings
-    def get_D(self):
-        """
-        Description
-        -----------
-        Returns concomitant data loadings
-
-        Parameters
-        ----------
-        N/A
-
-        Returns
-        -------
-        self.D_ : numpy.ndarray; 2-dimensional (q x k) concomitant data loadings matrix
-        """
-
-        # Check that concomitant data loadings attribute has been assigned
-        if self.D_ is None:
-            raise AttributeError('Concomitant data loadings attribute not yet assigned.')
-
-        # Return concomitant data loadings
-        return self.D_
-
-    # Get combined primary and concomitant data loadings
-    def get_V(self):
-        """
-        Description
-        -----------
-        Returns combined primary and concomitant data loadings
-
-        Parameters
-        ----------
-        N/A
-
-        Returns
-        -------
-        self.V_ : numpy.ndarray; 2-dimensional ((p + q) x k) combined primary and concomitant data loadings matrix
-        """
-
-        # Check that combined primary and concomitant data loadings attribute has been assigned
-        if self.V_ is None:
-            raise AttributeError('Combined primary and concomitant data loadings attribute not yet assigned.')
-
-        # Return combined primary and concomitant data loadings
-        return self.V_
-
-    # Returns decomposition matrix given primary data matrix and concomitant data matrix
-    def _get_B(self, M_, N_):
-        """
-        Description
-        -----------
-        Returns decomposition matrix given primary data matrix and concomitant data matrix
-
-        Parameters
-        ----------
-        M_ : numpy.ndarray; deep copy of 2-dimensional (n x p) or (n x (p + q)) matrix
-        N_ : numpy.ndarray; deep copy of 2-dimensional (n x q) concomitant data matrix
-
-        Returns
-        -------
-        B : numpy.ndarray; 2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix
-        """
-        
-        # Define components of decomposition matrix B
-        B_11 = M_.T @ M_
-        B_12 = M_.T @ N_
-        B_21 = B_12.T
-        if (self._inference == 'encoded') | (self._inference == 'joint'):
-            diag_reg = self.diag_const_ * identity(M_.shape[1])
-            inv_MT_M = inv((M_.T @ M_) + diag_reg)
-            B_22 = B_12.T @ inv_MT_M @ B_12
-        else:
-            B_22 = N_.T @ N_
-        
-        # Decomposition matrix with negative augmenting objective strength - jointly-encoded approximate inference
-        if self._inference == 'joint':
-            B = concatenate((concatenate((B_11, -self.mu_star * B_12), axis=1),
-                             concatenate((B_21, -self.mu_star * B_22), axis=1)), axis=0)
-        
-        # Decomposition matrix with negative augmenting objective strength - local or encoded approximate inference
-        else:
-            B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
-                             concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
-        
-        # Return decomposition matrix
-        return B
-
-
-# Supervised PCA class
+# Supervised APCA class
 class sAPCA(_APCA):
-    """
-    Description
-    -----------
-    Supervised augmented PCA class
+    r"""
+    Supervised APCA class.
 
     Parameters
     ----------
-    n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
-    mu : float; supervision strength; default = 1.0
-    inference : str; v
-    diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
+    n_components : int; optional, default is None
+        Number of components. If None reduce to minimum dimension of primary data.
+    mu : float; optional, default is 1.0
+        Supervision strength.
+    inference : str; optional, default is 'encoded'
+        Indicates model approximate inference strategy.
+    diag_const : float; optional, default is 1e-8
+        Constant added to diagonals of matrix prior to inversion.
 
     Attributes
     ----------
-    n_components : int; number of components; if None then reduce to minimum dimension of primary data
-    mu : float; supervision strength
-    _inference : str; indicates model approximate inference strategy
-    diag_const : float; constant added to diagonals of matrix prior to inversion
-    mu_star : float; supervision strength; None if _inference is 'local' or 'encoded'
-    mean_X_ : numpy.ndarray; 1-dimensional (p,) mean array of primary data matrix
-    mean_Y_ : numpy.ndarray; 1-dimensional (q,) mean array of primary data matrix
-    mean_Z_ : numpy.ndarray; 1-dimensional (p + q,) mean array of combined primary and supervised data matrices
-    B_ : numpy.ndarray; 2-dimensional decomposition matrix
-    W_ : numpy.ndarray; 2-dimensional primary data loadings matrix
-    D_ : numpy.ndarray; 2-dimensional supervised data loadings matrix
-    V_ : numpy.ndarray; 2-dimensional combined primary and supervised data loadings matrix
-    A_ : numpy.ndarray; 2-dimensional encoding matrix; None if _inference is 'local'
-    eigvals_ : numpy.ndarray; 1-dimensional array of sorted decomposition matrix eigenvalues
-    is_fitted_ : bool; indicates whether model has been fitted
+    n_components : int
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float
+        Supervision strength.
+    diag_const : float
+        Constant added to diagonals of matrix prior to inversion.
+    mean_X_ : numpy.ndarray
+        1-dimensional (p,) mean array of primary data matrix.
+    mean_Y_ : numpy.ndarray
+        1-dimensional (q,) mean array of primary data matrix.
+    mean_Z_ : numpy.ndarray
+        1-dimensional (p + q,) mean array of combined primary and supervised data matrices.
+    B_ : numpy.ndarray
+        2-dimensional decomposition matrix.
+    W_ : numpy.ndarray
+        2-dimensional primary data loadings matrix.
+    D_ : numpy.ndarray
+        2-dimensional supervised data loadings matrix.
+    V_ : numpy.ndarray
+        2-dimensional combined primary and supervised data loadings matrix.
+    A_ : numpy.ndarray
+        2-dimensional encoding matrix. None if `inference` is set to 'local'.
+    eigvals_ : numpy.ndarray
+        1-dimensional array of sorted decomposition matrix eigenvalues.
+    is_fitted_ : bool
+        Indicates whether model has been fitted.
     
     Methods
     -------
-    __init_ : augmented PCA instantiation method
-    get_eigvals : returns 1-dimensional array of sorted decomposition matrix eigenvalues
-    get_W : returns primary data loadings
-    get_A : returns encoding matrix
-    fit : fits augmented PCA model to data
-    transform : transforms data into scores using augmented PCA formulation
-    fit_transform : fits augumented PCA model to data and transforms data into scores
-    reconstruct : reconstructs primary and supervised data
-    get_D : returns supervised data loadings
-    get_V : returns combined primary and supervised data loadings
-    _get_B : calculates and returns decomposition matrix
+    fit(X, Y)
+        Fits augmented PCA model to data.
+    fit_transform(X, Y)
+        Fits augumented PCA model to data and transforms data into scores.
+    get_A()
+        Returns encoding matrix.
+    get_D()
+        Returns supervised data loadings.
+    get_V()
+        Returns combined primary and supervised data loadings.
+    get_W()
+        Returns primary data loadings.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
+    reconstruct(X, Y)
+        Reconstructs primary and supervised data.
+    transform(X, Y)
+        Transforms data into scores using augmented PCA formulation.
     """
     
     # Instantiation method of supervised augmented PCA base class
-    def __init__(self, n_components=None, mu=1.0, inference='joint', diag_const=1e-8):
-        """
-        Description
-        -----------
+    def __init__(self, n_components=None, mu=1.0, inference='encoded', diag_const=1e-8):
+        r"""
         Instantiation method of supervised augmented PCA class
 
         Parameters
         ----------
-        n_components : int; number of components; if None reduce to minimum dimension of primary data; default = None
-        mu : float; supervision strength; default = 1.0
-        inference : str; indicates model approximate inference strategy
-        diag_const : float; constant added to diagonals of matrix prior to inversion; default = 1e-8
-
-        Returns
-        -------
-        N/A
+        n_components : int; optional, default is None
+            Number of components. If None reduce to minimum dimension of primary data.
+        mu : float; optional, default is 1.0
+            Supervision strength.
+        inference : str; optional, default is 'encoded'
+            Indicates model approximate inference strategy.
+        diag_const : float; optional, default is 1e-8
+            Constant added to diagonals of matrix prior to inversion.
         """
     
         # Inherit from augmented PCA base class
         super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get supervised data loadings
-    def get_D(self):
-        """
-        Description
-        -----------
-        Returns supervised data loadings
+    def get_D(self) -> numpy.ndarray:
+        r"""
+        Returns supervised data loadings.
 
         Parameters
         ----------
-        N/A
+        none
 
         Returns
         -------
-        self.D_ : numpy.ndarray; 2-dimensional (q x k) supervised data loadings matrix
+        self.D_.copy() : numpy.ndarray
+            2-dimensional (q x k) supervised data loadings matrix.
         """
 
         # Check that supervised data loadings attribute has been assigned
@@ -737,22 +583,21 @@ class sAPCA(_APCA):
             raise AttributeError('Supervised data loadings attribute not yet assigned.')
 
         # Return supervised data loadings
-        return self.D_
+        return self.D_.copy()
 
     # Get combined primary and supervised data loadings
-    def get_V(self):
-        """
-        Description
-        -----------
-        Returns combined primary and supervised data loadings
+    def get_V(self) -> numpy.ndarray:
+        r"""
+        Returns combined primary and supervised data loadings.
 
         Parameters
         ----------
-        N/A
+        none
 
         Returns
         -------
-        self.V_ : numpy.ndarray; 2-dimensional ((p + q) x k) combined primary and supervised data loadings matrix
+        self.V_.copy() : numpy.ndarray
+            2-dimensional ((p + q) x k) combined primary and supervised data loadings matrix.
         """
 
         # Check that combined primary and supervised data loadings attribute has been assigned
@@ -760,23 +605,24 @@ class sAPCA(_APCA):
             raise AttributeError('Combined primary and supervised data loadings attribute not yet assigned.')
 
         # Return combined primary and supervised data loadings
-        return self.V_
+        return self.V_.copy()
 
     # Returns decomposition matrix given primary data matrix and supervised data matrix
-    def _get_B(self, M_, N_):
-        """
-        Description
-        -----------
-        Returns decomposition matrix given primary data matrix and supervised data matrix
+    def _get_B(self, M_: numpy.ndarray, N_: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Returns decomposition matrix given primary data matrix and supervised data matrix.
 
         Parameters
         ----------
-        M_ : numpy.ndarray; deep copy of 2-dimensional (n x p) or (n x (p + q)) matrix
-        N_ : numpy.ndarray; deep copy of 2-dimensional (n x q) supervised data matrix
+        M_ : numpy.ndarray
+            Deep copy of 2-dimensional (n x p) or (n x (p + q)) matrix.
+        N_ : numpy.ndarray
+            Deep copy of 2-dimensional (n x q) supervised data matrix.
 
         Returns
         -------
-        B : numpy.ndarray; 2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix
+        B : numpy.ndarray
+            2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix.
         """
         
         # Define components of decomposition matrix B
@@ -792,8 +638,8 @@ class sAPCA(_APCA):
         
         # Decomposition matrix with positive augmenting objective strength - jointly-encoded approximate inference
         if self._inference == 'joint':
-            B = concatenate((concatenate((B_11, self.mu_star * B_12), axis=1),
-                             concatenate((B_21, self.mu_star * B_22), axis=1)), axis=0)
+            B = concatenate((concatenate((B_11, self._mu_star * B_12), axis=1),
+                             concatenate((B_21, self._mu_star * B_22), axis=1)), axis=0)
         
         # Decomposition matrix with positive augmenting objective strength - local or encoded approximate inference
         else:
@@ -804,19 +650,191 @@ class sAPCA(_APCA):
         return B
 
 
+# Adversarial APCA class
+class aAPCA(_APCA):
+    r"""
+    Adversarial APCA class.
+
+    Parameters
+    ----------
+    n_components : int; optional, default is None
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float; optional, default is 1.0
+        Adversary strength.
+    inference : str; optional, default is 'encoded'
+        Indicates model approximate inference strategy.
+    diag_const : float; optional, default is 1e-8
+        Constant added to diagonals of matrix prior to inversion.
+
+    Attributes
+    -----------
+    n_components : int
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float
+        Adversary strength.
+    diag_const : float
+        Constant added to diagonals of matrix prior to inversion.
+    mean_X_ : numpy.ndarray
+        1-dimensional (p,) mean array of primary data matrix.
+    mean_Y_ : numpy.ndarray
+        1-dimensional (q,) mean array of primary data matrix.
+    mean_Z_ : numpy.ndarray
+        1-dimensional (p + q,) mean array of combined primary and concomitant data matrices.
+    B_ : numpy.ndarray
+        2-dimensional decomposition matrix.
+    W_ : numpy.ndarray
+        2-dimensional primary data loadings matrix.
+    D_ : numpy.ndarray
+        2-dimensional concomitant data loadings matrix.
+    V_ : numpy.ndarray
+        2-dimensional combined primary and concomitant data loadings matrix.
+    A_ : numpy.ndarray
+        2-dimensional encoding matrix. None if `inference` is set to 'local'.
+    eigvals_ : numpy.ndarray
+        1-dimensional array of sorted decomposition matrix eigenvalues.
+    is_fitted_ : bool
+        Indicates whether model has been fitted.
+    
+    Methods
+    -------
+    fit(X, Y)
+        Fits augmented PCA model to data.
+    fit_transform(X, Y)
+        Fits augumented PCA model to data and transforms data into scores.
+    get_A()
+        Returns encoding matrix.
+    get_D()
+        Returns concomitant data loadings.
+    get_V()
+        Returns combined primary and concomitant data loadings.
+    get_W()
+        Returns primary data loadings.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
+    reconstruct(X, Y)
+        Reconstructs primary and concomitant data.
+    transform(X, Y)
+        Transforms data into scores using augmented PCA formulation.
+    """
+    
+    # Instantiation method of adversarial augmented PCA base class
+    def __init__(self, n_components: int=None, mu=1.0, inference='encoded', diag_const=1e-8):
+        r"""
+        Instantiation method of adversarial augmented PCA class.
+        
+        Parameters
+        ----------
+        n_components : int; optional, default is None
+            Number of components. If None reduce to minimum dimension of primary data.
+        mu : float; optional, default is 1.0
+            Adversary strength.
+        inference : str; optional, default is 'encoded'
+            Indicates model approximate inference strategy.
+        diag_const : float; optional, default is 1e-8
+            Constant added to diagonals of matrix prior to inversion.
+        """
+        
+        # Inherit from augmented PCA base class
+        super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
+
+    # Get concomitant data loadings
+    def get_D(self) -> numpy.ndarray:
+        r"""
+        Returns concomitant data loadings.
+
+        Parameters
+        ----------
+        none
+
+        Returns
+        -------
+        self.D_.copy() : numpy.ndarray
+            2-dimensional (q x k) concomitant data loadings matrix.
+        """
+
+        # Check that concomitant data loadings attribute has been assigned
+        if self.D_ is None:
+            raise AttributeError('Concomitant data loadings attribute not yet assigned.')
+
+        # Return concomitant data loadings
+        return self.D_.copy()
+
+    # Get combined primary and concomitant data loadings
+    def get_V(self) -> numpy.ndarray:
+        r"""
+        Returns combined primary and concomitant data loadings.
+
+        Parameters
+        ----------
+        N/A
+
+        Returns
+        -------
+        self.V_.copy() : numpy.ndarray
+            2-dimensional ((p + q) x k) combined primary and concomitant data loadings matrix.
+        """
+
+        # Check that combined primary and concomitant data loadings attribute has been assigned
+        if self.V_ is None:
+            raise AttributeError('Combined primary and concomitant data loadings attribute not yet assigned.')
+
+        # Return combined primary and concomitant data loadings
+        return self.V_.copy()
+
+    # Returns decomposition matrix given primary data matrix and concomitant data matrix
+    def _get_B(self, M_: numpy.ndarray, N_: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Returns decomposition matrix given primary data matrix and concomitant data matrix.
+
+        Parameters
+        ----------
+        M_ : numpy.ndarray
+            Deep copy of 2-dimensional (n x p) or (n x (p + q)) matrix.
+        N_ : numpy.ndarray
+            Deep copy of 2-dimensional (n x q) concomitant data matrix.
+
+        Returns
+        -------
+        B : numpy.ndarray
+            2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix.
+        """
+        
+        # Define components of decomposition matrix B
+        B_11 = M_.T @ M_
+        B_12 = M_.T @ N_
+        B_21 = B_12.T
+        if (self._inference == 'encoded') | (self._inference == 'joint'):
+            diag_reg = self.diag_const_ * identity(M_.shape[1])
+            inv_MT_M = inv((M_.T @ M_) + diag_reg)
+            B_22 = B_12.T @ inv_MT_M @ B_12
+        else:
+            B_22 = N_.T @ N_
+        
+        # Decomposition matrix with negative augmenting objective strength - jointly-encoded approximate inference
+        if self._inference == 'joint':
+            B = concatenate((concatenate((B_11, -self._mu_star * B_12), axis=1),
+                             concatenate((B_21, -self._mu_star * B_22), axis=1)), axis=0)
+        
+        # Decomposition matrix with negative augmenting objective strength - local or encoded approximate inference
+        else:
+            B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
+                             concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
+        
+        # Return decomposition matrix
+        return B
+
+
 # Not fitted error class
 class NotFittedError(ValueError, AttributeError):
-    """
-    Description
-    -----------
+    r"""
     NotFittedError class inherits from both ValueError and AttributeError.
 
     Parameters
     ----------
-    N/A
+    none
 
     Attributes
     ----------
-    N/A
+    none
     """
 

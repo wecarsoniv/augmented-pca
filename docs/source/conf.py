@@ -10,9 +10,13 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+
+# Import APCA
+sys.path.insert(0, os.path.abspath('../../src'))
+import apca
+
 
 # -- Import theme ------------------------------------------------------------
 
@@ -38,9 +42,28 @@ release = '0.0.4'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+# extensions = [
+#     'sphinx_rtd_theme',
+#     'sphinx.ext.autodoc',
+#     'sphinx.ext.autosummary',
+#     'sphinx.ext.napoleon',
+# ]
 extensions = [
-'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
+    'numpydoc',
 ]
+
+# Turn on auto-summary
+autosummary_generate = True
+
+# Napoleon settings
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+napoleon_include_private_with_doc = False
+napoleon_include_special_with_doc = False
+napoleon_include_init_with_doc = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -58,13 +81,13 @@ exclude_patterns = []
 #
 # html_theme = 'alabaster'
 html_theme = 'sphinx_rtd_theme'
-
 html_theme_options = {
-   'display_version': True,
-   'logo_only': True,
+    'display_version': True,
+    'logo_only': True,
 }
 
-html_logo = '_static/img/encoded_inference_diagram.png'
+# Side bar icon
+html_logo = '_static/img/apca_logo.svg'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -78,4 +101,9 @@ html_static_path = ['_static']
 #   'github_repo': 'augmented-pca',
 #   'github_version': ''
 # }
+
+# Custom CSS file location
+html_css_files = [
+    'css/custom.css',
+]
 

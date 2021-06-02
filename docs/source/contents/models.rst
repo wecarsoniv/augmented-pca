@@ -5,25 +5,25 @@
 
 
 Models
-========================================================================================================================
+======
 
-In this section, a more detailed description of the offered APCA models is provided.
+In this section, a more detailed description of the offered APCA models and inference strategies is provided.
 
 
 Adversarial APCA
-------------------------------------------------------------------------------------------------------------------------
+----------------
 
 
 
 
 Supervised APCA
-------------------------------------------------------------------------------------------------------------------------
+---------------
 
 
 
 
 Approximate Inference Strategies
-------------------------------------------------------------------------------------------------------------------------
+--------------------------------
 
 In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference 
 strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both 
@@ -31,7 +31,7 @@ aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by
 
 
 Local
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
 
 In the local approximate inference strategy, the factors (local variables associated with each observation) are 
 included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the 

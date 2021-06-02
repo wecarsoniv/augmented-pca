@@ -5,10 +5,10 @@
 # File:  metrics.py
 # Author:  Billy Carson
 # Date written:  04-17-2021
-# Last modified:  04-20-2021
+# Last modified:  05-12-2021
 
-"""
-Description:  Augmented Principal Component Analysis (APCA) evaluation metrics definitions file.
+r"""
+Provided here are evaluation metric functions for APCA.
 """
 
 
@@ -17,7 +17,8 @@ Description:  Augmented Principal Component Analysis (APCA) evaluation metrics d
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Import modules
-import numpy as np
+import numpy
+from numpy import mean, sum
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -25,20 +26,29 @@ import numpy as np
 # ----------------------------------------------------------------------------------------------------------------------
 
 # Reconstruction error function
-def reconstruct_error(a, a_recon, reduction='mean'):
-    """
-    Description
-    -----------
+def reconstruct_error(a: numpy.ndarray, a_recon: numpy.ndarray, reduction: str='mean') -> numpy.ndarray:
+    r"""
+    Computes the reconstruction error between two matrices. This function can be used to determine the reconstruction 
+    error between original data matrices (primary or augmenting) and data matrices reconstructed via APCA.
     
     Parameters
     ----------
+    a : numpy.ndarray
+        Original data matrix.
+    a_recon : numpy.ndarray
+        Reconstructed data matrix.
+    reduction : str; optional, default is 'mean'
+        Specifies the reduction to apply to the output: 'mean' or 'sum'. 'mean':  mean of the squared error is taken, 
+        'sum': sum of the squared error is taken.
     
     Returns
     -------
+    err : float
+        Reconstruction error between `a` and `a_recon`. 
     """
     
     # Check array types
-    if (type(a) is not np.ndarray) | (type(a_recon) is not np.ndarray):
+    if (type(a) is not numpy.ndarray) | (type(a_recon) is not numpy.ndarray):
         raise TypeError('Arrays must be of type numpy.ndarray.')
     
     # Check array sizes
@@ -54,9 +64,9 @@ def reconstruct_error(a, a_recon, reduction='mean'):
     
     # Reduce reconstruction error array
     if reduction == 'mean':
-        err = np.mean(err_arr)
+        err = mean(err_arr)
     else:
-        err = np.sum(err_arr)
+        err = sum(err_arr)
     
     # Return reconstruction error
     return err

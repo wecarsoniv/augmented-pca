@@ -24,6 +24,15 @@ the library, models provided, and examples of how to use different provided mode
     contents/examples
     contents/citation
 
+.. toctree::
+    :glob:
+    :maxdepth: 2
+    :caption: Package Reference
+
+    package_ref/models
+    package_ref/datasets
+    package_ref/metrics
+
 
 Indices and Tables
 ------------------
