@@ -1,6 +1,7 @@
 # File: docs/requirements.txt
 
 # Defining the exact version will make sure things don't break
+numpydoc
 numpy
 scipy
 sphinx==3.5.4
@@ -13,5 +14,4 @@ sphinxcontrib-images==0.9.2
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-qthelp==1.0.3
-sphinxcontrib-serializinghtml==1.1.4
 
