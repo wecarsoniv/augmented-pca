@@ -1,6 +1,6 @@
 # File: docs/requirements.txt
 
-# Defining the exact version will make sure things don't break
+# Required packages for Read the Docs build
 numpydoc
 numpy
 scipy
