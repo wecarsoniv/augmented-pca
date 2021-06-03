@@ -12,7 +12,7 @@ version: 2
 #     - requirements: docs/requirements.txt
 
 conda:
-   file: sphinx_env.yml
+   file: docs/sphinx_env.yaml
 
 python:
    version: 3.8
