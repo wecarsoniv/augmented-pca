@@ -2,21 +2,21 @@
 version: 2
 
 # Build from the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/source/conf.py
+# sphinx:
+#   configuration: docs/source/conf.py
 
 # Explicitly set the version of Python and its requirements
+# python:
+#   version: 3.7
+#   install:
+#     - requirements: docs/requirements.txt
+
+conda:
+   file: sphinx_env.yml
+
 python:
-  version: 3.7
-  install:
-    - requirements: docs/requirements.txt
+   version: 3.8
 
-# conda:
-#     file: sphinx_env.yml
-
-# python:
-#    version: 3.8
-
-# python:
-#    setup_py_install: false
+python:
+   setup_py_install: false
 
