@@ -1,4 +1,4 @@
-# File: .readthedocs.yaml
+# # File: .readthedocs.yaml
 version: 2
 
 # Build from the docs/ directory with Sphinx
@@ -10,4 +10,13 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
+
+# conda:
+#     file: sphinx_env.yml
+
+# python:
+#    version: 3.8
+
+# python:
+#    setup_py_install: false
 
