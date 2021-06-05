@@ -5,11 +5,11 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  04-29-2021
+# Last modified:  06-05-2021
 
 """
-Description:  Augmented Principal Component Analysis (APCA) model definitions file. Class definitions for both
-adversarial APCA (aAPCA) and supervised APCA (sAPCA).
+Description:  AugmentedPCA model definitions file. Class definitions for both adversarial AugmentedPCA (aAPCA) and
+supervised AugmentedPCA (sAPCA).
 """
 
 

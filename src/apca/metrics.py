@@ -5,10 +5,10 @@
 # File:  metrics.py
 # Author:  Billy Carson
 # Date written:  04-17-2021
-# Last modified:  05-12-2021
+# Last modified:  06-05-2021
 
 r"""
-Provided here are evaluation metric functions for APCA.
+AugmentedPCA evaluation metric functions.
 """
 
 

@@ -7,12 +7,14 @@
 apca.models
 ===========
 
+
 Supervised APCA
 ---------------
 
 .. autoclass:: apca.models.sAPCA
    :members:
    :inherited-members:
+
 
 Adversarial APCA
 ----------------
