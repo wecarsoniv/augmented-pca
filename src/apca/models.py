@@ -30,10 +30,10 @@ from scipy.sparse import issparse
 # CLASS DEFINITIONS
 # ----------------------------------------------------------------------------------------------------------------------
 
-# Augmented PCA abstract base class
+# AugmentedPCA abstract base class
 class _APCA(ABC):
     r"""
-    Augmented PCA abstract base class
+    AugmentedPCA abstract base class.
 
     Parameters
     -----------
@@ -78,9 +78,9 @@ class _APCA(ABC):
     Methods
     -------
     fit(X, Y)
-        Fits augmented PCA model to data.
+        Fits AugmentedPCA model to data.
     fit_transform(X, Y)
-        Fits augumented PCA model to data and transforms data into scores.
+        Fits AugumentedPCA model to data and transforms data into scores.
     get_A()
         Returns encoding matrix.
     get_D()
@@ -94,13 +94,13 @@ class _APCA(ABC):
     reconstruct(X, Y)
         Reconstructs primary and augmenting data.
     transform(X, Y)
-        Transforms data into scores using augmented PCA formulation.
+        Transforms data into scores using AugmentedPCA formulation.
     """
 
-    # Instantiation method of augmented PCA base class
+    # Instantiation method of AugmentedPCA base class
     def __init__(self, n_components: int, mu: float, inference: str, diag_const: float):
         r"""
-        Instantiation method of augmented PCA base class.
+        Instantiation method of AugmentedPCA base class.
 
         Parameters
         ----------
@@ -136,7 +136,7 @@ class _APCA(ABC):
             raise ValueError('Augmenting objective strength must be an numeric value greater than or equal to 0.0.')
         self.mu = mu
         
-        # Check for proper type/value and assign APCA approximate inference strategy attribute
+        # Check for proper type/value and assign AugmentedPCA approximate inference strategy attribute
         if not isinstance(inference, str):
             raise TypeError('Approximate inference strategy must be type string. Acceptable strategies include ' +
                             '\"local\", \"encoded\", and \"joint\".')
@@ -152,7 +152,7 @@ class _APCA(ABC):
             raise ValueError('Diagonal regularization constant must be a positive numeric value.')
         self.diag_const_ = diag_const
         
-        # Assign attributes dependent on APCA approximate inference strategy
+        # Assign attributes dependent on AugmentedPCA approximate inference strategy
         if inference == 'joint':
             self._mu_star = mu + 1.0
         else:
@@ -238,10 +238,10 @@ class _APCA(ABC):
         # Return encoding matrix
         return self.A_.copy()
 
-    # Fits augmented PCA model to data
+    # Fits AugmentedPCA model to data
     def fit(self, X: numpy.ndarray, Y: numpy.ndarray):
         r"""
-        Fits augmented PCA model to data
+        Fits AugmentedPCA model to data
 
         Parameters
         ----------
@@ -698,9 +698,9 @@ class aAPCA(_APCA):
     Methods
     -------
     fit(X, Y)
-        Fits augmented PCA model to data.
+        Fits AugmentedPCA model to data.
     fit_transform(X, Y)
-        Fits augumented PCA model to data and transforms data into scores.
+        Fits AugumentedPCA model to data and transforms data into scores.
     get_A()
         Returns encoding matrix.
     get_D()
@@ -714,13 +714,13 @@ class aAPCA(_APCA):
     reconstruct(X, Y)
         Reconstructs primary and concomitant data.
     transform(X, Y)
-        Transforms data into scores using augmented PCA formulation.
+        Transforms data into scores using AugmentedPCA formulation.
     """
     
-    # Instantiation method of adversarial augmented PCA base class
+    # Instantiation method of adversarial AugmentedPCA base class
     def __init__(self, n_components: int=None, mu=1.0, inference='encoded', diag_const=1e-8):
         r"""
-        Instantiation method of adversarial augmented PCA class.
+        Instantiation method of adversarial AugmentedPCA class.
         
         Parameters
         ----------
@@ -734,7 +734,7 @@ class aAPCA(_APCA):
             Constant added to diagonals of matrix prior to inversion.
         """
         
-        # Inherit from augmented PCA base class
+        # Inherit from AugmentedPCA base class
         super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get concomitant data loadings

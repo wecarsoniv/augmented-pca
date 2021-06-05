@@ -9,11 +9,12 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+
+# Import libraries
 import os
 import sys
 
-# Import APCA
+# Import AugmentedPCA
 sys.path.insert(0, os.path.abspath('../../src'))
 import apca
 
@@ -28,7 +29,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 # Project information
-project = 'Augmented PCA'
+project = 'AugmentedPCA'
 author = 'Billy Carson'
 year = str(datetime.datetime.now().year)
 copyright = year + ', ' + author
