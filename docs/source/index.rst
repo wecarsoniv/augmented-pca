@@ -2,11 +2,11 @@
 
 
 Augmented PCA Documentation
-========================================================================================================================
+===========================
 
-Welcome to the Augmented PCA docmentation!
+Welcome to the AugmentedPCA docmentation!
 
-Augmented Principal Component Analysis (Augmented PCA or APCA) is a library written in Python that provides 
+Augmented Principal Component Analysis (AugmentedPCA) is a library written in Python that provides 
 implementations of linear factor models that find a set of factors aligned with an *augmenting* objective in addition 
 to the canonical PCA objective of finding factors that represent the data variance.
 
@@ -30,7 +30,6 @@ the library, models provided, and examples of how to use different provided mode
     :caption: Package Reference
 
     package_ref/models
-    package_ref/datasets
     package_ref/metrics
 
 

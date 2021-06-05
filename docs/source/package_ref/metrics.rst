@@ -7,10 +7,11 @@
 apca.metrics
 ============
 
-Reconstruction Error
---------------------
 
 .. automodule:: apca.metrics
+    Reconstruction Error
+    --------------------
+    
     :members:
     :undoc-members:
 
