@@ -7,7 +7,7 @@
 apca.metrics
 ============
 
-Documented here are the provided metrics for evaluating AugmentedPCA models.
+Provided metrics for evaluating AugmentedPCA models.
 
 
 Reconstruction Error

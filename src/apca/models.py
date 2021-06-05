@@ -30,10 +30,10 @@ from scipy.sparse import issparse
 # CLASS DEFINITIONS
 # ----------------------------------------------------------------------------------------------------------------------
 
-# AugmentedPCA abstract base class
+# AugmentedPCA model abstract base class
 class _APCA(ABC):
     r"""
-    AugmentedPCA abstract base class.
+    AugmentedPCA model abstract base class.
 
     Parameters
     -----------
@@ -94,13 +94,13 @@ class _APCA(ABC):
     reconstruct(X, Y)
         Reconstructs primary and augmenting data.
     transform(X, Y)
-        Transforms data into scores using AugmentedPCA formulation.
+        Transforms data into scores using AugmentedPCA model formulation.
     """
 
-    # Instantiation method of AugmentedPCA base class
+    # Instantiation method of AugmentedPCA model base class
     def __init__(self, n_components: int, mu: float, inference: str, diag_const: float):
         r"""
-        Instantiation method of AugmentedPCA base class.
+        Instantiation method of AugmentedPCA model base class.
 
         Parameters
         ----------
@@ -136,7 +136,7 @@ class _APCA(ABC):
             raise ValueError('Augmenting objective strength must be an numeric value greater than or equal to 0.0.')
         self.mu = mu
         
-        # Check for proper type/value and assign AugmentedPCA approximate inference strategy attribute
+        # Check for proper type/value and assign approximate inference strategy attribute
         if not isinstance(inference, str):
             raise TypeError('Approximate inference strategy must be type string. Acceptable strategies include ' +
                             '\"local\", \"encoded\", and \"joint\".')
@@ -152,7 +152,7 @@ class _APCA(ABC):
             raise ValueError('Diagonal regularization constant must be a positive numeric value.')
         self.diag_const_ = diag_const
         
-        # Assign attributes dependent on AugmentedPCA approximate inference strategy
+        # Assign attributes dependent on approximate inference strategy
         if inference == 'joint':
             self._mu_star = mu + 1.0
         else:
@@ -345,10 +345,10 @@ class _APCA(ABC):
         # Return reference to object
         return self
 
-    # Transforms data into scores using augmented PCA formulation
+    # Transforms data into scores using AugmentedPCA model formulation
     def transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
         r"""
-        Transforms data into scores using augmented PCA formulation.
+        Transforms data into scores using AugmentedPCA model formulation.
 
         Parameters
         ----------
@@ -400,7 +400,7 @@ class _APCA(ABC):
     # Fit adversarial PCA model to data and transform data into scores
     def fit_transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
         r"""
-        Fits augumented PCA model to data and transforms data into scores.
+        Fits AugumentedPCA model to data and transforms data into scores.
 
         Parameters
         ----------
@@ -476,10 +476,12 @@ class _APCA(ABC):
         """
 
 
-# Supervised APCA class
+# Supervised AugmentedPCA model class
 class sAPCA(_APCA):
     r"""
-    Supervised APCA class.
+    Supervised AugmentedPCA (sAPCA) model class. The objective of the sAPCA model is to find components that 1)
+    represent the maximum variance expressed in the primary data (primary objective) and 2) represent the variance
+    expressed in the data labels or outcome data (augmenting objective).
 
     Parameters
     ----------
@@ -524,9 +526,9 @@ class sAPCA(_APCA):
     Methods
     -------
     fit(X, Y)
-        Fits augmented PCA model to data.
+        Fits AugmentedPCA model to data.
     fit_transform(X, Y)
-        Fits augumented PCA model to data and transforms data into scores.
+        Fits AugumentedPCA model to data and transforms data into scores.
     get_A()
         Returns encoding matrix.
     get_D()
@@ -540,13 +542,13 @@ class sAPCA(_APCA):
     reconstruct(X, Y)
         Reconstructs primary and supervised data.
     transform(X, Y)
-        Transforms data into scores using augmented PCA formulation.
+        Transforms data into scores using AugmentedPCA model formulation.
     """
     
-    # Instantiation method of supervised augmented PCA base class
+    # Instantiation method of supervised AugmentedPCA model base class
     def __init__(self, n_components=None, mu=1.0, inference='encoded', diag_const=1e-8):
         r"""
-        Instantiation method of supervised augmented PCA class
+        Instantiation method of supervised AugmentedPCA model class.
 
         Parameters
         ----------
@@ -560,7 +562,7 @@ class sAPCA(_APCA):
             Constant added to diagonals of matrix prior to inversion.
         """
     
-        # Inherit from augmented PCA base class
+        # Inherit from AugmentedPCA model base class
         super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get supervised data loadings
@@ -650,10 +652,12 @@ class sAPCA(_APCA):
         return B
 
 
-# Adversarial APCA class
+# Adversarial AugmentedPCA model class
 class aAPCA(_APCA):
     r"""
-    Adversarial APCA class.
+    Adversarial AugmentedPCA (aAPCA) model class. The objective of the aAPCA model is to find components that 1)
+    represent the maximum variance expressed in the primary data (primary objective) while 2) maintaining a degree of
+    invariance to a set of concomitant data(augmenting objective).
 
     Parameters
     ----------
@@ -714,13 +718,13 @@ class aAPCA(_APCA):
     reconstruct(X, Y)
         Reconstructs primary and concomitant data.
     transform(X, Y)
-        Transforms data into scores using AugmentedPCA formulation.
+        Transforms data into scores using AugmentedPCA model formulation.
     """
     
-    # Instantiation method of adversarial AugmentedPCA base class
+    # Instantiation method of adversarial AugmentedPCA model base class
     def __init__(self, n_components: int=None, mu=1.0, inference='encoded', diag_const=1e-8):
         r"""
-        Instantiation method of adversarial AugmentedPCA class.
+        Instantiation method of adversarial AugmentedPCA model class.
         
         Parameters
         ----------
@@ -734,7 +738,7 @@ class aAPCA(_APCA):
             Constant added to diagonals of matrix prior to inversion.
         """
         
-        # Inherit from AugmentedPCA base class
+        # Inherit from AugmentedPCA model base class
         super().__init__(n_components=n_components, mu=mu, inference=inference, diag_const=diag_const)
 
     # Get concomitant data loadings

@@ -10,16 +10,22 @@ Models
 In this section, a more detailed description of the offered APCA models and inference strategies is provided.
 
 
+Supervised APCA
+~~~~~~~~~~~~~~~
+
+In supervised APCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
+
+.. image:: ../_static/img/sapca_diagram.png
+    :alt: sAPCA diagram
+
+
 Adversarial APCA
 ----------------
 
+In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
-
-
-Supervised APCA
----------------
-
-
+.. image:: ../_static/img/aapca_diagram.png
+    :alt: aAPCA diagram
 
 
 Approximate Inference Strategies
@@ -140,15 +146,15 @@ strategy to training data and obtain factors for test data.
 .. code-block:: python
     
     # Instantiate supervised APCA model model with encoded approximate inference strategy
-    sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
+    sapca = sAPCA(n_components=3, mu=5.0, inference='joint')
     
     # Fit supervised APCA model
     # Note: both primary and augmenting data are required to fit the model
     sapca.fit(X=X_train, Y_train)
     
     # Generate components for test set
-    # Note: only primary data are needed to obtain factors
-    S_test = sapca.transform(X=X_test)
+    # Note: both primary and augmenting data are needed to obtain factors
+    S_test = sapca.transform(X=X_test, Y=Y_test)
     
 
 For a more in-depth description of the jointly-encoded approximate inference strategy, see our paper or the 

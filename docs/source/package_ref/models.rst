@@ -7,7 +7,7 @@
 apca.models
 ===========
 
-Documented here are provided AugmentedPCA models.
+AugmentedPCA models class references and descriptions.
 
 
 Supervised APCA

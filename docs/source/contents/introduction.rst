@@ -16,15 +16,6 @@ Models Overview
 APCA has two main variants: adversarial APCA (aAPCA) and supervised APCA (sAPCA). A brief introduction to the two variants is given in the following sections.
 
 
-Adversarial APCA
-~~~~~~~~~~~~~~~~
-
-In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
-
-.. image:: ../_static/img/aapca_diagram.png
-    :alt: aAPCA diagram
-
-
 Supervised APCA
 ~~~~~~~~~~~~~~~
 
@@ -32,6 +23,15 @@ In supervised APCA (sAPCA), the augmenting objective is to make the factors *ali
 
 .. image:: ../_static/img/sapca_diagram.png
     :alt: sAPCA diagram
+
+
+Adversarial APCA
+~~~~~~~~~~~~~~~~
+
+In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
+
+.. image:: ../_static/img/aapca_diagram.png
+    :alt: aAPCA diagram
 
 
 Quick Introduction
