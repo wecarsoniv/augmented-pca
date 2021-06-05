@@ -87,7 +87,8 @@ html_theme_options = {
 }
 
 # Side bar icon
-html_logo = '_static/img/apca_logo.svg'
+html_logo = '_static/img/apca_logo_full.svg'
+html_favicon = '_static/img/apca_logo.svg'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
