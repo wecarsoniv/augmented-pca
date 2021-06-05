@@ -20,7 +20,7 @@ In supervised APCA (sAPCA), the augmenting objective is to make the factors *ali
 
 
 Adversarial APCA
-----------------
+~~~~~~~~~~~~~~~~
 
 In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
@@ -96,7 +96,7 @@ approximate inference strategy, see our paper or the corresponding
 
 
 Encoded
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
 
 In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or 
 components. This inference strategy is termed "encoded" because the augmenting objective is enforced via the encoder. 
@@ -128,7 +128,7 @@ For a more in-depth description of the encoded approximate inference strategy, s
 
 
 Jointly-Encoded
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is 
 enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and 

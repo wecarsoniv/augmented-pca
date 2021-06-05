@@ -220,7 +220,7 @@ sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
 sapca.fit(X=X_train, Y_train)
 
 # Generate components for test set
-# Note: only primary data are needed to obtain factors
+# Note: both primary and augmenting data are needed to obtain factors
 S_test = sapca.transform(X=X_test)
 
 ```
@@ -232,8 +232,8 @@ For a more in-depth description of the jointly-encoded approximate inference str
 
 Please cite our paper if you find this library or model helpful in your research:
 
-    @inproceedings{carson_augmentedpca,
-    title={Augmented Principal Component Analysis},
+    @inproceedings{carson2021augmentedpca,
+    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     year={2021},
     maintitle={Conference},
