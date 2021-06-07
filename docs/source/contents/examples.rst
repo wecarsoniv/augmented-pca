@@ -160,6 +160,7 @@ cancers, but the other cancers still have significant overlap.
 
 .. image:: ../_static/img/gene_express_pca_cluster_docs.svg
     :width: 400
+    :align: center
     :alt: gene expression PCA clustering
 
 Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
@@ -248,6 +249,7 @@ variance explained in the features or primary data matrix :python:`X`.
 
 .. image:: ../_static/img/gene_express_class_pred_docs.svg
     :width: 520
+    :align: center
     :alt: gene expression classification
 
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
@@ -279,6 +281,7 @@ class labels, thus ensuring cleaner clustering according to tumor type.
 
 .. image:: ../_static/img/gene_express_sapca_cluster_docs.svg
     :width: 400
+    :align: center
     :alt: gene expression sAPCA clustering
 
 
@@ -568,18 +571,28 @@ to 82%, thus demonstrating the ability of aAPCA to mitigate the effects of domai
 
 .. image:: ../_static/img/yale_face_classification_docs.svg
     :width: 520
+    :align: center
     :alt: Yale Face dataset identity and shadow location classification
 
-
+Since AugmentedPCA models are linear factor models similar to PCA, both the primary and concomitant data can be 
+reconstructed from the generated components. AugmentedPCA models have a :python:`reconstruct()` method that 
+returns the reconstructed primary and concomitant data. For this example, the shadow-invariant images reconstructed 
+from aAPCA components are visualized and compare these images to the original images as well as images recontructed 
+from regular PCA components. aAPCA  reconstructions  display  notice-able shadow removal when compared to the original 
+images and images reconstructed from PCA components. This demonstrates aAPCA’s ability to produce nuisance-invariant 
+representations.
 
 .. image:: ../_static/img/yale_face_recon_supp_docs.svg
     :width: 700
+    :align: center
     :alt: Yale Face dataset image reconstructions
 
+Finally, clustering of aAPCA-reconstructed images is compared to clustering of PCA-reconstructed images. PCA
+reconstructions are grouped almost exclusively according to  shadow  location (left-side or right-side) in 2D space, 
+while aAPCA-reconstructed images are grouped in a more shadow-invariant manner.
 
-    
 .. image:: ../_static/img/yale_face_tsne_cluster_docs.svg
-    :width: 550
+    :width: 600
+    :align: center
     :alt: Yale Face dataset image reconstruction t-SNE clustering
-
 
