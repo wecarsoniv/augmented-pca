@@ -16,8 +16,7 @@ Please cite our paper if you find the AugmentedPCA library helpful in your resea
 .. code-block:: none
     
     @inproceedings{carson2021augmentedpca,
-    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant 
-           {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
+    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     year={2021},
     maintitle={Conference},
