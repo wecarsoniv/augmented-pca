@@ -3,41 +3,41 @@
 
 ## Overview
 
-This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA or APCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. APCA can be split into two general families of models: adversarial APCA and supervised APCA.
+This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. AugmentedPCA can be split into two general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.
 
 
-### Adversarial APCA
+### Supervised AugmentedPCA
 
-In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
+In supervised AugmentedPCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
 
-![aAPCA diagram](https://github.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/aapca_diagram.png)
+![sAPCA diagram](https://github.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/sapca_diagram.png)
 
 
-### Supervised APCA
+### Adversarial AugmentedPCA
 
-In supervised APCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
+In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
-![sAPCA diagram](https://github.com/wecarsoniv/augmented-pca/tree/main/docs/source/_static/img/sapca_diagram.png)
+![aAPCA diagram](https://github.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/aapca_diagram.png)
 
 
 ## Documentation
 
-Documentation for APCA is available on this [documentation site](https://augmented-pca.readthedocs.io/en/latest/index.html).
+Documentation for AugmentedPCA is available on this [documentation site](https://augmented-pca.readthedocs.io/en/latest/index.html).
 
 Provided documentation includes:
 
-* Motivation - Motivation behind the APCA model and the different approximate inference strategies.
+* Motivation - Motivation behind AugmentedPCA models and the different approximate inference strategies.
 
 * Model formulation - Overview of different models and approximate inference strategies as well as more in-depth mathematical descriptions.
 
-* Tutorials - Step-by-step guide on how to use the different offered APCA model.
+* Tutorials - Step-by-step guide on how to use the different offered AugmentedPCA models.
 
 * Examples - Use case examples for the different models.
 
 
 ## Dependencies
 
-The APCA library is written in Python, and requires Python >= 3.6 to run. APCA relies on the following libraries and version numbers:
+The AugmentedPCA library is written in Python, and requires Python >= 3.6 to run. AugmentedPCA relies on the following libraries and version numbers:
 
 * [Python](https://www.python.org/) >= 3.6
 * [NumPy](https://numpy.org/) >= 1.19.2
@@ -53,25 +53,25 @@ To install the latest stable release, use [pip](https://pip.pypa.io/en/stable/).
 
 ## Issue Tracking and Reports
 
-Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the APCA repository for issue tracking, filing bug reports, and asking general questions about the library or project.
+Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the AugmentedPCA repository for issue tracking, filing bug reports, and asking general questions about the library or project.
 
 
 ## Quick Introduction
 
-A quick guide to using APCA is given in this section. For a more in-depth guide, see our [documentation]().
+A quick guide to using AugmentedPCA is given in this section. For a more in-depth guide, see our [documentation]().
 
 
-### Importing APCA Models
+### Importing AugmentedPCA Models
 
 APCA models can be imported from the `models.py` module. Below we show an example of importing the aAPCA model.
 
 ```python
-# Import all APCA models
+# Import all AugmentedPCA models
 from apca.models import aAPCA
 
 ```
 
-Alternatively, all offered APCA models can be imported at once.
+Alternatively, all offered AugmentedPCA models can be imported at once.
 
 ```python
 # Import all APCA models
@@ -80,7 +80,7 @@ from apca.models import *
 ```
 
 
-### Instantiating APCA
+### Instantiating AugmentedPCA Models
 
 APCA models are instantiated by assigning either an aAPCA or sAPCA object to a variable. During instantiation, one has the option to define parameters `n_components`, `mu`, which represent the number of components and the augmenting objective strength, respectively. Additionally, approximate inference strategy can be defined through the `inference` parameter.
 
@@ -90,15 +90,15 @@ n_components = 2        # factors will have dimensionality of 2
 mu = 1.0                # augmenting objective strength equal to 1 
 inference = 'encoded'   # encoded approximate inference strategy
 
-# Instantiate adversarial APCA model
+# Instantiate adversarial AugmentedPCA model
 aapca = aAPCA(n_components=n_components, mu=mu, inference=inference)
 
 ```
 
 
-### Fitting APCA
+### Fitting AugmentedPCA Models
 
-APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality. Similar to scikit-learn models, APCA models are fit using the `fit()` method. `fit()` takes two parameters: `X` which represents the matrix of primary data and `Y` which represents the matrix of augmenting data.
+APCA models closely follow the style and implemention of [scikit-learn's PCA implementation](https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html), with many of the same methods and functionality. Similar to scikit-learn models, AugmentedPCA models are fit using the `fit()` method. `fit()` takes two parameters: `X` which represents the matrix of primary data and `Y` which represents the matrix of augmenting data.
 
 ```python
 # Import numpy
@@ -110,15 +110,15 @@ n_samp = 100
 X = np.random.randn(n_samp, 20)   # primary data, 100 samples with dimensionality of 20
 Y = np.random.randn(n_samp, 3)    # concomitant data, 100 samples with dimensionality of 3
 
-# Fit adversarial APCA instance
+# Fit adversarial AugmentedPCA instance
 aapca.fit(X=X, Y=Y)
 
 ```
 
-Alternatively, APCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or factors.
+Alternatively, AugmentedPCA models can be fit using the `fit_transform()` method, which takes the same parameters as the `fit()` method but also returns a matrix of components or factors.
 
 ```python
-# Fit adversarial APCA instance and generate components
+# Fit adversarial AugmentedPCA instance and generate components
 S = aapca.fit_transform(X=X, Y=Y)
 
 ```
@@ -126,14 +126,14 @@ S = aapca.fit_transform(X=X, Y=Y)
 
 ### Approximate Inference Strategies
 
-In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
+In this section, we give a brief overview of the different approximate inference strategies offered for AugmentedPCA. Inference strategy should be chosen based on the data on which the AugmentedPCA model will be used as well as the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
 
 
 #### Local
 
 In the local approximate inference strategy, the factors (local variables associated with each observation) are included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the local inference strategy.
 
-![local inference diagram](https://github.com/wecarsoniv/augmented-pca/tree/main/docs/source/_static/img/local_inference_diagram.png)
+![local inference diagram](https://github.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/local_inference_diagram.png)
 
 Because the local variables are included in the augmenting objective, given new data we must have both primary *and* augmenting data to obtain factors. Thus, the local inference strategy should only be used for inference on new data when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local approximate inference strategy to training data and obtain factors for test data.
 
@@ -163,10 +163,10 @@ X_test = X[test_idx, :]
 Y_train = Y[train_idx, :]
 Y_test = Y[test_idx, :]
 
-# Instantiate supervised APCA model with local approximate inference strategy
+# Instantiate supervised AugmentedPCA model with local approximate inference strategy
 sapca = sAPCA(n_components=3, mu=5.0, inference='local')
 
-# Fit supervised APCA model
+# Fit supervised AugmentedPCA model
 sapca.fit(X=X_train, Y_train)
 
 # Generate components for test set
@@ -182,15 +182,15 @@ Note that when factors are generated for the test set that the `transform()` met
 
 In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or components. This inference strategy is termed "encoded" because the augmenting objective is enforced via the encoder. Below is a diagram depicting the encoded inference strategy.
 
-![encoded inference diagram](https://github.com/wecarsoniv/augmented-pca/tree/main/docs/source/_static/img/encoded_inference_diagram.png)
+![encoded inference diagram](https://github.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/encoded_inference_diagram.png)
 
 In contrast to the local inference strategy, when factors are generated for the test set under the encoded inference strategy the `transform()` method only requires the primary data `X_test`. Below we show an example of how to fit a sAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.
 
 ```python
-# Instantiate supervised APCA model model with encoded approximate inference strategy
+# Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy
 sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
 
-# Fit supervised APCA model
+# Fit supervised AugmentedPCA model
 # Note: both primary and augmenting data are required to fit the model
 sapca.fit(X=X_train, Y_train)
 
@@ -207,15 +207,15 @@ For a more in-depth description of the encoded approximate inference strategy, s
 
 The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram depicting the jointly-encoded inference strategy.
 
-![jointly-encoded inference diagram](https://github.com/wecarsoniv/augmented-pca/tree/main/docs/source/_static/img/joint_inference_diagram.png)
+![jointly-encoded inference diagram](https://github.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/joint_inference_diagram.png)
 
 Similar to the local inference strategy, when factors are generated for the test set under the jointly-encoded inference strategy the `transform()` method requires both the primary data `X_test` and augmenting data `Y_test`. Below we show an example of how to fit a sAPCA model with jointly-encoded approximate inference strategy to training data and obtain factors for test data.
 
 ```python
-# Instantiate supervised APCA model model with encoded approximate inference strategy
+# Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy
 sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
 
-# Fit supervised APCA model
+# Fit supervised AugmentedPCA model
 # Note: both primary and augmenting data are required to fit the model
 sapca.fit(X=X_train, Y_train)
 
