@@ -155,6 +155,9 @@ cancers, but the other cancers still have significant overlap.
     plt.show()
     
 
+.. image:: ../_static/img/gene_express_pca_cluster_docs.pdf
+    :alt: gene expression PCA clustering
+
 Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
 data, find components that have greater fidelity to class labels. Ideally, this will help separate the different 
 clusters of the gene expression data.
@@ -225,6 +228,22 @@ variance explained in the features or primary data matrix :python:`X`.
     >>>   Train set:  1.0000
     >>>   Test set:  0.9027
     
+    # Plot model performance as a function of adversary strength
+    fig2, ax2 = plt.subplots(nrows=1, ncols=1, figsize=(8.0, 3.8))
+    ax2.plot(mu_list, train_acc_list, c='orangered', linestyle='--', alpha=0.7, label='train acc.')
+    ax2.scatter(mu_list[0], train_acc_list[0], c='orangered', alpha=0.7)
+    ax2.plot(mu_list, test_acc_list, c='dodgerblue', alpha=0.7, label='test acc.')
+    ax2.scatter(mu_list[0], test_acc_list[0], c='dodgerblue', alpha=0.7)
+    ax2.set_xlabel('Supervision Strength $\mu$')
+    ax2.set_ylabel('Classification Accuracy')
+    ax2.grid(alpha=0.3)
+    ax2.set_axisbelow(True)
+    ax2.legend(loc='lower right')
+    plt.show()
+    
+
+.. image:: ../_static/img/gene_express_class_pred_docs.pdf
+    :alt: gene expression classification
 
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
 which demonstrates that sAPCA successfully learned components that both a) maximized explain variance of the original 
@@ -251,7 +270,10 @@ class labels, thus ensuring cleaner clustering according to tumor type.
     ax3.set_axisbelow(True)
     ax3.legend(loc='lower left')
     plt.show()
+    
 
+.. image:: ../_static/img/gene_express_sapca_cluster_docs.pdf
+    :alt: gene expression sAPCA clustering
 
 
 aAPCA Example - Removal of Image Nuisance
