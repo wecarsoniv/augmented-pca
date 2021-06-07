@@ -155,7 +155,7 @@ cancers, but the other cancers still have significant overlap.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_pca_cluster_docs.pdf
+.. image:: ../_static/img/gene_express_pca_cluster_docs.png
     :alt: gene expression PCA clustering
 
 Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
@@ -242,7 +242,7 @@ variance explained in the features or primary data matrix :python:`X`.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_class_pred_docs.pdf
+.. image:: ../_static/img/gene_express_class_pred_docs.png
     :alt: gene expression classification
 
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
@@ -272,7 +272,7 @@ class labels, thus ensuring cleaner clustering according to tumor type.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_sapca_cluster_docs.pdf
+.. image:: ../_static/img/gene_express_sapca_cluster_docs.png
     :alt: gene expression sAPCA clustering
 
 
