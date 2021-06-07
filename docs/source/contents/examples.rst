@@ -160,7 +160,6 @@ cancers, but the other cancers still have significant overlap.
 
 .. image:: ../_static/img/gene_express_pca_cluster_docs.svg
     :width: 400
-    :align: center
     :alt: gene expression PCA clustering
 
 Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
@@ -249,7 +248,6 @@ variance explained in the features or primary data matrix :python:`X`.
 
 .. image:: ../_static/img/gene_express_class_pred_docs.svg
     :width: 520
-    :align: center
     :alt: gene expression classification
 
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
@@ -281,7 +279,6 @@ class labels, thus ensuring cleaner clustering according to tumor type.
 
 .. image:: ../_static/img/gene_express_sapca_cluster_docs.svg
     :width: 400
-    :align: center
     :alt: gene expression sAPCA clustering
 
 
@@ -571,7 +568,6 @@ to 82%, thus demonstrating the ability of aAPCA to mitigate the effects of domai
 
 .. image:: ../_static/img/yale_face_classification_docs.svg
     :width: 520
-    :align: center
     :alt: Yale Face dataset identity and shadow location classification
 
 Since AugmentedPCA models are linear factor models similar to PCA, both the primary and concomitant data can be 
@@ -584,7 +580,6 @@ representations.
 
 .. image:: ../_static/img/yale_face_recon_supp_docs.svg
     :width: 700
-    :align: center
     :alt: Yale Face dataset image reconstructions
 
 Finally, clustering of aAPCA-reconstructed images is compared to clustering of PCA-reconstructed images. PCA
@@ -593,6 +588,5 @@ while aAPCA-reconstructed images are grouped in a more shadow-invariant manner.
 
 .. image:: ../_static/img/yale_face_tsne_cluster_docs.svg
     :width: 600
-    :align: center
     :alt: Yale Face dataset image reconstruction t-SNE clustering
 
