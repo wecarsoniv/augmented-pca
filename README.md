@@ -10,14 +10,14 @@ This library provides Python implementation of Augmented Principal Component Ana
 
 In supervised AugmentedPCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
 
-![sAPCA diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/sapca_diagram.png)
+![sAPCA diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/sapca_diagram.png)
 
 
 ### Adversarial AugmentedPCA
 
 In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
-![aAPCA diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/aapca_diagram.png)
+![aAPCA diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/aapca_diagram.png)
 
 
 ## Documentation
@@ -133,7 +133,7 @@ In this section, we give a brief overview of the different approximate inference
 
 In the local approximate inference strategy, the factors (local variables associated with each observation) are included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the local inference strategy.
 
-![local inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/local_inference_diagram.png)
+![local inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/local_inference_diagram.png)
 
 Because the local variables are included in the augmenting objective, given new data we must have both primary *and* augmenting data to obtain factors. Thus, the local inference strategy should only be used for inference on new data when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local approximate inference strategy to training data and obtain factors for test data.
 
@@ -182,7 +182,7 @@ Note that when factors are generated for the test set that the `transform()` met
 
 In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or components. This inference strategy is termed "encoded" because the augmenting objective is enforced via the encoder. Below is a diagram depicting the encoded inference strategy.
 
-![encoded inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/encoded_inference_diagram.png)
+![encoded inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/encoded_inference_diagram.png)
 
 In contrast to the local inference strategy, when factors are generated for the test set under the encoded inference strategy the `transform()` method only requires the primary data `X_test`. Below we show an example of how to fit a sAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.
 
@@ -207,7 +207,7 @@ For a more in-depth description of the encoded approximate inference strategy, s
 
 The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram depicting the jointly-encoded inference strategy.
 
-![jointly-encoded inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/blob/main/docs/source/_static/img/joint_inference_diagram.png)
+![jointly-encoded inference diagram](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/joint_inference_diagram.png)
 
 Similar to the local inference strategy, when factors are generated for the test set under the jointly-encoded inference strategy the `transform()` method requires both the primary data `X_test` and augmenting data `Y_test`. Below we show an example of how to fit a sAPCA model with jointly-encoded approximate inference strategy to training data and obtain factors for test data.
 
