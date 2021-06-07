@@ -226,7 +226,6 @@ variance explained in the features or primary data matrix :python:`X`.
     >>>   Test set:  0.9027
     
 
-------------------------------------------------------------------------------------------------------------------------
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
 which demonstrates that sAPCA successfully learned components that both a) maximized explain variance of the original 
 gene expression data in learned components and b) made sure these components also had greater fidelity with respects to 
