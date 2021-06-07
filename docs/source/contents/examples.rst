@@ -155,7 +155,7 @@ cancers, but the other cancers still have significant overlap.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_pca_cluster.png
+.. image:: ../_static/img/gene_express_pca_cluster_docs.svg
     :width: 400
     :alt: gene expression PCA clustering
 
@@ -243,7 +243,7 @@ variance explained in the features or primary data matrix :python:`X`.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_class_pred.png
+.. image:: ../_static/img/gene_express_class_pred_docs.svg
     :width: 530
     :alt: gene expression classification
 
@@ -274,7 +274,7 @@ class labels, thus ensuring cleaner clustering according to tumor type.
     plt.show()
     
 
-.. image:: ../_static/img/gene_express_sapca_cluster.png
+.. image:: ../_static/img/gene_express_sapca_cluster_docs.svg
     :width: 400
     :alt: gene expression sAPCA clustering
 
