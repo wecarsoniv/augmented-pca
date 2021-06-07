@@ -244,7 +244,7 @@ variance explained in the features or primary data matrix :python:`X`.
     
 
 .. image:: ../_static/img/gene_express_class_pred_docs.png
-    :width: 520
+    :width: 530
     :alt: gene expression classification
 
 Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
