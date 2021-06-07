@@ -10,7 +10,7 @@ This library provides Python implementation of Augmented Principal Component Ana
 
 In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
-![aAPCA diagram](https://github.com/wecarsoniv/augmented-pca/tree/main/docs/source/_static/img/aapca_diagram.png)
+![aAPCA diagram](https://github.com/wecarsoniv/augmented-pca/docs/source/_static/img/aapca_diagram.png)
 
 
 ### Supervised APCA
