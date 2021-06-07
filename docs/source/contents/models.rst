@@ -5,39 +5,43 @@
 
 
 Models
-======
+========================================================================================================================
 
 In this section, a more detailed description of the offered APCA models and inference strategies is provided.
 
 
-Supervised APCA
-~~~~~~~~~~~~~~~
+Supervised AugmentedPCA
+------------------------------------------------------------------------------------------------------------------------
 
-In supervised APCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
+In supervised AugmentedPCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or 
+some outcome, in addition to having the factors explain the variance of the original observed or primary data. Below is 
+a diagram depicting the relationship between primary data, supervision data, and the resulting sAPCA factors.
 
 .. image:: ../_static/img/sapca_diagram.png
     :alt: sAPCA diagram
 
 
-Adversarial APCA
-~~~~~~~~~~~~~~~~
+Adversarial AugmentedPCA
+------------------------------------------------------------------------------------------------------------------------
 
-In adversarial APCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of concomitant data, in addition to having the factors explain the variance of the original observed or primary data. Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
+In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of 
+concomitant data, in addition to having the factors explain the variance of the original observed or primary data. 
+Below is a diagram depicting the relationship between primary data, concomitant data, and the resulting aAPCA factors.
 
 .. image:: ../_static/img/aapca_diagram.png
     :alt: aAPCA diagram
 
 
 Approximate Inference Strategies
---------------------------------
+------------------------------------------------------------------------------------------------------------------------
 
-In this section, we give a brief overview of the different approximate inference strategies offered for APCA. Inference 
-strategy should be chosen based on the data on which the APCA model will be used as well as the specific use case. Both 
-aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
+In this section, we give a brief overview of the different approximate inference strategies offered for AugmentedPCA 
+models. Inference strategy should be chosen based on the data on which the AugmentedPCA model will be used as well as 
+the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
 
 
 Local
-~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the local approximate inference strategy, the factors (local variables associated with each observation) are 
 included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the 
@@ -78,10 +82,10 @@ approximate inference strategy to training data and obtain factors for test data
     Y_train = Y[train_idx, :]
     Y_test = Y[test_idx, :]
     
-    # Instantiate supervised APCA model with local approximate inference strategy
+    # Instantiate supervised AugmentedPCA model with local approximate inference strategy
     sapca = sAPCA(n_components=3, mu=5.0, inference='local')
     
-    # Fit supervised APCA model
+    # Fit supervised AugmentedPCA model
     sapca.fit(X=X_train, Y_train)
     
     # Generate components for test set
@@ -89,14 +93,16 @@ approximate inference strategy to training data and obtain factors for test data
     S_test = sapca.transform(X=X_test, Y=Y_test)
     
 
-Note that when factors are generated for the test set that the :python:`transform()` method requires both the primary 
-data :python:`X_test` and labels :python:`Y_test` be passed as parameters. For a more in-depth description of the local 
-approximate inference strategy, see our paper or the corresponding 
-`documentation section <https://augmented-pca.readthedocs.io/en/latest/index.html>`_.
+
+.. note::
+    The local approximate inference strategy requires both primary and augmenting data at test time. Therefore, when 
+    factors are generated for the test set, the :python:`transform()` method requires both the primary data 
+    :python:`X_test` and augmenting data :python:`Y_test` be passed as parameters. For a more in-depth description of 
+    the local approximate inference strategy, see the paper introducing the AugmentedPCA library.
 
 
 Encoded
-~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or 
 components. This inference strategy is termed "encoded" because the augmenting objective is enforced via the encoder. 
@@ -123,12 +129,12 @@ how to fit a sAPCA model with encoded approximate inference strategy to training
     S_test = sapca.transform(X=X_test)
     
 
-For a more in-depth description of the encoded approximate inference strategy, see our paper or the corresponding 
-`documentation section <https://augmented-pca.readthedocs.io/en/latest/index.html>`_.
+For a more in-depth description of the encoded approximate inference strategy, see the paper introducing the 
+AugmentedPCA library.
 
 
 Jointly-Encoded
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is 
 enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and 
@@ -157,6 +163,8 @@ strategy to training data and obtain factors for test data.
     S_test = sapca.transform(X=X_test, Y=Y_test)
     
 
-For a more in-depth description of the jointly-encoded approximate inference strategy, see our paper or the 
-corresponding `documentation section <https://augmented-pca.readthedocs.io/en/latest/index.html>`_.
+.. note::
+    The jointly-encoded approximate inference strategy requires both primary and augmenting data at test time. 
+    Therefore, when  factors are generated for the test set, the :python:`transform()` method requires both the 
+    primary data :python:`X_test` and augmenting data :python:`Y_test` be passed as parameters.
 

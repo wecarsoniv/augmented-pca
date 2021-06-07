@@ -5,18 +5,19 @@
 
 
 Citation
-========
+========================================================================================================================
 
 
 Citation
---------
+------------------------------------------------------------------------------------------------------------------------
 
-Please cite our paper if you find this library or offered models helpful in your research:
+Please cite our paper if you find the AugmentedPCA library helpful in your research:
 
 .. code-block:: none
     
     @inproceedings{carson2021augmentedpca,
-    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
+    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant 
+           {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     year={2021},
     maintitle={Conference},
@@ -24,7 +25,7 @@ Please cite our paper if you find this library or offered models helpful in your
 
 
 Funding
--------
+------------------------------------------------------------------------------------------------------------------------
 
 This project was supported by the NIH BRAIN Initiative, award number R01 EB026937.
 
