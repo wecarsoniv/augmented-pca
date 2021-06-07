@@ -5,21 +5,21 @@
 
 
 apca.models
-===========
+========================================================================================================================
 
 AugmentedPCA models class references and descriptions.
 
 
-Supervised APCA
----------------
+Supervised AugmentedPCA
+------------------------------------------------------------------------------------------------------------------------
 
 .. autoclass:: apca.models.sAPCA
    :members:
    :inherited-members:
 
 
-Adversarial APCA
-----------------
+Adversarial AugmentedPCA
+------------------------------------------------------------------------------------------------------------------------
 
 .. autoclass:: apca.models.aAPCA
    :members:
