@@ -45,19 +45,31 @@ Next, AugmentedPCA factor models are imported from the :python:`apca.models` mod
     
 
 Gene expression data is loaded and formatted into a matrix :python:`X`, where each row represents a different tumor 
-gene expression sample and each column represents a different gene. 
+gene expression sample and each column represents a different gene. Labels are store in an array and tumor samples are 
+assigned an integer label of either 0, 1, 2, 3, or 4. Labels are then one-hot encoded to create a matrix :python:`Y` 
+of augmenting supervision data.
 
 .. code-block:: python
 
     # Display data dimensionality
-    print('Cancer gene expression dataset dimensions:\n')
+    print('Cancer gene expression dataset dimensions:')
     print('  Gene expression data:  (%d, %d)' % (X.shape))
     print('  Supervision data:  (%d, %d)' % (Y.shape))
     print('  Labels:  (%d,)' % (y.shape))
     
+    >>> Cancer gene expression dataset dimensions:
     >>>   Gene expression data:  (801, 20531)
     >>>   Supervision data:  (801, 5)
     >>>   Labels:  (801,)
+    
+
+Instead of using all gene expression data, only a subset of the gene expression data will be used. This is because the 
+process of fitting AugmentedPCA models require matrix inversions as well as eigendecompositions. This process gets 
+prohibitively expensive for larger feature dimensions. Thus, it is recommended to keep the feature dimensions to around 
+~1,000 features, give or take.
+
+Next, scikit-learn's :python:`train_test_split()` function is used to split the data into train and test splits
+(roughly 50% and 50% of the data, respectively).
 
 .. code-block:: python
 
@@ -65,9 +77,15 @@ gene expression sample and each column represents a different gene.
     X_subset = X[:, :2000]
 
     # Split data
-    X_train, X_test, Y_train, Y_test, y_train, y_test = train_test_split(X_subset, Y, y, test_size=0.5,
-                                                                         shuffle=True, random_state=random_state)
+    X_train, X_test, Y_train, Y_test, y_train, y_test = train_test_split(X_subset, Y, y,
+                                                                         test_size=0.5,
+                                                                         shuffle=True,
+                                                                         random_state=0)
     
+
+Gene expression training features are scaled such that each feature has mean zero and unit variance. Then, test data is 
+scaled according to the population statistics of the training features. Supervision data isn't scaled since the data is 
+one-hot encodings.
 
 .. code-block:: python
 
@@ -79,11 +97,22 @@ gene expression sample and each column represents a different gene.
     X_test = scaler.transform(X_test)
     
 
+For evaluating the classification performance achieved using AugmentedPCA components, a simple logistic regression 
+classifier with no penalty is used, since only two components will be used for prediction.
+
 .. code-block:: python
 
     # Instantiate logistic regression model
-    model = LogisticRegression(penalty='none', solver='lbfgs', max_iter=10000, multi_class='auto', random_state=0)
+    model = LogisticRegression(penalty='none', solver='lbfgs', max_iter=10000,
+                            multi_class='auto', random_state=0)
     
+
+Now, two PCA components of the decomposed gene expression data is used to predict tumor type. Logistic regression only 
+achieves 71% accuracy on the test set. This is because PCA finds independent sets  of features (orthogonal components) 
+that maximize the explained variance of the data. If the majority of the variance of the gene expression data is not 
+aligned with class labels then class separation will not be achieved from the first few principle components. This is 
+reflected in the visualization of the 2-dimensional (2D) clustering. There is clear separation of KIRC from the other 
+cancers, but the other cancers still have significant overlap.
 
 .. code-block:: python
 
@@ -125,6 +154,32 @@ gene expression sample and each column represents a different gene.
     ax1.legend(loc='lower right')
     plt.show()
     
+
+Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
+data, find components that have greater fidelity to class labels. Ideally, this will help separate the different 
+clusters of the gene expression data.
+
+Like scikit-learn's PCA implementation, sAPCA models are fit using the :python:`fit()` and :python:`fit_transform()` 
+methods, with :python:`fit_transform()` returning a matrix of components or factors. The :python:`fit()` and 
+:python:`fit_transform()` methods of AugmentedPCA models require both a primary data matrix :python:`X` and an 
+augmenting data matrix :python:`Y` as parameters. For sAPCA models, the augmenting data is the supervision data matrix 
+:python:`Y`. In this case, this matrix corresponds to the matrix of one-hot encoded class labels.
+
+AugmentedPCA models have a tuning parameter :python:`mu`, which represents the relative strength of the augmenting 
+objective. At lower values of :python:`mu`, AugmentedPCA models will prioritize maximizing explained variance in 
+learned components, and this will produce components similar to that produced by regular PCA. At higher values of 
+:python:`mu`, the augmenting objective is prioritized. Here, since sAPCA is being used, at higher :python:`mu` values 
+the components will have greater clustering according to class.
+
+Since sAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this 
+value will depend on the dataset, the scale of the features, and the dimensionality of the features. Here, a 
+supervision strength in the thousands is reasonable. For a smaller number of features, these values may be much too 
+large.
+
+AugmentedPCA models offer multiple "approximate inference strategies." For supervised applications of AugmentedPCA, 
+it's recommended one often chooses the :python:`'encoded'` option, as done below. Essentially, this ensures that the 
+model doesn't need to use the supervision data at test time to create components and instead only relies upon the 
+variance explained in the features or primary data matrix :python:`X`.
 
 .. code-block:: python
 
@@ -170,6 +225,12 @@ gene expression sample and each column represents a different gene.
     >>>   Train set:  1.0000
     >>>   Test set:  0.9027
     
+
+------------------------------------------------------------------------------------------------------------------------
+Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
+which demonstrates that sAPCA successfully learned components that both a) maximized explain variance of the original 
+gene expression data in learned components and b) made sure these components also had greater fidelity with respects to 
+class labels, thus ensuring cleaner clustering according to tumor type.
 
 .. code-block:: python
 
