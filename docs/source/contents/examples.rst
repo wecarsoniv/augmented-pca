@@ -587,6 +587,6 @@ reconstructions are grouped almost exclusively according to  shadow  location (l
 while aAPCA-reconstructed images are grouped in a more shadow-invariant manner.
 
 .. image:: ../_static/img/yale_face_tsne_cluster_docs.svg
-    :width: 620
+    :width: 650
     :alt: Yale Face dataset image reconstruction t-SNE clustering
 
