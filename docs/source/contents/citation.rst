@@ -16,11 +16,11 @@ Please cite our paper if you find the AugmentedPCA library helpful in your resea
 .. code-block:: none
     
     @inproceedings{carson2021augmentedpca,
-    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
+    title={{AugmentedPCA}: {A} {P}ython {P}ackage of {S}upervised and {A}dversarial {L}inear {F}actor {M}odels},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     year={2021},
-    maintitle={Conference},
-    booktitle={Workshop}}
+    month={December},
+    booktitle={{P}roceedings of {L}earning {M}eaningful {R}epresentations of {L}ife {W}orkshop at {NeurIPS} 2021}}
 
 
 Funding

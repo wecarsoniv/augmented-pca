@@ -3,7 +3,7 @@
 
 ## Overview
 
-This library provides Python implementation of Augmented Principal Component Analysis (Augmented PCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. AugmentedPCA can be split into two general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.
+This library provides Python implementation of Augmented Principal Component Analysis (AugmentedPCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. AugmentedPCA can be split into two general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.
 
 
 ### Supervised AugmentedPCA
@@ -233,11 +233,11 @@ For a more in-depth description of the jointly-encoded approximate inference str
 Please cite our paper if you find this library or model helpful in your research:
 
     @inproceedings{carson2021augmentedpca,
-    title={{AugmentedPCA}: {A}n {O}pen-{S}ource {L}ibrary for {S}upervised and {N}uisance-{I}nvariant {L}inear {R}epresentation {L}earning with {A}nalytic {S}olutions},
+    title={{AugmentedPCA}: {A} {P}ython {P}ackage of {S}upervised and {A}dversarial {L}inear {F}actor {M}odels},
     author={{Carson IV}, William E. and Talbot, Austin and Carlson, David},
     year={2021},
-    maintitle={Conference},
-    booktitle={Workshop}}
+    month={December},
+    booktitle={{P}roceedings of {L}earning {M}eaningful {R}epresentations of {L}ife {W}orkshop at {NeurIPS} 2021}}
 
 
 ## Funding

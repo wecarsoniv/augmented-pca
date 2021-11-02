@@ -7,7 +7,7 @@
 Models
 ========================================================================================================================
 
-In this section, a more detailed description of the offered APCA models and inference strategies is provided.
+In this section, a more detailed description of the offered AugmentedPCA models and inference strategies is provided.
 
 
 Supervised AugmentedPCA

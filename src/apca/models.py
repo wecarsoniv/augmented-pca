@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  06-05-2021
+# Last modified:  10-09-2021
 
 """
 Description:  AugmentedPCA model definitions file. Class definitions for both adversarial AugmentedPCA (aAPCA) and
@@ -22,7 +22,7 @@ from abc import ABC, abstractmethod
 from warnings import warn
 import numpy
 from numpy import mean, real, real_if_close, concatenate, identity
-from numpy.linalg import inv, eig
+from scipy.linalg import inv, solve, eig
 from scipy.sparse import issparse
 
 
@@ -318,22 +318,22 @@ class _APCA(ABC):
             self.V_ = None
         
         # Generate encoding matrix for encoded approximate inference
-        if self._inference == 'encoded':
+        if self._inference == 'encoded':           
             diag_reg = self.diag_const_ * identity(n=X_.shape[1])
             inv_XT_X = inv((X_.T @ X_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
-            A_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg)
+            A_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg
             A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
-            self.A_ = A_1 @ A_2 @ X_ @ inv_XT_X
+            self.A_ = solve(A_1, A_2) @ X_ @ inv_XT_X
         
         # Generate encoding matrix for jointly-encoded approximate inference
         elif self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(n=Z_.shape[1])
             inv_ZT_Z = inv((Z_.T @ Z_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
-            A_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg)
-            A_2 = ((self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)) @ Z_ @ inv_ZT_Z
-            self.A_ = A_1 @ A_2
+            A_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg
+            A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
+            self.A_ = solve(A_1, A_2) @ Z_ @ inv_ZT_Z
         
         # No encoding matrix for local approximate inference
         else:
@@ -379,9 +379,9 @@ class _APCA(ABC):
         if self._inference == 'local':
             Y_ = Y.copy()
             Y_ -= self.mean_Y_
-            S_1 = inv((self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_))
+            S_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_)
             S_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
-            S = (S_1 @ S_2).T
+            S = (solve(S_1, S_2)).T
             
         # Generate scores - encoded approximate inference
         elif self._inference == 'encoded':
@@ -633,8 +633,8 @@ class sAPCA(_APCA):
         B_21 = B_12.T
         if (self._inference == 'encoded') | (self._inference == 'joint'):
             diag_reg = self.diag_const_ * identity(M_.shape[1])
-            inv_MT_M = inv((M_.T @ M_) + diag_reg)
-            B_22 = B_12.T @ inv_MT_M @ B_12
+            MT_M = (M_.T @ M_) + diag_reg
+            B_22 = B_12.T @ solve(MT_M, B_12)
         else:
             B_22 = N_.T @ N_
         
@@ -809,8 +809,8 @@ class aAPCA(_APCA):
         B_21 = B_12.T
         if (self._inference == 'encoded') | (self._inference == 'joint'):
             diag_reg = self.diag_const_ * identity(M_.shape[1])
-            inv_MT_M = inv((M_.T @ M_) + diag_reg)
-            B_22 = B_12.T @ inv_MT_M @ B_12
+            MT_M = (M_.T @ M_) + diag_reg
+            B_22 = B_12.T @ solve(MT_M, B_12)
         else:
             B_22 = N_.T @ N_
         

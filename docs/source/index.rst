@@ -1,8 +1,8 @@
 :github_url: https://github.com/wecarsoniv/augmented-pca
 
 
-Augmented PCA Documentation
-===========================
+AugmentedPCA Documentation
+==========================
 
 Welcome to the AugmentedPCA docmentation!
 
