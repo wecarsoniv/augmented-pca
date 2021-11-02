@@ -22,7 +22,7 @@ In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the fac
 
 ## Documentation
 
-Documentation for AugmentedPCA is available on this [documentation site](https://augmented-pca.readthedocs.io/en/latest/index.html).
+Documentation for AugmentedPCA is available on this [documentation site](https://augmented-pca.readthedocs.io/en/latest/).
 
 Provided documentation includes:
 
@@ -58,7 +58,7 @@ Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pc
 
 ## Quick Introduction
 
-A quick guide to using AugmentedPCA is given in this section. For a more in-depth guide, see our [documentation]().
+A quick guide to using AugmentedPCA is given in this section. For a more in-depth guide, see our [documentation](https://augmented-pca.readthedocs.io/en/latest/).
 
 
 ### Importing AugmentedPCA Models
