@@ -7,7 +7,7 @@
 Introduction
 ========================================================================================================================
 
-This library provides Python implementation of Augmented Principal Component Analysis (AugmentedPCA) models - a 
+This package provides Python implementation of Augmented Principal Component Analysis (AugmentedPCA) models - a 
 family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the 
 canonical PCA objective of finding factors that represent the data variance. AugmentedPCA models can be split into two 
 general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.

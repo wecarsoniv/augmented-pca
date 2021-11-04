@@ -8,7 +8,7 @@ Installation
 Dependencies
 ------------------------------------------------------------------------------------------------------------------------
 
-The AugmentedPCA library is written in Python, and requires Python >= 3.6 to run. AugmentedPCA relies on the following 
+The AugmentedPCA package is written in Python, and requires Python >= 3.6 to run. AugmentedPCA relies on the following 
 libraries and version numbers:
 
 * `Python <https://www.python.org/>`_ >= 3.6

@@ -98,7 +98,7 @@ approximate inference strategy to training data and obtain factors for test data
     The local approximate inference strategy requires both primary and augmenting data at test time. Therefore, when 
     factors are generated for the test set, the :python:`transform()` method requires both the primary data 
     :python:`X_test` and augmenting data :python:`Y_test` be passed as parameters. For a more in-depth description of 
-    the local approximate inference strategy, see the paper introducing the AugmentedPCA library.
+    the local approximate inference strategy, see the paper introducing the AugmentedPCA package.
 
 
 Encoded
@@ -130,7 +130,7 @@ how to fit a sAPCA model with encoded approximate inference strategy to training
     
 
 For a more in-depth description of the encoded approximate inference strategy, see the paper introducing the 
-AugmentedPCA library.
+AugmentedPCA package.
 
 
 Jointly-Encoded

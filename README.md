@@ -1,9 +1,9 @@
-# Augmented Principal Component Analysis
+# AugmentedPCA
 
 
 ## Overview
 
-This library provides Python implementation of Augmented Principal Component Analysis (AugmentedPCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. AugmentedPCA can be split into two general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.
+This Python package provides implementations of Augmented Principal Component Analysis (AugmentedPCA) - a family of linear factor models that find a set of factors aligned with an *augmenting objective* in addition to the canonical PCA objective of finding factors that represent the data variance. AugmentedPCA can be split into two general families of models: adversarial AugmentedPCA and supervised AugmentedPCA.
 
 
 ### Supervised AugmentedPCA
@@ -37,7 +37,7 @@ Provided documentation includes:
 
 ## Dependencies
 
-The AugmentedPCA library is written in Python, and requires Python >= 3.6 to run. AugmentedPCA relies on the following libraries and version numbers:
+The AugmentedPCA package is written in Python, and requires Python >= 3.6 to run. AugmentedPCA relies on the following libraries and version numbers:
 
 * [Python](https://www.python.org/) >= 3.6
 * [NumPy](https://numpy.org/) >= 1.19.2
@@ -53,7 +53,7 @@ To install the latest stable release, use [pip](https://pip.pypa.io/en/stable/).
 
 ## Issue Tracking and Reports
 
-Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the AugmentedPCA repository for issue tracking, filing bug reports, and asking general questions about the library or project.
+Please use the [GitHub issue tracker](https://github.com/wecarsoniv/augmented-pca/issues) associated with the AugmentedPCA repository for issue tracking, filing bug reports, and asking general questions about the package or project.
 
 
 ## Quick Introduction
@@ -230,7 +230,7 @@ For a more in-depth description of the jointly-encoded approximate inference str
 
 ## Citation
 
-Please cite our paper if you find this library or model helpful in your research:
+Please cite our paper if you find this package helpful in your research:
 
     @inproceedings{carson2021augmentedpca,
     title={{AugmentedPCA}: {A} {P}ython {P}ackage of {S}upervised and {A}dversarial {L}inear {F}actor {M}odels},

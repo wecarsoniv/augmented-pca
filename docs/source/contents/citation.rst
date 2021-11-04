@@ -11,7 +11,7 @@ Citation
 Citation
 ------------------------------------------------------------------------------------------------------------------------
 
-Please cite our paper if you find the AugmentedPCA library helpful in your research:
+Please cite our paper if you find the AugmentedPCA package helpful in your research:
 
 .. code-block:: none
     
