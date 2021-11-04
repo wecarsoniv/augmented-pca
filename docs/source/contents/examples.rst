@@ -14,13 +14,14 @@ sAPCA Example - Gene Expression Clustering
 ------------------------------------------------------------------------------------------------------------------------
 
 The ability of sAPCA to create representations with greater class fidelity is demonstrated using a 
-`gene expression dataset from the UCI machine learning repository <https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq>`_. 
-This dataset contains RNA-Seq gene expression samples from patients with five different typesof tumors. Dimensionality 
-reduction techniques, such as PCA, are often used in gene expression analysis to visualize clustering of samples in 
-2-dimensional(2D) space or as a preprocessing step for downstream classification. However, sometimes principal axes of 
-variance may represent patient-specific gene expression variance rather than variance specific to condition or disease. 
-Here, sAPCA is used to create representations that, in addition to representing the variance in the gene expression 
-data, are aligned with the data labels.
+`gene expression dataset from the UCI machine learning repository 
+<https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq>`_. This dataset contains RNA-Seq gene 
+expression samples from patients with five different typesof tumors. Dimensionality reduction techniques, such as PCA, 
+are often used in gene expression analysis to visualize clustering of samples in 2-dimensional(2D) space or as a 
+preprocessing step for downstream classification. However, sometimes principal axes of variance may represent 
+patient-specific gene expression variance rather than variance specific to condition or disease. Here, sAPCA is used to 
+create representations that, in addition to representing the variance in the gene expression data, are aligned with the 
+data labels.
 
 First, Python functions, modules, and libraries used in this example are imported.
 

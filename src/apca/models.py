@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  10-09-2021
+# Last modified:  11-04-2021
 
 """
 Description:  AugmentedPCA model definitions file. Class definitions for both adversarial AugmentedPCA (aAPCA) and
@@ -14,10 +14,10 @@ supervised AugmentedPCA (sAPCA).
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# IMPORT MODULES
+# IMPORT STATEMENTS
 # ----------------------------------------------------------------------------------------------------------------------
 
-# Import modules
+# Import statements
 from abc import ABC, abstractmethod
 from warnings import warn
 import numpy
@@ -241,7 +241,7 @@ class _APCA(ABC):
     # Fits AugmentedPCA model to data
     def fit(self, X: numpy.ndarray, Y: numpy.ndarray):
         r"""
-        Fits AugmentedPCA model to data
+        Fits AugmentedPCA model to data.
 
         Parameters
         ----------

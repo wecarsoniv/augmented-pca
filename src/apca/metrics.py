@@ -5,7 +5,7 @@
 # File:  metrics.py
 # Author:  Billy Carson
 # Date written:  04-17-2021
-# Last modified:  06-05-2021
+# Last modified:  11-04-2021
 
 r"""
 AugmentedPCA evaluation metric functions.
@@ -13,10 +13,10 @@ AugmentedPCA evaluation metric functions.
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-# IMPORT MODULES
+# IMPORT STATEMENTS
 # ----------------------------------------------------------------------------------------------------------------------
 
-# Import modules
+# Import statements
 import numpy
 from numpy import mean, sum
 
