@@ -13,29 +13,29 @@ In this section, a more detailed description of the offered AugmentedPCA models 
 Supervised AugmentedPCA
 ------------------------------------------------------------------------------------------------------------------------
 
-In supervised AugmentedPCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or 
-some outcome, in addition to having the factors explain the variance of the original observed or primary data. sAPCA is 
-useful when *predictivity* of latent components with respects to a set of data labels or outcomes is desired. sAPCA is 
-equivalent to a supervised autoencoder (SAE) with a single hidden layer. Therefore, sAPCA can be applied to situations 
+In supervised AugmentedPCA (SAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or 
+some outcome, in addition to having the factors explain the variance of the original observed or primary data. SAPCA is 
+useful when *predictivity* of latent components with respects to a set of data labels or outcomes is desired. SAPCA is 
+equivalent to a supervised autoencoder (SAE) with a single hidden layer. Therefore, SAPCA can be applied to situations 
 where the properties of latent representations enforced via deep SAEs are desired, yet where limited data or training 
 inconsistencies are a concern.  Below is a diagram depicting the relationship between primary data, supervision data, 
-and the resulting sAPCA factors.
+and the resulting SAPCA factors.
 
 .. image:: ../_static/img/sapca_diagram.png
-    :alt: sAPCA diagram
+    :alt: SAPCA diagram
 
 
 Adversarial AugmentedPCA
 ------------------------------------------------------------------------------------------------------------------------
 
-In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of 
+In adversarial AugmentedPCA (AAPCA), the augmenting objective is to make the factors *orthogonal* to a set of 
 concomitant data, in addition to having the factors explain the variance of the original observed or primary data. 
-aAPCA can be used in situations where one wishes to enforce *invariance* of latent components to a set of concomitant 
+AAPCA can be used in situations where one wishes to enforce *invariance* of latent components to a set of concomitant 
 data, and is equivalent to an adversarial autoencoder with a single hidden layer. Below is a diagram depicting the 
-relationship between primary data, concomitant data, and the resulting aAPCA factors.
+relationship between primary data, concomitant data, and the resulting AAPCA factors.
 
 .. image:: ../_static/img/aapca_diagram.png
-    :alt: aAPCA diagram
+    :alt: AAPCA diagram
 
 
 Approximate Inference Strategies
@@ -43,7 +43,7 @@ Approximate Inference Strategies
 
 In this section, we give a brief overview of the different approximate inference strategies offered for AugmentedPCA 
 models. Inference strategy should be chosen based on the data on which the AugmentedPCA model will be used as well as 
-the specific use case. Both aAPCA and sAPCA models use the jointly-encoded approximate inference strategy by default.
+the specific use case. Both SAPCA and AAPCA models use the jointly-encoded approximate inference strategy by default.
 
 
 Local
@@ -58,7 +58,7 @@ local inference strategy.
 
 Because the local variables are included in the augmenting objective, given new data we must have both primary *and* 
 augmenting data to obtain factors. Thus, the local inference strategy should only be used for inference on new data
-when both primary and augmenting data are available. Below we show an example of how to fit a sAPCA model with local
+when both primary and augmenting data are available. Below we show an example of how to fit a SAPCA model with local
 approximate inference strategy to training data and obtain factors for test data.
 
 .. code-block:: python
@@ -66,8 +66,8 @@ approximate inference strategy to training data and obtain factors for test data
     # Import numpy
     import numpy as np
     
-    # Import supervised APCA
-    from apca.models import sAPCA
+    # Import supervised AugmentedPCA
+    from apca.models import SAPCA
     
     # Generate synthetic data and labels
     n_samp = 100
@@ -89,7 +89,7 @@ approximate inference strategy to training data and obtain factors for test data
     Y_test = Y[test_idx, :]
     
     # Instantiate supervised AugmentedPCA model with local approximate inference strategy
-    sapca = sAPCA(n_components=3, mu=5.0, inference='local')
+    sapca = SAPCA(n_components=3, mu=5.0, inference='local')
     
     # Fit supervised AugmentedPCA model
     sapca.fit(X=X_train, Y_train)
@@ -119,14 +119,14 @@ function. Below is a diagram depicting the encoded inference strategy.
 
 In contrast to the local inference strategy, when factors are generated for the test set under the encoded inference 
 strategy the :python:`transform()` method only requires the primary data :python:`X_test`. Below we show an example of 
-how to fit a sAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.
+how to fit a SAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.
 
 .. code-block:: python
     
-    # Instantiate supervised APCA model model with encoded approximate inference strategy
-    sapca = sAPCA(n_components=3, mu=5.0, inference='encoded')
+    # Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy
+    sapca = SAPCA(n_components=3, mu=5.0, inference='encoded')
     
-    # Fit supervised APCA model
+    # Fit supervised AugmentedPCA model
     # Note: both primary and augmenting data are required to fit the model
     sapca.fit(X=X_train, Y_train)
     
@@ -152,15 +152,15 @@ depicting the jointly-encoded inference strategy.
 
 Similar to the local inference strategy, when factors are generated for the test set under the jointly-encoded
 inference strategy the :python:`transform()` method requires both the primary data :python:`X_test` and augmenting data 
-:python:`Y_test`. Below we show an example of how to fit a sAPCA model with jointly-encoded approximate inference
+:python:`Y_test`. Below we show an example of how to fit a SAPCA model with jointly-encoded approximate inference
 strategy to training data and obtain factors for test data.
 
 .. code-block:: python
     
-    # Instantiate supervised APCA model model with encoded approximate inference strategy
-    sapca = sAPCA(n_components=3, mu=5.0, inference='joint')
+    # Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy
+    sapca = SAPCA(n_components=3, mu=5.0, inference='joint')
     
-    # Fit supervised APCA model
+    # Fit supervised AugmentedPCA model
     # Note: both primary and augmenting data are required to fit the model
     sapca.fit(X=X_train, Y_train)
     

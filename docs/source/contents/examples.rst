@@ -10,16 +10,16 @@ Examples
 Here, usage and efficacy of AugmentedPCA models is demonstrated on real world, open-source datasets.
 
 
-sAPCA Example - Gene Expression Clustering
+SAPCA Example - Gene Expression Clustering
 ------------------------------------------------------------------------------------------------------------------------
 
-The ability of sAPCA to create representations with greater class fidelity is demonstrated using a 
+The ability of SAPCA to create representations with greater class fidelity is demonstrated using a 
 `gene expression dataset from the UCI machine learning repository 
 <https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq>`_. This dataset contains RNA-Seq gene 
 expression samples from patients with five different typesof tumors. Dimensionality reduction techniques, such as PCA, 
 are often used in gene expression analysis to visualize clustering of samples in 2-dimensional(2D) space or as a 
 preprocessing step for downstream classification. However, sometimes principal axes of variance may represent 
-patient-specific gene expression variance rather than variance specific to condition or disease. Here, sAPCA is used to 
+patient-specific gene expression variance rather than variance specific to condition or disease. Here, SAPCA is used to 
 create representations that, in addition to representing the variance in the gene expression data, are aligned with the 
 data labels.
 
@@ -163,23 +163,23 @@ cancers, but the other cancers still have significant overlap.
     :width: 400
     :alt: gene expression PCA clustering
 
-Now, instead of PCA, sAPCA is used to find components that, in addition to maximizing the explained variance of the 
+Now, instead of PCA, SAPCA is used to find components that, in addition to maximizing the explained variance of the 
 data, find components that have greater fidelity to class labels. Ideally, this will help separate the different 
 clusters of the gene expression data.
 
-Like scikit-learn's PCA implementation, sAPCA models are fit using the :python:`fit()` and :python:`fit_transform()` 
+Like scikit-learn's PCA implementation, SAPCA models are fit using the :python:`fit()` and :python:`fit_transform()` 
 methods, with :python:`fit_transform()` returning a matrix of components or factors. The :python:`fit()` and 
 :python:`fit_transform()` methods of AugmentedPCA models require both a primary data matrix :python:`X` and an 
-augmenting data matrix :python:`Y` as parameters. For sAPCA models, the augmenting data is the supervision data matrix 
+augmenting data matrix :python:`Y` as parameters. For SAPCA models, the augmenting data is the supervision data matrix 
 :python:`Y`. In this case, this matrix corresponds to the matrix of one-hot encoded class labels.
 
 AugmentedPCA models have a tuning parameter :python:`mu`, which represents the relative strength of the augmenting 
 objective. At lower values of :python:`mu`, AugmentedPCA models will prioritize maximizing explained variance in 
 learned components, and this will produce components similar to that produced by regular PCA. At higher values of 
-:python:`mu`, the augmenting objective is prioritized. Here, since sAPCA is being used, at higher :python:`mu` values 
+:python:`mu`, the augmenting objective is prioritized. Here, since SAPCA is being used, at higher :python:`mu` values 
 the components will have greater clustering according to class.
 
-Since sAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this 
+Since SAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this 
 value will depend on the dataset, the scale of the features, and the dimensionality of the features. Here, a 
 supervision strength in the thousands is reasonable. For a smaller number of features, these values may be much too 
 large.
@@ -191,7 +191,7 @@ variance explained in the features or primary data matrix :python:`X`.
 
 .. code-block:: python
 
-    # Number of sAPCA components
+    # Number of SAPCA components
     n_components = 2
 
     # List of supervision strength values
@@ -207,9 +207,9 @@ variance explained in the features or primary data matrix :python:`X`.
     # Iterate over supervision strengths
     for mu in mu_list:
         # PCA decomposition
-        apca = sAPCA(n_components=2, mu=mu, inference='encoded')
-        S_train = apca.fit_transform(X=X_train, Y=Y_train)
-        S_test = apca.transform(X=X_test, Y=None)
+        sapca = SAPCA(n_components=2, mu=mu, inference='encoded')
+        S_train = sapca.fit_transform(X=X_train, Y=Y_train)
+        S_test = sapca.transform(X=X_test, Y=None)
 
         # Fit model to training data
         model.fit(S_train, y_train)
@@ -225,11 +225,11 @@ variance explained in the features or primary data matrix :python:`X`.
         test_acc_list.append(test_acc)
 
     # Model prediction accuracy
-    print('Max model performance using sAPCA components (# components = %d):' % (n_components))
+    print('Max model performance using SAPCA components (# components = %d):' % (n_components))
     print('  Train set:  %.4f' % (np.max(train_acc_list)))
     print('  Test set:  %.4f' % (np.max(test_acc_list)))
     
-    >>> Max model performance using sAPCA components (# components = 2):
+    >>> Max model performance using SAPCA components (# components = 2):
     >>>   Train set:  1.0000
     >>>   Test set:  0.9027
     
@@ -251,17 +251,17 @@ variance explained in the features or primary data matrix :python:`X`.
     :width: 520
     :alt: gene expression classification
 
-Finally, sAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
-which demonstrates that sAPCA successfully learned components that both a) maximized explain variance of the original 
+Finally, SAPCA components are visualized in 2D space. There is much greater separation/clustering according to class, 
+which demonstrates that SAPCA successfully learned components that both a) maximized explain variance of the original 
 gene expression data in learned components and b) made sure these components also had greater fidelity with respects to 
 class labels, thus ensuring cleaner clustering according to tumor type.
 
 .. code-block:: python
 
-    # sAPCA decomposition
-    apca = sAPCA(n_components=2, mu=2500, inference='encoded')
-    S_train = apca.fit_transform(X=X_train, Y=Y_train)
-    S_test = apca.transform(X=X_test, Y=None)
+    # SAPCA decomposition
+    sapca = SAPCA(n_components=2, mu=2500, inference='encoded')
+    S_train = sapca.fit_transform(X=X_train, Y=Y_train)
+    S_test = sapca.transform(X=X_test, Y=None)
 
     # Plot PCA components of samples in 2D space
     color_list = ['deeppink', 'dodgerblue', 'lightseagreen', 'darkorange', 'mediumorchid']
@@ -270,8 +270,8 @@ class labels, thus ensuring cleaner clustering according to tumor type.
     for i, label in enumerate(list(np.unique(y_test))):
         ax3.scatter(S_test[np.where(y_test==label), 0], S_test[np.where(y_test==label), 1],
                     c=color_list[i], marker=marker_list[i], alpha=0.5, label=class_dict[i])
-    ax3.set_xlabel('sAPCA Component 1')
-    ax3.set_ylabel('sAPCA Component 2')
+    ax3.set_xlabel('SAPCA Component 1')
+    ax3.set_ylabel('SAPCA Component 2')
     ax3.grid(alpha=0.3)
     ax3.set_axisbelow(True)
     ax3.legend(loc='lower left')
@@ -280,17 +280,17 @@ class labels, thus ensuring cleaner clustering according to tumor type.
 
 .. image:: ../_static/img/gene_express_sapca_cluster_docs.svg
     :width: 400
-    :alt: gene expression sAPCA clustering
+    :alt: gene expression SAPCA clustering
 
 
-aAPCA Example - Removal of Image Nuisance
+AAPCA Example - Removal of Image Nuisance
 ------------------------------------------------------------------------------------------------------------------------
     
-The ability of aAPCA to create representations invariant to concomitant data or nuisance variables is demonstrated 
+The ability of AAPCA to create representations invariant to concomitant data or nuisance variables is demonstrated 
 using images from the `Extended Yale Face Database B <http://vision.ucsd.edu/~leekc/ExtYaleDatabase/ExtYaleB.html>`_. 
 This dataset contains facial images of 38 human subjects taken with the light source at varying angles of azimuth and 
 elevation, resulting in shadows cast across subject faces. Here, the nuisance variable is the variable lighting angles 
-resulting in shadows that obscure parts of the image, and by extension features of subject identity. Here, aAPCA is 
+resulting in shadows that obscure parts of the image, and by extension features of subject identity. Here, AAPCA is 
 used to create representations that, in addition to representing the variance in the image data, are invariant to this 
 shadow nuisance variable.
 
@@ -311,7 +311,7 @@ Next, AugmentedPCA factor models are imported from the :python:`apca.models` mod
 
 .. code-block:: python
 
-    # Import all APCA models
+    # Import all AugmentedPCA models
     from apca.models import *
 
 For this example, a subset of 411 images is selected in which only azimuth of the light source is varied (elevation 
@@ -431,23 +431,23 @@ scaled according to the population statistics of the training concomitant data.
     Y_test_scaled = scaler_Y.transform(X=Y_test)
     
 
-Now, aAPCA is used to find components that, in addition to maximizing the explained variance of the image data, find 
+Now, AAPCA is used to find components that, in addition to maximizing the explained variance of the image data, find 
 components that are invariant to shadow/variable lighting condition. Ideally, this will help remove this confound and 
 ultimately improve classification performance with respects to classifying identity.
 
-Like scikit-learn's PCA implementation, sAPCA models are fit using the :python:`fit()` and :python:`fit_transform()` 
+Like scikit-learn's PCA implementation, AAPCA models are fit using the :python:`fit()` and :python:`fit_transform()` 
 methods, with :python:`fit_transform()` returning a matrix of components or factors. The :python:`fit()` and 
 :python:`fit_transform()` methods of AugmentedPCA models require both a primary data matrix :python:`X` and an 
-augmenting data matrix :python:`Y` as parameters. For aAPCA models, the augmenting data is the concomitant data matrix 
+augmenting data matrix :python:`Y` as parameters. For AAPCA models, the augmenting data is the concomitant data matrix 
 :python:`Y`. In this case, this matrix corresponds to the matrix of scaled azimuth lighting angles.
 
 AugmentedPCA models have a tuning parameter :python:`mu`, which represents the relative strength of the augmenting 
 objective. At lower values of :python:`mu`, AugmentedPCA models will prioritize maximizing explained variance in 
 learned components, and this will produce components similar to that produced by regular PCA. At higher values of 
-:python:`mu`, the augmenting objective is prioritized. Here, since aAPCA is being used, at higher :python:`mu` values 
+:python:`mu`, the augmenting objective is prioritized. Here, since AAPCA is being used, at higher :python:`mu` values 
 the components will have greater invariance to the shadow confound.
 
-Since aAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this 
+Since AAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this 
 value will depend on the dataset, the scale of the features, and the dimensionality of the features. Here, a 
 supervision strength in the thousands is reasonable. For a smaller number of features, these values may be much too 
 large.
@@ -487,10 +487,10 @@ primary data and concomitant data at test time.
 
     # Iterate over increasing adversary strengths
     for mu in tqdm(mu_list):
-        # Instantiate APCA model with new adversary strength value
-        aapca = aAPCA(n_components=n_components, mu=mu, inference='joint')
+        # Instantiate AugmentedPCA model with new adversary strength value
+        aapca = AAPCA(n_components=n_components, mu=mu, inference='joint')
 
-        # Decompose with APCA
+        # Decompose with AugmentedPCA
         S_train = aapca.fit_transform(X=X_train_scaled, Y=Y_train_scaled)
         S_test = aapca.transform(X=X_test_scaled, Y=Y_test_scaled)
         S_train_scaled = scaler_S.fit_transform(S_train)
@@ -519,30 +519,30 @@ primary data and concomitant data at test time.
                                   y_pred=y_pred_test)
         shadow_test_acc_list.append(test_acc)
 
-    # Display baseline PCA accuracy and max APCA accuracy
+    # Display baseline PCA accuracy and max AugmentedPCA accuracy
     print('Logistic regression classification performance:')
     print('  ID classification:')
     print('    PCA components:  %.3f' % (id_test_acc_list[0]))
-    print('    APCA components (max acc.):  %.3f\n' % (np.max(id_test_acc_list)))
+    print('    AAPCA components (max acc.):  %.3f\n' % (np.max(id_test_acc_list)))
     print('  Shadow location (left/right) classification:')
     print('    PCA components:  %.3f' % (shadow_test_acc_list[0]))
-    print('    APCA components (min acc.):  %.3f\n' % (np.min(shadow_test_acc_list)))
+    print('    AAPCA components (min acc.):  %.3f\n' % (np.min(shadow_test_acc_list)))
     
     >>> Logistic regression classification performance:
     >>>   ID classification:
     >>>     PCA components:  0.704
-    >>>     APCA components (max acc.):  0.825
+    >>>     AAPCA components (max acc.):  0.825
     >>>   Shadow location (left/right) classification:
     >>>     PCA components:  0.979
-    >>>     APCA components (min acc.):  0.656
+    >>>     AAPCA components (min acc.):  0.656
     
 
-Model performance when using shadow-invariant aAPCA components to classify identity and shadow location as a function 
+Model performance when using shadow-invariant AAPCA components to classify identity and shadow location as a function 
 of adversary strength is now plotted. As the adversarial strength is increased, both training and test set 
 classification accuracy of the nuisance variable (shadow location) decreases. For all adversary strengths, training set 
 identity classification is 100%. Initially, training on PCA representations results in a test set identity 
 classification accuracy of 70%. As adversary strength is increased, test set identity classification accuracy increases 
-to 82%, thus demonstrating the ability of aAPCA to mitigate the effects of domain shift due to concomitant influence.
+to 82%, thus demonstrating the ability of AAPCA to mitigate the effects of domain shift due to concomitant influence.
 
 .. code-block:: python
 
@@ -574,18 +574,18 @@ to 82%, thus demonstrating the ability of aAPCA to mitigate the effects of domai
 Since AugmentedPCA models are linear factor models similar to PCA, both the primary and concomitant data can be 
 reconstructed from the generated components. AugmentedPCA models have a :python:`reconstruct()` method that 
 returns the reconstructed primary and concomitant data. For this example, the shadow-invariant images reconstructed 
-from aAPCA components are visualized and compare these images to the original images as well as images recontructed 
-from regular PCA components. aAPCA  reconstructions  display  notice-able shadow removal when compared to the original 
-images and images reconstructed from PCA components. This demonstrates aAPCA’s ability to produce nuisance-invariant 
+from AAPCA components are visualized and compare these images to the original images as well as images recontructed 
+from regular PCA components. AAPCA  reconstructions  display  notice-able shadow removal when compared to the original 
+images and images reconstructed from PCA components. This demonstrates AAPCA’s ability to produce nuisance-invariant 
 representations.
 
 .. image:: ../_static/img/yale_face_recon_supp_docs.svg
     :width: 700
     :alt: Yale Face dataset image reconstructions
 
-Finally, clustering of aAPCA-reconstructed images is compared to clustering of PCA-reconstructed images. PCA
+Finally, clustering of AAPCA-reconstructed images is compared to clustering of PCA-reconstructed images. PCA
 reconstructions are grouped almost exclusively according to  shadow  location (left-side or right-side) in 2D space, 
-while aAPCA-reconstructed images are grouped in a more shadow-invariant manner.
+while AAPCA-reconstructed images are grouped in a more shadow-invariant manner.
 
 .. image:: ../_static/img/yale_face_tsne_cluster_docs.svg
     :width: 650

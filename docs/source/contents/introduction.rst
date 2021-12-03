@@ -16,36 +16,36 @@ general families of models: adversarial AugmentedPCA and supervised AugmentedPCA
 Models Overview
 ------------------------------------------------------------------------------------------------------------------------
 
-AugmentedPCA has two main model variants: adversarial AugmentedPCA (aAPCA) and supervised AugmentedPCA (sAPCA). A brief 
+AugmentedPCA has two main model variants: adversarial AugmentedPCA (AAPCA) and supervised AugmentedPCA (SAPCA). A brief 
 introduction to the two variants is given in the following sections.
 
 
 Supervised AugmentedPCA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In supervised AugmentedPCA (sAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or 
-some outcome, in addition to having the factors explain the variance of the original observed or primary data. sAPCA is 
-useful when *predictivity* of latent components with respects to a set of data labels or outcomes is desired. sAPCA is 
-equivalent to a supervised autoencoder (SAE) with a single hidden layer. Therefore, sAPCA can be applied to situations 
+In supervised AugmentedPCA (SAPCA), the augmenting objective is to make the factors *aligned* with the data labels, or 
+some outcome, in addition to having the factors explain the variance of the original observed or primary data. SAPCA is 
+useful when *predictivity* of latent components with respects to a set of data labels or outcomes is desired. SAPCA is 
+equivalent to a supervised autoencoder (SAE) with a single hidden layer. Therefore, SAPCA can be applied to situations 
 where the properties of latent representations enforced via deep SAEs are desired, yet where limited data or training 
 inconsistencies are a concern. Below is a diagram depicting the relationship between primary data, supervision data, 
-and the resulting sAPCA factors.
+and the resulting SAPCA factors.
 
 .. image:: ../_static/img/sapca_diagram.png
-    :alt: sAPCA diagram
+    :alt: SAPCA diagram
 
 
 Adversarial AugmentedPCA
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In adversarial AugmentedPCA (aAPCA), the augmenting objective is to make the factors *orthogonal* to a set of 
+In adversarial AugmentedPCA (AAPCA), the augmenting objective is to make the factors *orthogonal* to a set of 
 concomitant data, in addition to having the factors explain the variance of the original observed or primary data. 
-aAPCA can be used in situations where one wishes to enforce *invariance* of latent components to a set of concomitant 
+AAPCA can be used in situations where one wishes to enforce *invariance* of latent components to a set of concomitant 
 data, and is equivalent to an adversarial autoencoder with a single hidden layer. Below is a diagram depicting the 
-relationship between primary data, concomitant data, and the resulting aAPCA factors.
+relationship between primary data, concomitant data, and the resulting AAPCA factors.
 
 .. image:: ../_static/img/aapca_diagram.png
-    :alt: aAPCA diagram
+    :alt: AAPCA diagram
 
 
 Quick Introduction
@@ -58,12 +58,12 @@ Importing AugmentedPCA Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AugmentedPCA models can be imported from the :python:`models.py` module. Below we show an example of importing the 
-aAPCA model.
+AAPCA model.
 
 .. code-block:: python
 
     # Import all AugmentedPCA models
-    from apca.models import aAPCA
+    from apca.models import AAPCA
     
 
 Alternatively, all offered AugmentedPCA models can be imported at once.
@@ -78,7 +78,7 @@ Alternatively, all offered AugmentedPCA models can be imported at once.
 Instantiating AugmentedPCA Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-AugmentedPCA models are instantiated by assigning either an aAPCA or sAPCA object to a variable. During instantiation, 
+AugmentedPCA models are instantiated by assigning either an SAPCA or AAPCA object to a variable. During instantiation, 
 one has the option to define parameters :python:`n_components`, :python:`mu`, which represent the number of components 
 and the augmenting objective strength, respectively. Additionally, approximate inference strategy can be defined 
 through the :python:`inference` parameter.
@@ -91,7 +91,7 @@ through the :python:`inference` parameter.
     inference = 'encoded'   # encoded approximate inference strategy
     
     # Instantiate adversarial AugmentedPCA model
-    aapca = aAPCA(n_components=n_components, mu=mu, inference=inference)
+    aapca = AAPCA(n_components=n_components, mu=mu, inference=inference)
     
 
 

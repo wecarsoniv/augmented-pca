@@ -26,5 +26,6 @@ Please cite our paper if you find the AugmentedPCA package helpful in your resea
 Funding
 ------------------------------------------------------------------------------------------------------------------------
 
-This project was supported by the NIH BRAIN Initiative, award number R01 EB026937.
+This project was supported by the National Institute of Biomedical Imaging and Bioengineering and the National 
+Institute of Mental Health through the National Institutes of Health BRAIN Initiative under Award Number R01EB026937.
 
