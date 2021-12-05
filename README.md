@@ -1,5 +1,4 @@
-# AugmentedPCA
-
+![AugmentedPCA logo](https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/apca_logo_full.png){:width="36px"}
 
 ## Overview
 
