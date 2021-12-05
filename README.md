@@ -1,4 +1,4 @@
-![AugmentedPCA logo]<img src="https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/apca_logo_full.png" width="400" height="790">
+<img src="https://raw.githubusercontent.com/wecarsoniv/augmented-pca/main/docs/source/_static/img/apca_logo_full.png" width="500">
 
 
 ## Overview
