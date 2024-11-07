@@ -25,3 +25,11 @@ Adversarial AugmentedPCA
    :members:
    :inherited-members:
 
+
+Combined AugmentedPCA
+------------------------------------------------------------------------------------------------------------------------
+
+.. autoclass:: apca.models.CAPCA
+   :members:
+   :inherited-members:
+
