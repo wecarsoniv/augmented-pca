@@ -5,11 +5,11 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  11-30-2021
+# Last modified:  11-07-2024
 
 """
-Description:  AugmentedPCA model definitions file. Class definitions for both adversarial AugmentedPCA (AAPCA) and
-supervised AugmentedPCA (SAPCA).
+Description:  AugmentedPCA model definitions file. Class definitions for adversarial AugmentedPCA (AAPCA), supervised
+AugmentedPCA (SAPCA), and combined AugmentedPCA (CAPCA).
 """
 
 
@@ -41,10 +41,10 @@ class _APCA(ABC):
     -----------
     n_components : int
         Number of components. If None then reduce to minimum dimension of primary data.
-    mu : float
-        Augmenting objective strength.
+    mu : float or tuple or list
+        Augmenting objective strength(s).
     inference : str
-        Indicates model approximate inference strategy.
+        Model approximate inference strategy.
     decomp : str
         Decomposition approach.
     pow_iter : int
@@ -60,8 +60,8 @@ class _APCA(ABC):
     ----------
     n_components : int
         Number of components. If None then reduce to minimum dimension of primary data.
-    mu : float
-        Augmenting objective strength.
+    mu : float or tuple or list
+        Augmenting objective strength(s).
     pow_iter : int
         Number of power iterations to perform in randomized approximation.
     n_oversamp : int
@@ -80,8 +80,8 @@ class _APCA(ABC):
         2-dimensional decomposition matrix.
     W_ : numpy.ndarray
         2-dimensional primary data loadings matrix.
-    D_ : numpy.ndarray
-        2-dimensional augmenting data loadings matrix.
+    D_ : numpy.ndarray or tuple / list of numpy.ndarrays
+        2-dimensional augmenting data loadings matrix / matrices.
     A_ : numpy.ndarray
         2-dimensional encoding matrix; None if `inference` is set to 'local'.
     eigvals_ : numpy.ndarray
@@ -93,25 +93,35 @@ class _APCA(ABC):
     -------
     fit(X, Y)
         Fits AugmentedPCA model to data.
-    fit_transform(X, Y)
-        Fits AugumentedPCA model to data and transforms data into scores.
-    get_A()
-        Returns encoding matrix.
-    get_D()
-        Abstract method. Returns augmenting data loadings.
-    get_W()
-        Returns primary data loadings.
-    get_eigvals()
-        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
-    reconstruct(X, Y)
-        Reconstructs primary and augmenting data.
     transform(X, Y)
         Transforms data into scores using AugmentedPCA model formulation.
+    fit_transform(X, Y)
+        Fits AugumentedPCA model to data and transforms data into scores.
+    reconstruct(X, Y)
+        Reconstructs primary and augmenting data.
+    get_components()
+        Returns primary data loadings / components. Alias for get_W().
+    get_W()
+        Returns primary data loadings.
+    get_D()
+        Abstract method. Returns augmenting data loadings.
+    get_A()
+        Returns encoding matrix.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
     """
     
     # Instantiation method of AugmentedPCA model base class
-    def __init__(self, n_components: int, mu: float, inference: str, decomp: str, pow_iter: int, n_oversamp: int,
-                 diag_const: float, random_state: int):
+    def __init__(
+        self,
+        n_components: int,
+        mu: float | tuple | list,
+        inference: str,
+        decomp: str,
+        pow_iter: int,
+        n_oversamp: int,
+        diag_const: float,
+        random_state: int):
         r"""
         Instantiation method of AugmentedPCA model base class.
         
@@ -119,14 +129,14 @@ class _APCA(ABC):
         ----------
         n_components : int
             Number of components. If None then reduce to minimum dimension of primary data.
-        mu : float
-            Augmenting objective strength.
+        mu : float or tuple or list
+            Augmenting objective strength(s).
         pow_iter : int
             Number of power iterations to perform in randomized approximation.
         n_oversamp : int
             Oversampling parameter for randomized approximation.
         inference : str
-            Indicates model approximate inference strategy.
+            Model approximate inference strategy.
         decomp : str
             Decomposition approach.
         diag_const : float
@@ -135,54 +145,69 @@ class _APCA(ABC):
             Model random state. Ignored if exact eigenvalue decomposition approach used.
         """
         
-        # Check for proper type/value and assign number of components attribute
+        # Check for proper type / value and assign number of components attribute
         if n_components is not None:
-            if (not isinstance(n_components, float)) & (not isinstance(n_components, int)):
+            if not isinstance(n_components, float) and not isinstance(n_components, int):
                 raise TypeError('Number of components must be an integer value greater than or equal to 1.')
-            elif n_components < 1.0:
-                raise ValueError('Number of components must be an integer value greater than or equal to 1.')
-            elif not isinstance(n_components, int):
-                if (n_components - round(n_components)) < 1e-10:
-                    warn(message=('Warning: Number of components must be an integer value greater than or equal ' +
-                                  'to 1. Rounding to the nearest integer'))
-                    n_components = round(n_components)
-                else:
-                    raise TypeError('Number of components must be an integer value greater than or equal to 1.')
+            else:
+                if n_components < 1.0:
+                    raise ValueError('Number of components must be an integer value greater than or equal to 1.')
+                if not isinstance(n_components, int):
+                    if (n_components - round(n_components)) < 1e-10:
+                        warn(message=('Warning: Number of components must be an integer value greater than or equal ' +
+                                      'to 1. Rounding to the nearest integer'))
+                        n_components = round(n_components)
+                    else:
+                        raise TypeError('Number of components must be an integer value greater than or equal to 1.')
         self.n_components = n_components
         
-        # Check for proper type/value and assign adversary strength attribute
-        if (not isinstance(mu, float)) & (not isinstance(mu, int)):
-            raise TypeError('Augmenting objective strength must be an numeric value greater than or equal to 0.0.')
-        elif mu < 0.0:
-            raise ValueError('Augmenting objective strength must be an numeric value greater than or equal to 0.0.')
+        # Check for proper type / value and assign augmenting strength attribute
+        if not isinstance(mu, float) and not isinstance(mu, int) and \
+        not isinstance(mu, list) and not isinstance(mu, tuple):
+            raise TypeError('Augmenting objective strength must be either an numeric value greater than or equal ' +
+                            'to 0.0 or a tuple / list of numeric values.')
+        if isinstance(mu, float) or isinstance(mu, int):
+            if mu < 0.0:
+                raise ValueError('Augmenting objective strength must be an numeric value greater than or equal to ' +
+                                 '0.0.')
+        elif isinstance(mu, tuple) or isinstance(mu, list):
+            if isinstance(mu, list):
+                mu = tuple(mu)
+            for mu_ in list(mu):
+                if mu_ < 0.0:
+                    raise ValueError('Both augmenting objective strengths must be an numeric value greater than or ' +
+                                     'equal to 0.0. Tuple or list contains negative value(s).')
+            if len(mu) != 2:
+                raise ValueError('Tuple or list must contain exactly two elements representing the supervised and ' +
+                                 'adversarial augmenting strengths, respectively.')
         self.mu = mu
         
-        # Check for proper type/value and assign approximate inference strategy attribute
+        # Check for proper type / value and assign approximate inference strategy attribute
         if not isinstance(inference, str):
             raise TypeError('Approximate inference strategy must be type string. Acceptable strategies include ' +
                             '\"local\", \"encoded\", and \"joint\".')
-        elif (inference != 'local') & (inference != 'encoded') & (inference != 'joint'):
+        elif inference != 'local' and inference != 'encoded' and inference != 'joint':
             raise ValueError(('Approximate inference strategy not recognized. Acceptable strategies include ' +
                               '\"local\", \"encoded\", and \"joint\"'))
         self._inference = inference
         
-        # Check for proper type/value and assign decomposition approach attribute
+        # Check for proper type / value and assign decomposition approach attribute
         if not isinstance(decomp, str):
             raise TypeError('Decomposition approach parameter must be type string. Acceptable decomposition ' +
                             'approaches include \"exact\", and \"approx\".')
-        elif (decomp != 'exact') & (decomp != 'approx'):
+        elif decomp != 'exact' and decomp != 'approx':
             raise ValueError(('Decomposition approach parameter not recognized. Acceptable decomposition approaches' +
                               'include \"exact\", and \"approx\"'))
         self._decomp = decomp
         
-        # Check for proper type/value and assign randomized AugmentedPCA power iterations attribute
-        if (not isinstance(pow_iter, float)) & (not isinstance(pow_iter, int)):
+        # Check for proper type / value and assign randomized AugmentedPCA power iterations attribute
+        if not isinstance(pow_iter, float) and not isinstance(pow_iter, int):
             raise TypeError('Number of randomized AugmentedPCA power iterations must be an integer value greater ' + 
                             'than or equal to 0.')
-        elif pow_iter < 0.0:
+        if pow_iter < 0.0:
             raise ValueError('Number of randomized AugmentedPCA power iterations must be a value greater than or ' + 
                              'equal to 0.')
-        elif not isinstance(pow_iter, int):
+        if not isinstance(pow_iter, int):
             if (pow_iter - round(pow_iter)) < 1e-10:
                 warn(message=('Warning: Number of randomized AugmentedPCA power iterations must be an integer ' + 
                               'value greater than or equal to 0. Rounding to the nearest integer'))
@@ -192,13 +217,13 @@ class _APCA(ABC):
                                 'greater than or equal to 0.')
         self.pow_iter = pow_iter
         
-        # Check for proper type/value and assign randomized AugmentedPCA oversampling attribute
-        if (not isinstance(n_oversamp, float)) & (not isinstance(n_oversamp, int)):
+        # Check for proper type / value and assign randomized AugmentedPCA oversampling attribute
+        if not isinstance(n_oversamp, float) and not isinstance(n_oversamp, int):
             raise TypeError('Randomized AugmentedPCA oversampling value must be an integer value greater than or ' + 
                             'equal to 0.')
-        elif n_oversamp < 1.0:
+        if n_oversamp < 1.0:
             raise ValueError('Randomized AugmentedPCA oversampling value must be a value greater than or equal to 0.')
-        elif not isinstance(n_oversamp, int):
+        if not isinstance(n_oversamp, int):
             if (n_oversamp - round(n_oversamp)) < 1e-10:
                 warn(message=('Warning: Randomized AugmentedPCA oversampling value must be an integer value ' + 
                               'greater than or equal to 0. Rounding to the nearest integer'))
@@ -206,11 +231,10 @@ class _APCA(ABC):
             else:
                 raise TypeError('Randomized AugmentedPCA oversampling value must be an integer value greater than ' + 
                                 'or equal to 0.')
-        # self.n_oversamp = min(n_components, n_oversamp)
         self.n_oversamp = n_oversamp
         
-        # Check for proper type/value and assign diagonal regularization constant attribute
-        if (not isinstance(diag_const, float)) & (not isinstance(diag_const, int)):
+        # Check for proper type / value and assign diagonal regularization constant attribute
+        if not isinstance(diag_const, float) and not isinstance(diag_const, int):
             raise TypeError('Diagonal regularization constant must be numeric.')
         elif diag_const < 0.0:
             raise ValueError('Diagonal regularization constant must be a positive numeric value.')
@@ -222,12 +246,6 @@ class _APCA(ABC):
                 raise TypeError('Random state value must be an integer value.')
         self.random_state = random_state
         
-        # Assign attributes dependent on approximate inference strategy
-        if 'joint' in inference:
-            self._mu_star = mu + 1.0
-        else:
-            self._mu_star = None
-        
         # Initialize all other attributes
         self.mean_X_ = None
         self.mean_Y_ = None
@@ -238,78 +256,8 @@ class _APCA(ABC):
         self.eigvals_ = None
         self.is_fitted_ = False
     
-    # Get eigenvalues
-    def get_eigvals(self) -> numpy.ndarray:
-        r"""
-        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
-        
-        Parameters
-        ----------
-        none
-        
-        Returns
-        -------
-        self.eigvals_.copy() : numpy.ndarray
-            1-dimensional array of sorted eigenvalues.
-        """
-        
-        # Check that encoding matrix attribute has been assigned
-        if self.eigvals_ is None:
-            raise AttributeError('Eigenvalues attribute not yet assigned.')
-        
-        # Return encoding matrix
-        return self.eigvals_.copy()
-    
-    # Get primary data loadings
-    def get_W(self) -> numpy.ndarray:
-        r"""
-        Returns primary data loadings.
-        
-        Parameters
-        ----------
-        none
-        
-        Returns
-        -------
-        self.W_.copy() : numpy.ndarray
-            2-dimensional (p x k) primary data loadings matrix.
-        """
-        
-        # Check that primary data loadings attribute has been assigned
-        if self.W_ is None:
-            raise AttributeError('Primary data loadings attribute not yet assigned.')
-        
-        # Return primary data loadings
-        return self.W_.copy()
-    
-    # Get encoding matrix
-    def get_A(self) -> numpy.ndarray:
-        r"""
-        Returns encoding matrix.
-        
-        Parameters
-        ----------
-        none
-        
-        Returns
-        -------
-        self.A_.copy() : numpy.ndarray
-            2-dimensional (d x p) encoding matrix.
-        """
-        
-        # Check that encoding matrix attribute has been assigned
-        if self.A_ is None:
-            if self._inference == 'local':
-                raise AttributeError('AugmentedPCA object with local approximate inference does not have an ' + 
-                                     'encoding matrix attribute.')
-            else:
-                raise AttributeError('Encoding matrix attribute not yet assigned.')
-        
-        # Return encoding matrix
-        return self.A_.copy()
-    
     # Fits AugmentedPCA model to data
-    def fit(self, X: numpy.ndarray, Y: numpy.ndarray):
+    def fit(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list):
         r"""
         Fits AugmentedPCA model to data.
         
@@ -317,18 +265,47 @@ class _APCA(ABC):
         ----------
         X : numpy.ndarray
             2-dimensional (n x p) primary data matrix.
-        Y : numpy.ndarray
-            2-dimensional (n x q) concomitant data matrix.
+        Y : numpy.ndarray or tuple / list of numpy.ndarrays
+            2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+            data matrices.
         """
         
-        # Create deep copies of primary and concomitant data matrices
+        # Check for proper type / value of primary data
+        if not isinstance(X, numpy.ndarray):
+            raise TypeError('X must be of type numpy.ndarray.')
+        
+        # Check for correct number of elements of augmenting data
+        if self.__class__.__name__ == 'CAPCA':
+            if not isinstance(Y, tuple) and not isinstance(Y, list):
+                raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing two ' +
+                                'numpy.ndarrays.')
+            else:
+                if len(Y) != 2:
+                    raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing ' +
+                                    'two numpy.ndarrays.')
+                for Y_ in Y:
+                    if not isinstance(Y_, numpy.ndarray):
+                        raise TypeError('Y must be of type numpy.ndarray or a tuple / list of numpy.ndarrays.')
+        else:
+            if not isinstance(Y, numpy.ndarray):
+                raise TypeError('Y must be of type numpy.ndarray.')
+        
+        # Create deep copies of primary and augmenting data matrices
         X_ = X.copy()
-        Y_ = Y.copy()
+        if self.__class__.__name__ == 'CAPCA':
+            Ys_, Ya_ = Y[0].copy(), Y[1].copy()
+        else:
+            Y_ = Y.copy()
         
         # Raise error for sparse matrices used as input
-        if issparse(X_) | issparse(Y_):
-            error_msg = '%(name) does not support sparse input.'
-            raise TypeError(error_msg % {'name': self.__class__.__name__})
+        if self.__class__.__name__ == 'CAPCA':
+            if issparse(X_) or issparse(Ys_) or issparse(Ya_):
+                error_msg = '%(name) does not support sparse input.'
+                raise TypeError(error_msg % {'name': self.__class__.__name__})
+        else:
+            if issparse(X_) or issparse(Y_):
+                error_msg = '%(name) does not support sparse input.'
+                raise TypeError(error_msg % {'name': self.__class__.__name__})
         
         # Define number of components as smallest dimension of X if not specified
         if self.n_components is None:
@@ -346,18 +323,27 @@ class _APCA(ABC):
         
         # Calculate means of data matrices
         self.mean_X_ = mean(X_, axis=0)
-        self.mean_Y_ = mean(Y_, axis=0)
+        if self.__class__.__name__ == 'CAPCA':
+            self.mean_Y_ = (mean(Ys_, axis=0), mean(Ya_, axis=0))
+        else:
+            self.mean_Y_ = mean(Y_, axis=0)
         
-        # Mean-center primary data matrix and concomitant data matrix
+        # Mean-center primary and augmenting data matrices
         X_ -= self.mean_X_
-        Y_ -= self.mean_Y_
+        if self.__class__.__name__ == 'CAPCA':
+            Ys_ -= self.mean_Y_[0]
+            Ya_ -= self.mean_Y_[1]
+        else:
+            Y_ -= self.mean_Y_
         
-        # Define Z as concatenation of primary data and concomitant data matrices
-        if (self._inference == 'local') | (self._inference == 'encoded'):
+        # Define Z as concatenation of primary data and augmenting data matrices
+        if self._inference == 'local' or self._inference == 'encoded':
             Z_ = None
-            self.mean_Z_ = None
         elif self._inference == 'joint':
-            Z_ = concatenate((X_, Y_), axis=1)
+            if self.__class__.__name__ == 'CAPCA':
+                Z_ = concatenate((X_, Ys_, Ya_), axis=1)
+            else:
+                Z_ = concatenate((X_, Y_), axis=1)
             self.mean_Z_ = mean(Z_, axis=0)
             Z_ -= self.mean_Z_
         else:
@@ -365,13 +351,23 @@ class _APCA(ABC):
         
         # Get data dimensions
         n, p = X_.shape
-        _, q = Y_.shape
+        if self.__class__.__name__ == 'CAPCA':
+            _, qs = Ys_.shape
+            _, qa = Ya_.shape
+        else:
+            _, q = Y_.shape
         
         # Get decomposition matrix
-        if (self._inference == 'local') | (self._inference == 'encoded'):
-            self.B_ = self._get_B(M_=X_, N_=Y_)
+        if self._inference == 'local' or self._inference == 'encoded':
+            if self.__class__.__name__ == 'CAPCA':
+                self.B_ = self._get_B(M_=X_, N_=(Ys_, Ya_))
+            else:
+                self.B_ = self._get_B(M_=X_, N_=Y_)
         elif self._inference == 'joint':
-            self.B_ = self._get_B(M_=Z_, N_=Y_)
+            if self.__class__.__name__ == 'CAPCA':
+                self.B_ = self._get_B(M_=Z_, N_=(Ys_, Ya_))
+            else:
+                self.B_ = self._get_B(M_=Z_, N_=Y_)
         else:
             raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
         
@@ -428,10 +424,17 @@ class _APCA(ABC):
         
         # Assign primary loadings W and augmented loadings D
         self.W_ = V[:p, :self.n_components]
-        if (self._inference == 'local') | (self._inference == 'encoded'):
-            self.D_ = V[p:p + q, :self.n_components]
+        if self._inference == 'local' or self._inference == 'encoded':
+            if self.__class__.__name__ == 'CAPCA':
+                self.D_ = (V[p:p + qs, :self.n_components], V[p + qs:p + qs + qa, :self.n_components])
+            else:
+                self.D_ = V[p:p + q, :self.n_components]
         elif self._inference == 'joint':
-            self.D_ = V[p + q:, :self.n_components]
+            if self.__class__.__name__ == 'CAPCA':
+                self.D_ = (V[p + qs + qa:p + (2 * qs) + qa, :self.n_components],
+                           V[p + (2 * qs) + qa,:p + (2 * qs) + (2 * qa), :self.n_components])
+            else:
+                self.D_ = V[p + q:, :self.n_components]
         else:
             raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
         
@@ -440,22 +443,48 @@ class _APCA(ABC):
             self.A_ = None
         
         # Generate encoding matrix for encoded approximate inference
-        elif self._inference == 'encoded':           
+        elif self._inference == 'encoded':
             diag_reg = self.diag_const_ * identity(n=X_.shape[1])
             inv_XT_X = inv((X_.T @ X_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
-            A_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg
-            A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
-            self.A_ = solve(A_1, A_2) @ X_ @ inv_XT_X
+            A1 = self.W_.T @ self.W_
+            A2 = self.W_.T @ X_.T
+            if self.__class__.__name__ == 'CAPCA':
+                if isinstance(self.mu, tuple) or isinstance(self.mu, list):
+                    A1 -= (self.mu[0] * (self.D_[0].T @ self.D_[0])) + \
+                    (self.mu[1] * (self.D_[1].T @ self.D_[1])) - diag_reg
+                    A2 -= (self.mu[0] * (self.D_[0].T @ Ys_.T)) + (self.mu[1] * (self.D_[1].T @ Ya_.T))
+                else:
+                    A1 -= (self.mu * (self.D_[0].T @ self.D_[0])) + \
+                    (self.mu * (self.D_[1].T @ self.D_[1])) - diag_reg
+                    A2 -= (self.mu * (self.D_[0].T @ Ys_.T)) + (self.mu * (self.D_[1].T @ Ya_.T))
+            else:
+                A1 -= (self.mu * (self.D_.T @ self.D_)) - diag_reg
+                A2 -= self.mu * (self.D_.T @ Y_.T)
+            self.A_ = solve(A1, A2) @ X_ @ inv_XT_X
         
         # Generate encoding matrix for jointly-encoded approximate inference
         elif self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(n=Z_.shape[1])
             inv_ZT_Z = inv((Z_.T @ Z_) + diag_reg)
             diag_reg = self.diag_const_ * identity(n=self.W_.shape[1])
-            A_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_) + diag_reg
-            A_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
-            self.A_ = solve(A_1, A_2) @ Z_ @ inv_ZT_Z
+            A1 = self.W_.T @ self.W_
+            A2 = self.W_.T @ X_.T
+            if self.__class__.__name__ == 'CAPCA':
+                if isinstance(self.mu, tuple) or isinstance(self.mu, list):
+                    A1 -= ((self.mu[0] + 1.0) * (self.D_[0].T @ self.D_[0])) + \
+                    ((self.mu[1] + 1.0) * (self.D_[1].T @ self.D_[1])) - diag_reg
+                    A2 -= ((self.mu[0] + 1.0) * (self.D_[0].T @ Ys_.T)) + \
+                    ((self.mu[1] + 1.0) * (self.D_[1].T @ Ya_.T))
+                else:
+                    A1 -= ((self.mu + 1.0) * (self.D_[0].T @ self.D_[0])) + \
+                    ((self.mu + 1.0) * (self.D_[1].T @ self.D_[1])) - diag_reg
+                    A2 -= ((self.mu + 1.0) * (self.D_[0].T @ Ys_.T)) + \
+                    ((self.mu + 1.0) * (self.D_[1].T @ Ya_.T))
+            else:
+                A1 -= ((self.mu + 1.0) * (self.D_.T @ self.D_)) - diag_reg
+                A2 -= (self.mu + 1.0) * (self.D_.T @ Y_.T)
+            self.A_ = solve(A1, A2) @ Z_ @ inv_ZT_Z
         
         # Inference strategy not recognized
         else:
@@ -468,7 +497,7 @@ class _APCA(ABC):
         return self
     
     # Transforms data into scores using AugmentedPCA model formulation
-    def transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+    def transform(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
         r"""
         Transforms data into scores using AugmentedPCA model formulation.
         
@@ -476,8 +505,9 @@ class _APCA(ABC):
         ----------
         X : numpy.ndarray
             2-dimensional (n x p) primary data matrix.
-        Y : numpy.ndarray
-            2-dimensional (n x q) concomitant data matrix.
+        Y : numpy.ndarray or tuple / list of numpy.ndarrays
+            2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+            data matrices. Ignored if `inference` is set to 'encoded'.
         
         Returns
         -------
@@ -491,6 +521,27 @@ class _APCA(ABC):
                          'appropriate arguments before using this method.')
             raise NotFittedError(error_msg % {'name': self.__class__.__name__})
         
+        # Check for proper type / value of primary data
+        if not isinstance(X, numpy.ndarray):
+            raise TypeError('X must be of type numpy.ndarray.')
+        
+        # Check for correct number of elements of augmenting data
+        if self._inference == 'local' or self._inference == 'joint':
+            if self.__class__.__name__ == 'CAPCA':
+                if not isinstance(Y, tuple) and not isinstance(Y, list):
+                    raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing ' +
+                                    'two numpy.ndarrays.')
+                else:
+                    if len(Y) != 2:
+                        raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list ' +
+                                        'containing two numpy.ndarrays.')
+                    for Y_ in Y:
+                        if not isinstance(Y_, numpy.ndarray):
+                            raise TypeError('Y must be of type numpy.ndarray or a tuple / list of numpy.ndarrays.')
+            else:
+                if not isinstance(Y, numpy.ndarray):
+                    raise TypeError('Y must be of type numpy.ndarray.')
+        
         # Create deep copy of primary data matrix
         X_ = X.copy()
         
@@ -499,11 +550,24 @@ class _APCA(ABC):
         
         # Generate scores - local approximate inference
         if self._inference == 'local':
-            Y_ = Y.copy()
-            Y_ -= self.mean_Y_
-            S_1 = (self.W_.T @ self.W_) - (self.mu * self.D_.T @ self.D_)
-            S_2 = (self.W_.T @ X_.T) - (self.mu * self.D_.T @ Y_.T)
-            S = (solve(S_1, S_2)).T
+            S1 = self.W_.T @ self.W_
+            S2 = self.W_.T @ X_.T
+            if self.__class__.__name__ == 'CAPCA':
+                Ys_, Ya_ = Y[0].copy(), Y[0].copy()
+                Ys_ -= self.mean_Y_[0]
+                Ya_ -= self.mean_Y_[1]
+                if isinstance(self.mu, tuple) or isinstance(self.mu, list):
+                    S1 -= (self.mu[0] * (self.D_[0].T @ self.D_[0])) + (self.mu[1] * (self.D_[1].T @ self.D_[1]))
+                    S2 -= (self.mu[0] * (self.D_[0].T @ Ys_.T)) + (self.mu[1] * (self.D_[1].T @ Ya_.T))
+                else:
+                    S1 -= self.mu * ((self.D_[0].T @ self.D_[0]) + (self.D_[1].T @ self.D_[1]))
+                    S2 -= self.mu * ((self.D_[0].T @ Ys_.T) + (self.D_[1].T @ Ya_.T))
+            else:
+                Y_ = Y.copy()
+                Y_ -= self.mean_Y_
+                S1 -= self.mu * (self.D_.T @ self.D_)
+                S2 -= self.mu * (self.D_.T @ Y_.T)
+            S = (solve(S1, S2)).T
         
         # Generate scores - encoded approximate inference
         elif self._inference == 'encoded':
@@ -511,9 +575,15 @@ class _APCA(ABC):
         
         # Generate scores - jointly-encoded approximate inference
         elif self._inference == 'joint':
-            Y_ = Y.copy()
-            Y_ -= self.mean_Y_
-            Z_ = concatenate((X_, Y_), axis=1)
+            if self.__class__.__name__ == 'CAPCA':
+                Ys_, Ya_ = Y[0].copy(), Y[0].copy()
+                Ys_ -= self.mean_Y_[0]
+                Ya_ -= self.mean_Y_[1]
+                Z_ = concatenate((X_, Ys_, Ya_), axis=1)
+            else:
+                Y_ = Y.copy()
+                Y_ -= self.mean_Y_
+                Z_ = concatenate((X_, Y_), axis=1)
             S = (self.A_ @ Z_.T).T
         
         # Inference strategy not recognized
@@ -524,7 +594,7 @@ class _APCA(ABC):
         return S
     
     # Fit AugmentedPCA model to data and transform data into scores
-    def fit_transform(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+    def fit_transform(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
         r"""
         Fits AugumentedPCA model to data and transforms data into scores.
         
@@ -532,8 +602,9 @@ class _APCA(ABC):
         ----------
         X : numpy.ndarray
             2-dimensional (n x p) primary data matrix.
-        Y : numpy.ndarray
-            2-dimensional (n x q) concomitant data matrix.
+        Y : numpy.ndarray or tuple / list of numpy.ndarrays
+            2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+            data matrices.
         
         Returns
         -------
@@ -551,7 +622,7 @@ class _APCA(ABC):
         return S
     
     # Reconstruct primary and augmenting data
-    def reconstruct(self, X: numpy.ndarray, Y: numpy.ndarray) -> numpy.ndarray:
+    def reconstruct(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
         r"""
         Reconstruct primary and augmenting data.
         
@@ -559,15 +630,17 @@ class _APCA(ABC):
         ----------
         X : numpy.ndarray
             2-dimensional (n x p) primary data matrix.
-        Y : numpy.ndarray
-            2-dimensional (n x q) augmenting data matrix.
+        Y : numpy.ndarray or tuple / list of numpy.ndarrays
+            2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+            data matrices. Ignored if `inference` is set to 'encoded'.
         
         Returns
         -------
         X_recon : numpy.ndarray
             2-dimensional (n x p) reconstruction of primary data.
-        Y_recon : numpy.ndarray
-            2-dimensional (n x q) reconstruction of augmenting data.
+        Y_recon : numpy.ndarray or tuple / list of numpy.ndarrays
+            2-dimensional (n x q) reconstruction of augmenting data or tuple of 2-dimensional (n x qs), (n x qa)
+            augmenting data reconstructions.
         """
         
         # Generate factors from data
@@ -575,10 +648,78 @@ class _APCA(ABC):
         
         # Reconstruct both primary and augmenting data
         X_recon = (S @ self.W_.T) + self.mean_X_
-        Y_recon = (S @ self.D_.T) + self.mean_Y_
+        if self.__class__.__name__ == 'CAPCA':
+            Y_recon = ((S @ self.D_[0].T) + self.mean_Y_[0], (S @ self.D_[1].T) + self.mean_Y_[1])
+        else:
+            Y_recon = (S @ self.D_.T) + self.mean_Y_
         
         # Return reconstructed primary and augmenting data
         return X_recon, Y_recon
+    
+    # Get eigenvalues
+    def get_eigvals(self) -> numpy.ndarray:
+        r"""
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
+        
+        Parameters
+        ----------
+        none
+        
+        Returns
+        -------
+        self.eigvals_.copy() : numpy.ndarray
+            1-dimensional array of sorted eigenvalues.
+        """
+        
+        # Check that encoding matrix attribute has been assigned
+        if self.eigvals_ is None:
+            raise AttributeError('Eigenvalues attribute not yet assigned.')
+        
+        # Return encoding matrix
+        return self.eigvals_.copy()
+    
+    # Get primary data loadings / components
+    def get_components(self) -> numpy.ndarray:
+        r"""
+        Returns primary data loadings / components.
+        
+        Parameters
+        ----------
+        none
+        
+        Returns
+        -------
+        self.W_.copy() : numpy.ndarray
+            2-dimensional (p x k) primary data loadings matrix.
+        """
+        
+        # Retrieve primary data loadings
+        W = self.get_W()
+        
+        # Return primary data loadings
+        return W
+    
+    # Get primary data loadings
+    def get_W(self) -> numpy.ndarray:
+        r"""
+        Returns primary data loadings.
+        
+        Parameters
+        ----------
+        none
+        
+        Returns
+        -------
+        self.W_.copy() : numpy.ndarray
+            2-dimensional (p x k) primary data loadings matrix.
+        """
+        
+        # Check that primary data loadings attribute has been assigned
+        if self.W_ is None:
+            raise AttributeError('Primary data loadings attribute not yet assigned.')
+        
+        # Return primary data loadings
+        return self.W_.copy()
     
     # Get augmenting data loadings
     @abstractmethod
@@ -586,6 +727,32 @@ class _APCA(ABC):
         r"""
         Abstract method : Returns augmenting data loadings.
         """
+    
+    # Get encoding matrix
+    def get_A(self) -> numpy.ndarray:
+        r"""
+        Returns encoding matrix.
+        
+        Parameters
+        ----------
+        none
+        
+        Returns
+        -------
+        self.A_.copy() : numpy.ndarray
+            2-dimensional (d x p) encoding matrix.
+        """
+        
+        # Check that encoding matrix attribute has been assigned
+        if self.A_ is None:
+            if self._inference == 'local':
+                raise AttributeError('AugmentedPCA object with local approximate inference does not have an ' + 
+                                     'encoding matrix attribute.')
+            else:
+                raise AttributeError('Encoding matrix attribute not yet assigned.')
+        
+        # Return encoding matrix
+        return self.A_.copy()
     
     # Returns decomposition matrix given primary data matrix and augmenting data matrix
     @abstractmethod
@@ -609,8 +776,8 @@ class SAPCA(_APCA):
     mu : float; optional, default is 1.0
         Supervision strength.
     inference : str; optional, default is 'encoded'
-        Indicates model approximate inference strategy.
-    decomp : str; optional, default is 'exact'
+        Model approximate inference strategy.
+    decomp : str; optional, default is 'approx'
         Decomposition approach.
     pow_iter : int; optional, default is 5
         Number of power iterations to perform in randomized approximation.
@@ -658,25 +825,35 @@ class SAPCA(_APCA):
     -------
     fit(X, Y)
         Fits AugmentedPCA model to data.
-    fit_transform(X, Y)
-        Fits AugumentedPCA model to data and transforms data into scores.
-    get_A()
-        Returns encoding matrix.
-    get_D()
-        Returns supervised data loadings.
-    get_W()
-        Returns primary data loadings.
-    get_eigvals()
-        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
-    reconstruct(X, Y)
-        Reconstructs primary and supervised data.
     transform(X, Y)
         Transforms data into scores using AugmentedPCA model formulation.
+    fit_transform(X, Y)
+        Fits AugumentedPCA model to data and transforms data into scores.
+    reconstruct(X, Y)
+        Reconstructs primary and supervised data.
+    get_components()
+        Returns primary data loadings / components. Alias for get_W().
+    get_W()
+        Returns primary data loadings.
+    get_D()
+        Returns supervised data loadings.
+    get_A()
+        Returns encoding matrix.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
     """
     
     # Instantiation method of supervised AugmentedPCA model base class
-    def __init__(self, n_components=None, mu=1.0, inference='encoded', decomp='exact', pow_iter=5, n_oversamp=5,
-                 diag_const=1e-8, random_state=None):
+    def __init__(
+        self,
+        n_components=None,
+        mu=1.0,
+        inference='encoded',
+        decomp='approx',
+        pow_iter=5,
+        n_oversamp=5,
+        diag_const=1e-8,
+        random_state=None):
         r"""
         Instantiation method of supervised AugmentedPCA model class.
         
@@ -687,8 +864,8 @@ class SAPCA(_APCA):
         mu : float; optional, default is 1.0
             Supervision strength.
         inference : str; optional, default is 'encoded'
-            Indicates model approximate inference strategy.
-        decomp : str; optional, default is 'exact'
+            Model approximate inference strategy.
+        decomp : str; optional, default is 'approx'
             Decomposition approach.
         pow_iter : int; optional, default is 5
             Number of power iterations to perform in randomized approximation.
@@ -701,8 +878,15 @@ class SAPCA(_APCA):
         """
         
         # Inherit from AugmentedPCA model base class
-        super().__init__(n_components=n_components, mu=mu, inference=inference, decomp=decomp, pow_iter=pow_iter,
-                         n_oversamp=n_oversamp, diag_const=diag_const, random_state=random_state)
+        super().__init__(
+            n_components=n_components,
+            mu=mu,
+            inference=inference,
+            decomp=decomp,
+            pow_iter=pow_iter,
+            n_oversamp=n_oversamp,
+            diag_const=diag_const,
+            random_state=random_state)
     
     # Get supervised data loadings
     def get_D(self) -> numpy.ndarray:
@@ -745,27 +929,27 @@ class SAPCA(_APCA):
         """
         
         # Define components of decomposition matrix B
-        B_11 = M_.T @ M_
-        B_12 = M_.T @ N_
-        B_21 = B_12.T
+        B11 = M_.T @ M_
+        B12 = M_.T @ N_
+        B21 = B12.T
         if self._inference == 'local':
-            B_22 = N_.T @ N_
-        elif (self._inference == 'encoded') | (self._inference == 'joint'):
+            B22 = N_.T @ N_
+        elif self._inference == 'encoded' or self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(M_.shape[1])
             MT_M = (M_.T @ M_) + diag_reg
-            B_22 = B_12.T @ solve(MT_M, B_12)
+            B22 = B12.T @ solve(MT_M, B12)
         else:
             raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
         
         # Decomposition matrix with positive augmenting objective strength - local or encoded approximate inference
-        if (self._inference == 'local') | (self._inference == 'encoded'):
-            B = concatenate((concatenate((B_11, self.mu * B_12), axis=1),
-                             concatenate((B_21, self.mu * B_22), axis=1)), axis=0)
+        if self._inference == 'local' or self._inference == 'encoded':
+            B = concatenate((concatenate((B11, self.mu * B12), axis=1),
+                             concatenate((B21, self.mu * B22), axis=1)), axis=0)
         
         # Decomposition matrix with positive augmenting objective strength - jointly-encoded approximate inference
         elif self._inference == 'joint':
-            B = concatenate((concatenate((B_11, self._mu_star * B_12), axis=1),
-                             concatenate((B_21, self._mu_star * B_22), axis=1)), axis=0)
+            B = concatenate((concatenate((B11, (self.mu + 1.0) * B12), axis=1),
+                             concatenate((B21, (self.mu + 1.0) * B22), axis=1)), axis=0)
         
         # Inference strategy not recognized
         else:
@@ -780,7 +964,7 @@ class AAPCA(_APCA):
     r"""
     Adversarial AugmentedPCA (aAPCA) model class. The objective of the aAPCA model is to find components that 1)
     represent the maximum variance expressed in the primary data (primary objective) while 2) maintaining a degree of
-    invariance to a set of concomitant data(augmenting objective).
+    invariance to a set of concomitant data (augmenting objective).
     
     Parameters
     ----------
@@ -789,8 +973,8 @@ class AAPCA(_APCA):
     mu : float; optional, default is 1.0
         Adversary strength.
     inference : str; optional, default is 'encoded'
-        Indicates model approximate inference strategy.
-    decomp : str; optional, default is 'exact'
+        Model approximate inference strategy.
+    decomp : str; optional, default is 'approx'
         Decomposition approach.
     pow_iter : int; optional, default is 5
         Number of power iterations to perform in randomized AugmentedPCA approximation.
@@ -838,25 +1022,35 @@ class AAPCA(_APCA):
     -------
     fit(X, Y)
         Fits AugmentedPCA model to data.
-    fit_transform(X, Y)
-        Fits AugumentedPCA model to data and transforms data into scores.
-    get_A()
-        Returns encoding matrix.
-    get_D()
-        Returns concomitant data loadings.
-    get_W()
-        Returns primary data loadings.
-    get_eigvals()
-        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
-    reconstruct(X, Y)
-        Reconstructs primary and concomitant data.
     transform(X, Y)
         Transforms data into scores using AugmentedPCA model formulation.
+    fit_transform(X, Y)
+        Fits AugumentedPCA model to data and transforms data into scores.
+    reconstruct(X, Y)
+        Reconstructs primary and concomitant data.
+    get_components()
+        Returns primary data loadings / components. Alias for get_W().
+    get_W()
+        Returns primary data loadings.
+    get_D()
+        Returns concomitant data loadings.
+    get_A()
+        Returns encoding matrix.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
     """
     
     # Instantiation method of adversarial AugmentedPCA model base class
-    def __init__(self, n_components: int=None, mu=1.0, inference='encoded', decomp='exact', pow_iter=5, n_oversamp=5,
-                 diag_const=1e-8, random_state=None):
+    def __init__(
+        self,
+        n_components: int=None,
+        mu=1.0,
+        inference='encoded',
+        decomp='approx',
+        pow_iter=5,
+        n_oversamp=5,
+        diag_const=1e-8,
+        random_state=None):
         r"""
         Instantiation method of adversarial AugmentedPCA model class.
         
@@ -867,8 +1061,8 @@ class AAPCA(_APCA):
         mu : float; optional, default is 1.0
             Adversary strength
         inference : str; optional, default is 'encoded'
-            Indicates model approximate inference strategy.
-        decomp : str; optional, default is 'exact'
+            Model approximate inference strategy.
+        decomp : str; optional, default is 'approx'
             Decomposition approach.
         pow_iter : int; optional, default is 5
             Number of power iterations to perform in randomized approximation.
@@ -881,8 +1075,15 @@ class AAPCA(_APCA):
         """
         
         # Inherit from AugmentedPCA model base class
-        super().__init__(n_components=n_components, mu=mu, inference=inference, decomp=decomp, pow_iter=pow_iter,
-                         n_oversamp=n_oversamp, diag_const=diag_const, random_state=random_state)
+        super().__init__(
+            n_components=n_components,
+            mu=mu,
+            inference=inference,
+            decomp=decomp,
+            pow_iter=pow_iter,
+            n_oversamp=n_oversamp,
+            diag_const=diag_const,
+            random_state=random_state)
     
     # Get concomitant data loadings
     def get_D(self) -> numpy.ndarray:
@@ -921,31 +1122,253 @@ class AAPCA(_APCA):
         Returns
         -------
         B : numpy.ndarray
-            2-dimensional ((p + q) x (p + q)) or ((p + 2 * q) x (p + 2 * q)) decomposition matrix.
+            2-dimensional ((p + q) x (p + q)) or ((p + (2 * q)) x (p + (2 * q))) decomposition matrix.
         """
         
         # Define components of decomposition matrix B
-        B_11 = M_.T @ M_
-        B_12 = M_.T @ N_
-        B_21 = B_12.T
+        B11 = M_.T @ M_
+        B12 = M_.T @ N_
+        B21 = B12.T
         if self._inference == 'local':
-            B_22 = N_.T @ N_
-        elif (self._inference == 'encoded') | (self._inference == 'joint'):
+            B22 = N_.T @ N_
+        elif self._inference == 'encoded' or self._inference == 'joint':
             diag_reg = self.diag_const_ * identity(M_.shape[1])
             MT_M = (M_.T @ M_) + diag_reg
-            B_22 = B_12.T @ solve(MT_M, B_12)
+            B22 = B12.T @ solve(MT_M, B12)
         else:
             raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
         
         # Decomposition matrix with negative augmenting objective strength - local or encoded approximate inference
-        if (self._inference == 'local') | (self._inference == 'encoded'):
-            B = concatenate((concatenate((B_11, -self.mu * B_12), axis=1),
-                             concatenate((B_21, -self.mu * B_22), axis=1)), axis=0)
+        if self._inference == 'local' or self._inference == 'encoded':
+            B = concatenate((concatenate((B11, -self.mu * B12), axis=1),
+                             concatenate((B21, -self.mu * B22), axis=1)), axis=0)
         
         # Decomposition matrix with negative augmenting objective strength - jointly-encoded approximate inference
         elif self._inference == 'joint':
-            B = concatenate((concatenate((B_11, -self._mu_star * B_12), axis=1),
-                             concatenate((B_21, -self._mu_star * B_22), axis=1)), axis=0)
+            B = concatenate((concatenate((B11, -(self.mu + 1.0) * B12), axis=1),
+                             concatenate((B21, -(self.mu + 1.0) * B22), axis=1)), axis=0)
+        
+        # Inference strategy not recognized
+        else:
+            raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
+        
+        # Return decomposition matrix
+        return B
+
+
+# Combined AugmentedPCA model class
+class CAPCA(_APCA):
+    r"""
+    Combined AugmentedPCA (cAPCA) model class. The objective of the cAPCA model is to find components that 1)
+    represent the maximum variance expressed in the primary data (primary objective) and 2) represent the variance
+    expressed in the data labels or outcome data and maintain a degree of invariance to a set of concomitant data
+    (augmenting objectives).
+    
+    Parameters
+    ----------
+    n_components : int; optional, default is None
+        Number of components. If None reduce to minimum dimension of primary data.
+    mu : float or tuple or list; optional, default is 1.0
+        Augmenting objective strength(s).
+    inference : str; optional, default is 'encoded'
+        Model approximate inference strategy.
+    decomp : str; optional, default is 'approx'
+        Decomposition approach.
+    pow_iter : int; optional, default is 5
+        Number of power iterations to perform in randomized approximation.
+    n_oversamp : int; optional, default is 5
+        Oversampling parameter for randomized approximation.
+    diag_const : float; optional, default is 1e-8
+        Constant added to diagonals of matrix prior to inversion.
+    random_state : int
+        Model random state. Ignored if exact eigenvalue decomposition approach used.
+    
+    Attributes
+    ----------
+    n_components : int
+        Number of components. If None then reduce to minimum dimension of primary data.
+    mu : float or tuple or list
+        Augmenting objective strength(s).
+    pow_iter : int
+        Number of power iterations to perform in randomized approximation.
+    n_oversamp : int
+        Oversampling parameter for randomized approximation.
+    diag_const : float
+        Constant added to diagonals of matrix prior to inversion.
+    random_state : int
+        Model random state. Ignored if exact eigenvalue decomposition approach used.
+    mean_X_ : numpy.ndarray
+        1-dimensional (p,) mean array of primary data matrix.
+    mean_Y_ : numpy.ndarray
+        1-dimensional (q,) mean array of primary data matrix.
+    mean_Z_ : numpy.ndarray
+        1-dimensional (p + q,) mean array of combined primary and supervised data matrices.
+    B_ : numpy.ndarray
+        2-dimensional decomposition matrix.
+    W_ : numpy.ndarray
+        2-dimensional primary data loadings matrix.
+    D_ : numpy.ndarray
+        2-dimensional supervised data loadings matrix.
+    A_ : numpy.ndarray
+        2-dimensional encoding matrix. None if `inference` is set to 'local'.
+    eigvals_ : numpy.ndarray
+        1-dimensional array of sorted decomposition matrix eigenvalues.
+    is_fitted_ : bool
+        Indicates whether model has been fitted.
+    
+    Methods
+    -------
+    fit(X, Y)
+        Fits AugmentedPCA model to data.
+    transform(X, Y)
+        Transforms data into scores using AugmentedPCA model formulation.
+    fit_transform(X, Y)
+        Fits AugumentedPCA model to data and transforms data into scores.
+    reconstruct(X, Y)
+        Reconstructs primary and supervised data.
+    get_components()
+        Returns primary data loadings / components. Alias for get_W().
+    get_W()
+        Returns primary data loadings.
+    get_D()
+        Returns supervised data loadings.
+    get_A()
+        Returns encoding matrix.
+    get_eigvals()
+        Returns 1-dimensional array of sorted decomposition matrix eigenvalues.
+    """
+    
+    # Instantiation method of combined AugmentedPCA model base class
+    def __init__(
+        self,
+        n_components=None,
+        mu=1.0,
+        inference='encoded',
+        decomp='approx',
+        pow_iter=5,
+        n_oversamp=5,
+        diag_const=1e-8,
+        random_state=None):
+        r"""
+        Instantiation method of combined AugmentedPCA model class.
+        
+        Parameters
+        ----------
+        n_components : int; optional, default is None
+            Number of components. If None reduce to minimum dimension of primary data.
+        mu : float or tuple or list; optional, default is 1.0
+            Augmenting ojective strength(s).
+        inference : str; optional, default is 'encoded'
+            Model approximate inference strategy.
+        decomp : str; optional, default is 'approx'
+            Decomposition approach.
+        pow_iter : int; optional, default is 5
+            Number of power iterations to perform in randomized approximation.
+        n_oversamp : int; optional, default is 5
+            Oversampling parameter for randomized approximation.
+        diag_const : float; optional, default is 1e-8
+            Constant added to diagonals of matrix prior to inversion.
+        random_state : int
+            Model random state. Ignored if exact eigenvalue decomposition approach used.
+        """
+        
+        # Inherit from AugmentedPCA model base class
+        super().__init__(
+            n_components=n_components,
+            mu=mu,
+            inference=inference,
+            decomp=decomp,
+            pow_iter=pow_iter,
+            n_oversamp=n_oversamp,
+            diag_const=diag_const,
+            random_state=random_state)
+    
+    # Get supervised data loadings
+    def get_D(self) -> numpy.ndarray:
+        r"""
+        Returns supervised data loadings.
+        
+        Parameters
+        ----------
+        none
+        
+        Returns
+        -------
+        self.D_.copy() : numpy.ndarray
+            Tuple of two 2-dimensional (qs x k), (qa x k) augmenting data loadings matrices.
+        """
+        
+        # Check that supervised data loadings attribute has been assigned
+        if self.D_ is None:
+            raise AttributeError('Augmenting data loadings attribute not yet assigned.')
+        
+        # Return supervised data loadings
+        return (self.D_[0].copy(), self.D_[1].copy())
+    
+    # Returns decomposition matrix given primary data matrix and augmenting data matrices
+    def _get_B(self, M_: numpy.ndarray, N_: numpy.ndarray) -> numpy.ndarray:
+        r"""
+        Returns decomposition matrix given primary data matrix and augmenting data matrices.
+        
+        Parameters
+        ----------
+        M_ : numpy.ndarray
+            Deep copy of 2-dimensional (n x p) or (n x (p + q)) matrix.
+        N_ : numpy.ndarray
+            Tuple of two deep copies of 2-dimensional (n x qs), (n x qa) augmenting data.
+        
+        Returns
+        -------
+        B : numpy.ndarray
+            2-dimensional (p + qs + qa) x (p + qs + qa) decomposition matrix.
+        """
+        
+        # Define components of decomposition matrix B
+        B11 = M_.T @ M_
+        B12 = M_.T @ N_[0]
+        B13 = M_.T @ N_[1]
+        B31 = B13.T
+        B21 = B12.T
+        if self._inference == 'local':
+            B22 = N_[0].T @ N_[0]
+            B33 = N_[1].T @ N_[1]
+            B23 = N_[0].T @ N_[1]
+            B32 = B23.T
+        elif self._inference == 'encoded' or self._inference == 'joint':
+            diag_reg = self.diag_const_ * identity(M_.shape[1])
+            MT_M = (M_.T @ M_) + diag_reg
+            B22 = B12.T @ solve(MT_M, B12)
+            B33 = B13.T @ solve(MT_M, B13)
+            B23 = B12.T @ solve(MT_M, B13)
+            B32 = B23.T
+        else:
+            raise ValueError('Invalid inference strategy parameter \'%s\'.' % self._inference)
+        
+        # Decomposition matrix with positive augmenting objective strength - local or encoded approximate inference
+        if self._inference == 'local' or self._inference == 'encoded':
+            if isinstance(self.mu, tuple) or isinstance(self.mu, list):
+                B = concatenate((concatenate((B11, self.mu[0] * B12, -self.mu[1] * B13), axis=1),
+                                 concatenate((B21, self.mu[0] * B22, -self.mu[1] * B23), axis=1),
+                                 concatenate((B31, self.mu[0] * B32, -self.mu[1] * B33), axis=1)),
+                                axis=0)
+            else:
+                B = concatenate((concatenate((B11, self.mu * B12, -self.mu * B13), axis=1),
+                                 concatenate((B21, self.mu * B22, -self.mu * B23), axis=1),
+                                 concatenate((B31, self.mu * B32, -self.mu * B33), axis=1)),
+                                axis=0)
+        
+        # Decomposition matrix with positive augmenting objective strength - jointly-encoded approximate inference
+        elif self._inference == 'joint':
+            if isinstance(self.mu, tuple) or isinstance(self.mu, list):
+                B = concatenate((concatenate((B11, (self.mu[0] + 1.0) * B12, -(self.mu[1] + 1.0) * B13), axis=1),
+                                 concatenate((B21, (self.mu[0] + 1.0) * B22, -(self.mu[1] + 1.0) * B23), axis=1),
+                                 concatenate((B31, (self.mu[0] + 1.0) * B32, -(self.mu[1] + 1.0) * B33), axis=1)),
+                                axis=0)
+            else:
+                B = concatenate((concatenate((B11, (self.mu + 1.0) * B12, -(self.mu + 1.0) * B13), axis=1),
+                                 concatenate((B21, (self.mu + 1.0) * B22, -(self.mu + 1.0) * B23), axis=1),
+                                 concatenate((B31, (self.mu + 1.0) * B32, -(self.mu + 1.0) * B33), axis=1)),
+                                axis=0)
         
         # Inference strategy not recognized
         else:
