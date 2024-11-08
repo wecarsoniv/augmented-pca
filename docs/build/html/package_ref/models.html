@@ -1,0 +1,1020 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apca.models &mdash; AugmentedPCA 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=88289265" />
+
+  
+    <link rel="shortcut icon" href="../_static/apca_logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Citation" href="../contents/citation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/apca_logo_full.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contents/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contents/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contents/models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contents/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contents/citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">apca.models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#supervised-augmentedpca">Supervised AugmentedPCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apca.models.SAPCA"><code class="docutils literal notranslate"><span class="pre">SAPCA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.fit"><code class="docutils literal notranslate"><span class="pre">SAPCA.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.fit_transform"><code class="docutils literal notranslate"><span class="pre">SAPCA.fit_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.get_A"><code class="docutils literal notranslate"><span class="pre">SAPCA.get_A()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.get_D"><code class="docutils literal notranslate"><span class="pre">SAPCA.get_D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.get_W"><code class="docutils literal notranslate"><span class="pre">SAPCA.get_W()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.get_components"><code class="docutils literal notranslate"><span class="pre">SAPCA.get_components()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.get_eigvals"><code class="docutils literal notranslate"><span class="pre">SAPCA.get_eigvals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.reconstruct"><code class="docutils literal notranslate"><span class="pre">SAPCA.reconstruct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.SAPCA.transform"><code class="docutils literal notranslate"><span class="pre">SAPCA.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#adversarial-augmentedpca">Adversarial AugmentedPCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apca.models.AAPCA"><code class="docutils literal notranslate"><span class="pre">AAPCA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.fit"><code class="docutils literal notranslate"><span class="pre">AAPCA.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.fit_transform"><code class="docutils literal notranslate"><span class="pre">AAPCA.fit_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.get_A"><code class="docutils literal notranslate"><span class="pre">AAPCA.get_A()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.get_D"><code class="docutils literal notranslate"><span class="pre">AAPCA.get_D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.get_W"><code class="docutils literal notranslate"><span class="pre">AAPCA.get_W()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.get_components"><code class="docutils literal notranslate"><span class="pre">AAPCA.get_components()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.get_eigvals"><code class="docutils literal notranslate"><span class="pre">AAPCA.get_eigvals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.reconstruct"><code class="docutils literal notranslate"><span class="pre">AAPCA.reconstruct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.AAPCA.transform"><code class="docutils literal notranslate"><span class="pre">AAPCA.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#combined-augmentedpca">Combined AugmentedPCA</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apca.models.CAPCA"><code class="docutils literal notranslate"><span class="pre">CAPCA</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.fit"><code class="docutils literal notranslate"><span class="pre">CAPCA.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.fit_transform"><code class="docutils literal notranslate"><span class="pre">CAPCA.fit_transform()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.get_A"><code class="docutils literal notranslate"><span class="pre">CAPCA.get_A()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.get_D"><code class="docutils literal notranslate"><span class="pre">CAPCA.get_D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.get_W"><code class="docutils literal notranslate"><span class="pre">CAPCA.get_W()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.get_components"><code class="docutils literal notranslate"><span class="pre">CAPCA.get_components()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.get_eigvals"><code class="docutils literal notranslate"><span class="pre">CAPCA.get_eigvals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.reconstruct"><code class="docutils literal notranslate"><span class="pre">CAPCA.reconstruct()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apca.models.CAPCA.transform"><code class="docutils literal notranslate"><span class="pre">CAPCA.transform()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AugmentedPCA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">apca.models</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/wecarsoniv/augmented-pca" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="apca-models">
+<h1>apca.models<a class="headerlink" href="#apca-models" title="Link to this heading"></a></h1>
+<p>AugmentedPCA models class references and descriptions.</p>
+<section id="supervised-augmentedpca">
+<h2>Supervised AugmentedPCA<a class="headerlink" href="#supervised-augmentedpca" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="apca.models.SAPCA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apca.models.</span></span><span class="sig-name descname"><span class="pre">SAPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'encoded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'approx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pow_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_oversamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.SAPCA" title="Link to this definition"></a></dt>
+<dd><p>Supervised AugmentedPCA (sAPCA) model class. The objective of the sAPCA model is to find components that 1)
+represent the maximum variance expressed in the primary data (primary objective) and 2) represent the variance
+expressed in the data labels or outcome data (augmenting objective).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int; optional, default is None</span></dt><dd><p>Number of components. If None reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float; optional, default is 1.0</span></dt><dd><p>Supervision strength.</p>
+</dd>
+<dt><strong>inference</strong><span class="classifier">str; optional, default is ‘encoded’</span></dt><dd><p>Model inference strategy.</p>
+</dd>
+<dt><strong>decomp</strong><span class="classifier">str; optional, default is ‘approx’</span></dt><dd><p>Decomposition approach.</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Number of power iterations to perform in randomized approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Oversampling parameter for randomized approximation.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float; optional, default is 1e-8</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int</span></dt><dd><p>Number of components. If None then reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>Supervision strength.</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int</span></dt><dd><p>Number of power iterations to perform in randomized approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int</span></dt><dd><p>Oversampling parameter for randomized approximation.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+<dt><strong>mean_X_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Y_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (q,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Z_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p + q,) mean array of combined primary and supervised data matrices.</p>
+</dd>
+<dt><strong>B_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional decomposition matrix.</p>
+</dd>
+<dt><strong>W_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional primary data loadings matrix.</p>
+</dd>
+<dt><strong>D_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional supervised data loadings matrix.</p>
+</dd>
+<dt><strong>A_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional encoding matrix. None if <cite>inference</cite> is set to ‘local’.</p>
+</dd>
+<dt><strong>eigvals_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+</dd>
+<dt><strong>is_fitted_</strong><span class="classifier">bool</span></dt><dd><p>Indicates whether model has been fitted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>fit(X, Y)</strong></p></td>
+<td><p>Fits AugmentedPCA model to data.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>transform(X, Y)</strong></p></td>
+<td><p>Transforms data into scores using AugmentedPCA model formulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>fit_transform(X, Y)</strong></p></td>
+<td><p>Fits AugumentedPCA model to data and transforms data into scores.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>reconstruct(X, Y)</strong></p></td>
+<td><p>Reconstructs primary and supervised data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_components()</strong></p></td>
+<td><p>Returns primary data loadings / components. Alias for get_W().</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_W()</strong></p></td>
+<td><p>Returns primary data loadings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_D()</strong></p></td>
+<td><p>Returns supervised data loadings.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_A()</strong></p></td>
+<td><p>Returns encoding matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_eigvals()</strong></p></td>
+<td><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.SAPCA.fit" title="Link to this definition"></a></dt>
+<dd><p>Fits AugmentedPCA model to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fits AugumentedPCA model to data and transforms data into scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.get_A">
+<span class="sig-name descname"><span class="pre">get_A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.get_A" title="Link to this definition"></a></dt>
+<dd><p>Returns encoding matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.A_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (d x p) encoding matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.get_D">
+<span class="sig-name descname"><span class="pre">get_D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.get_D" title="Link to this definition"></a></dt>
+<dd><p>Returns supervised data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.D_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (q x k) supervised data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.get_W">
+<span class="sig-name descname"><span class="pre">get_W</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.get_W" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.get_components">
+<span class="sig-name descname"><span class="pre">get_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.get_components" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings / components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.get_eigvals">
+<span class="sig-name descname"><span class="pre">get_eigvals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.get_eigvals" title="Link to this definition"></a></dt>
+<dd><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.eigvals_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted eigenvalues.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.reconstruct" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct primary and augmenting data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>X_recon</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) reconstruction of primary data.</p>
+</dd>
+<dt><strong>Y_recon</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) reconstruction of augmenting data or tuple of 2-dimensional (n x qs), (n x qa)
+augmenting data reconstructions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.SAPCA.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.SAPCA.transform" title="Link to this definition"></a></dt>
+<dd><p>Transforms data into scores using AugmentedPCA model formulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="adversarial-augmentedpca">
+<h2>Adversarial AugmentedPCA<a class="headerlink" href="#adversarial-augmentedpca" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="apca.models.AAPCA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apca.models.</span></span><span class="sig-name descname"><span class="pre">AAPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'encoded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'approx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pow_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_oversamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.AAPCA" title="Link to this definition"></a></dt>
+<dd><p>Adversarial AugmentedPCA (aAPCA) model class. The objective of the aAPCA model is to find components that 1)
+represent the maximum variance expressed in the primary data (primary objective) while 2) maintaining a degree of
+invariance to a set of concomitant data (augmenting objective).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int; optional, default is None</span></dt><dd><p>Number of components. If None then reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float; optional, default is 1.0</span></dt><dd><p>Adversary strength.</p>
+</dd>
+<dt><strong>inference</strong><span class="classifier">str; optional, default is ‘encoded’</span></dt><dd><p>Model inference strategy.</p>
+</dd>
+<dt><strong>decomp</strong><span class="classifier">str; optional, default is ‘approx’</span></dt><dd><p>Decomposition approach.</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Number of power iterations to perform in randomized AugmentedPCA approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Oversampling parameter for randomized AugmentedPCA approximations.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float; optional, default is 1e-8</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int</span></dt><dd><p>Number of components. If None then reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float</span></dt><dd><p>Adversary strength.</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int</span></dt><dd><p>Number of power iterations to perform in randomized approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int</span></dt><dd><p>Oversampling parameter for randomized approximation.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+<dt><strong>mean_X_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Y_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (q,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Z_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p + q,) mean array of combined primary and concomitant data matrices.</p>
+</dd>
+<dt><strong>B_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional decomposition matrix.</p>
+</dd>
+<dt><strong>W_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional primary data loadings matrix.</p>
+</dd>
+<dt><strong>D_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional concomitant data loadings matrix.</p>
+</dd>
+<dt><strong>A_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional encoding matrix. None if <cite>inference</cite> is set to ‘local’.</p>
+</dd>
+<dt><strong>eigvals_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+</dd>
+<dt><strong>is_fitted_</strong><span class="classifier">bool</span></dt><dd><p>Indicates whether model has been fitted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>fit(X, Y)</strong></p></td>
+<td><p>Fits AugmentedPCA model to data.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>transform(X, Y)</strong></p></td>
+<td><p>Transforms data into scores using AugmentedPCA model formulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>fit_transform(X, Y)</strong></p></td>
+<td><p>Fits AugumentedPCA model to data and transforms data into scores.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>reconstruct(X, Y)</strong></p></td>
+<td><p>Reconstructs primary and concomitant data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_components()</strong></p></td>
+<td><p>Returns primary data loadings / components. Alias for get_W().</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_W()</strong></p></td>
+<td><p>Returns primary data loadings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_D()</strong></p></td>
+<td><p>Returns concomitant data loadings.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_A()</strong></p></td>
+<td><p>Returns encoding matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_eigvals()</strong></p></td>
+<td><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.AAPCA.fit" title="Link to this definition"></a></dt>
+<dd><p>Fits AugmentedPCA model to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fits AugumentedPCA model to data and transforms data into scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.get_A">
+<span class="sig-name descname"><span class="pre">get_A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.get_A" title="Link to this definition"></a></dt>
+<dd><p>Returns encoding matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.A_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (d x p) encoding matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.get_D">
+<span class="sig-name descname"><span class="pre">get_D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.get_D" title="Link to this definition"></a></dt>
+<dd><p>Returns concomitant data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.D_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (q x k) concomitant data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.get_W">
+<span class="sig-name descname"><span class="pre">get_W</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.get_W" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.get_components">
+<span class="sig-name descname"><span class="pre">get_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.get_components" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings / components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.get_eigvals">
+<span class="sig-name descname"><span class="pre">get_eigvals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.get_eigvals" title="Link to this definition"></a></dt>
+<dd><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.eigvals_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted eigenvalues.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.reconstruct" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct primary and augmenting data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>X_recon</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) reconstruction of primary data.</p>
+</dd>
+<dt><strong>Y_recon</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) reconstruction of augmenting data or tuple of 2-dimensional (n x qs), (n x qa)
+augmenting data reconstructions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.AAPCA.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.AAPCA.transform" title="Link to this definition"></a></dt>
+<dd><p>Transforms data into scores using AugmentedPCA model formulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="combined-augmentedpca">
+<h2>Combined AugmentedPCA<a class="headerlink" href="#combined-augmentedpca" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="apca.models.CAPCA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apca.models.</span></span><span class="sig-name descname"><span class="pre">CAPCA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'encoded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'approx'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pow_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_oversamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diag_const</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.CAPCA" title="Link to this definition"></a></dt>
+<dd><p>Combined AugmentedPCA (cAPCA) model class. The objective of the cAPCA model is to find components that 1)
+represent the maximum variance expressed in the primary data (primary objective) and 2) represent the variance
+expressed in the data labels or outcome data and maintain a degree of invariance to a set of concomitant data
+(augmenting objectives).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int; optional, default is None</span></dt><dd><p>Number of components. If None reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float or tuple or list; optional, default is 1.0</span></dt><dd><p>Augmenting objective strength(s).</p>
+</dd>
+<dt><strong>inference</strong><span class="classifier">str; optional, default is ‘encoded’</span></dt><dd><p>Model inference strategy.</p>
+</dd>
+<dt><strong>decomp</strong><span class="classifier">str; optional, default is ‘approx’</span></dt><dd><p>Decomposition approach.</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Number of power iterations to perform in randomized approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int; optional, default is 5</span></dt><dd><p>Oversampling parameter for randomized approximation.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float; optional, default is 1e-8</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Attributes<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>n_components</strong><span class="classifier">int</span></dt><dd><p>Number of components. If None then reduce to minimum dimension of primary data.</p>
+</dd>
+<dt><strong>mu</strong><span class="classifier">float or tuple or list</span></dt><dd><p>Augmenting objective strength(s).</p>
+</dd>
+<dt><strong>pow_iter</strong><span class="classifier">int</span></dt><dd><p>Number of power iterations to perform in randomized approximation.</p>
+</dd>
+<dt><strong>n_oversamp</strong><span class="classifier">int</span></dt><dd><p>Oversampling parameter for randomized approximation.</p>
+</dd>
+<dt><strong>diag_const</strong><span class="classifier">float</span></dt><dd><p>Constant added to diagonals of matrix prior to inversion.</p>
+</dd>
+<dt><strong>random_state</strong><span class="classifier">int</span></dt><dd><p>Model random state. Ignored if exact eigenvalue decomposition approach used.</p>
+</dd>
+<dt><strong>mean_X_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Y_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (q,) mean array of primary data matrix.</p>
+</dd>
+<dt><strong>mean_Z_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional (p + q,) mean array of combined primary and supervised data matrices.</p>
+</dd>
+<dt><strong>B_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional decomposition matrix.</p>
+</dd>
+<dt><strong>W_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional primary data loadings matrix.</p>
+</dd>
+<dt><strong>D_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional supervised data loadings matrix.</p>
+</dd>
+<dt><strong>A_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional encoding matrix. None if <cite>inference</cite> is set to ‘local’.</p>
+</dd>
+<dt><strong>eigvals_</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+</dd>
+<dt><strong>is_fitted_</strong><span class="classifier">bool</span></dt><dd><p>Indicates whether model has been fitted.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>fit(X, Y)</strong></p></td>
+<td><p>Fits AugmentedPCA model to data.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>transform(X, Y)</strong></p></td>
+<td><p>Transforms data into scores using AugmentedPCA model formulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>fit_transform(X, Y)</strong></p></td>
+<td><p>Fits AugumentedPCA model to data and transforms data into scores.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>reconstruct(X, Y)</strong></p></td>
+<td><p>Reconstructs primary and supervised data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_components()</strong></p></td>
+<td><p>Returns primary data loadings / components. Alias for get_W().</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_W()</strong></p></td>
+<td><p>Returns primary data loadings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_D()</strong></p></td>
+<td><p>Returns supervised data loadings.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_A()</strong></p></td>
+<td><p>Returns encoding matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>get_eigvals()</strong></p></td>
+<td><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apca.models.CAPCA.fit" title="Link to this definition"></a></dt>
+<dd><p>Fits AugmentedPCA model to data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.fit_transform">
+<span class="sig-name descname"><span class="pre">fit_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.fit_transform" title="Link to this definition"></a></dt>
+<dd><p>Fits AugumentedPCA model to data and transforms data into scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.get_A">
+<span class="sig-name descname"><span class="pre">get_A</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.get_A" title="Link to this definition"></a></dt>
+<dd><p>Returns encoding matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.A_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (d x p) encoding matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.get_D">
+<span class="sig-name descname"><span class="pre">get_D</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.get_D" title="Link to this definition"></a></dt>
+<dd><p>Returns supervised data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.D_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>Tuple of two 2-dimensional (qs x k), (qa x k) augmenting data loadings matrices.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.get_W">
+<span class="sig-name descname"><span class="pre">get_W</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.get_W" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.get_components">
+<span class="sig-name descname"><span class="pre">get_components</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.get_components" title="Link to this definition"></a></dt>
+<dd><p>Returns primary data loadings / components.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.W_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (p x k) primary data loadings matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.get_eigvals">
+<span class="sig-name descname"><span class="pre">get_eigvals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.get_eigvals" title="Link to this definition"></a></dt>
+<dd><p>Returns 1-dimensional array of sorted decomposition matrix eigenvalues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>none</strong></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>self.eigvals_.copy()</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>1-dimensional array of sorted eigenvalues.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.reconstruct" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct primary and augmenting data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>X_recon</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) reconstruction of primary data.</p>
+</dd>
+<dt><strong>Y_recon</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) reconstruction of augmenting data or tuple of 2-dimensional (n x qs), (n x qa)
+augmenting data reconstructions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apca.models.CAPCA.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#apca.models.CAPCA.transform" title="Link to this definition"></a></dt>
+<dd><p>Transforms data into scores using AugmentedPCA model formulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x p) primary data matrix.</p>
+</dd>
+<dt><strong>Y</strong><span class="classifier">numpy.ndarray or tuple / list of numpy.ndarrays</span></dt><dd><p>2-dimensional (n x q) augmenting data matrix or tuple of two 2-dimensional (n x qs), (n x qa) augmenting
+data matrices. Ignored if <cite>inference</cite> is set to ‘encoded’.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>S</strong><span class="classifier">numpy.ndarray</span></dt><dd><p>2-dimensional (n x k) scores matrix.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../contents/citation.html" class="btn btn-neutral float-left" title="Citation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Billy Carson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+    <link rel="stylesheet" type="text/css" href="_static/custom.css">
+
+
+</body>
+</html>

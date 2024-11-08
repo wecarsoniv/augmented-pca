@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Models &mdash; AugmentedPCA 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=88289265" />
+
+  
+    <link rel="shortcut icon" href="../_static/apca_logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/apca_logo_full.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#supervised-augmentedpca">Supervised AugmentedPCA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adversarial-augmentedpca">Adversarial AugmentedPCA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#approximate-inference-strategies">Approximate Inference Strategies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#local">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#encoded">Encoded</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jointly-encoded">Jointly-Encoded</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../package_ref/models.html">apca.models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AugmentedPCA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Models</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/wecarsoniv/augmented-pca" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="models">
+<h1>Models<a class="headerlink" href="#models" title="Link to this heading"></a></h1>
+<p>In this section, a more detailed description of the offered AugmentedPCA models and inference strategies is provided.</p>
+<section id="supervised-augmentedpca">
+<h2>Supervised AugmentedPCA<a class="headerlink" href="#supervised-augmentedpca" title="Link to this heading"></a></h2>
+<p>In supervised AugmentedPCA (SAPCA), the augmenting objective is to make the factors <em>aligned</em> with the data labels, or
+some outcome, in addition to having the factors explain the variance of the original observed or primary data. SAPCA is
+useful when <em>predictivity</em> of latent components with respects to a set of data labels or outcomes is desired. SAPCA is
+equivalent to a supervised autoencoder (SAE) with a single hidden layer. Therefore, SAPCA can be applied to situations
+where the properties of latent representations enforced via deep SAEs are desired, yet where limited data or training
+inconsistencies are a concern.  Below is a diagram depicting the relationship between primary data, supervision data,
+and the resulting SAPCA factors.</p>
+<img alt="SAPCA diagram" src="../_images/sapca_diagram.png" />
+</section>
+<section id="adversarial-augmentedpca">
+<h2>Adversarial AugmentedPCA<a class="headerlink" href="#adversarial-augmentedpca" title="Link to this heading"></a></h2>
+<p>In adversarial AugmentedPCA (AAPCA), the augmenting objective is to make the factors <em>orthogonal</em> to a set of
+concomitant data, in addition to having the factors explain the variance of the original observed or primary data.
+AAPCA can be used in situations where one wishes to enforce <em>invariance</em> of latent components to a set of concomitant
+data, and is equivalent to an adversarial autoencoder with a single hidden layer. Below is a diagram depicting the
+relationship between primary data, concomitant data, and the resulting AAPCA factors.</p>
+<img alt="AAPCA diagram" src="../_images/aapca_diagram.png" />
+</section>
+<section id="approximate-inference-strategies">
+<h2>Approximate Inference Strategies<a class="headerlink" href="#approximate-inference-strategies" title="Link to this heading"></a></h2>
+<p>In this section, we give a brief overview of the different approximate inference strategies offered for AugmentedPCA
+models. Inference strategy should be chosen based on the data on which the AugmentedPCA model will be used as well as
+the specific use case. Both SAPCA and AAPCA models use the jointly-encoded approximate inference strategy by default.</p>
+<section id="local">
+<h3>Local<a class="headerlink" href="#local" title="Link to this heading"></a></h3>
+<p>In the local approximate inference strategy, the factors (local variables associated with each observation) are
+included in both the likelihood relating and the augmenting objective. Below is a diagram from our paper depicting the
+local inference strategy.</p>
+<img alt="local inference diagram" src="../_images/local_inference_diagram.png" />
+<p>Because the local variables are included in the augmenting objective, given new data we must have both primary <em>and</em>
+augmenting data to obtain factors. Thus, the local inference strategy should only be used for inference on new data
+when both primary and augmenting data are available. Below we show an example of how to fit a SAPCA model with local
+approximate inference strategy to training data and obtain factors for test data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import numpy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># Import supervised AugmentedPCA</span>
+<span class="kn">from</span> <span class="nn">apca.models</span> <span class="kn">import</span> <span class="n">SAPCA</span>
+
+<span class="c1"># Generate synthetic data and labels</span>
+<span class="n">n_samp</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_samp</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_samp</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Generate test/train splits</span>
+<span class="n">train_pct</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="n">n_train</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">train_pct</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+<span class="n">train_idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:</span><span class="n">n_train</span><span class="p">]</span>
+<span class="n">test_idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="n">n_train</span><span class="p">:]</span>
+
+<span class="c1"># Split data into test/train sets</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_idx</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">test_idx</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">Y_train</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">train_idx</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">Y_test</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">test_idx</span><span class="p">,</span> <span class="p">:]</span>
+
+<span class="c1"># Instantiate supervised AugmentedPCA model with local approximate inference strategy</span>
+<span class="n">sapca</span> <span class="o">=</span> <span class="n">SAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fit supervised AugmentedPCA model</span>
+<span class="n">sapca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+<span class="c1"># Generate components for test set</span>
+<span class="c1"># Note: both primary and augmenting data are needed to obtain factors</span>
+<span class="n">S_test</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The local approximate inference strategy requires both primary and augmenting data at test time. Therefore, when
+factors are generated for the test set, the <code class="code highlight python docutils literal highlight-python"><span class="n">transform</span><span class="p">()</span></code> method requires both the primary data
+<code class="code highlight python docutils literal highlight-python"><span class="n">X_test</span></code> and augmenting data <code class="code highlight python docutils literal highlight-python"><span class="n">Y_test</span></code> be passed as parameters. For a more in-depth description of
+the local approximate inference strategy, see the paper introducing the AugmentedPCA package.</p>
+</div>
+</section>
+<section id="encoded">
+<h3>Encoded<a class="headerlink" href="#encoded" title="Link to this heading"></a></h3>
+<p>In the encoded approximate inference strategy, a linear encoder is used to transform the data into factors or
+components. This inference strategy is termed “encoded” because the augmenting objective is enforced via an encoding
+function. Below is a diagram depicting the encoded inference strategy.</p>
+<img alt="encoded inference diagram" src="../_images/encoded_inference_diagram.png" />
+<p>In contrast to the local inference strategy, when factors are generated for the test set under the encoded inference
+strategy the <code class="code highlight python docutils literal highlight-python"><span class="n">transform</span><span class="p">()</span></code> method only requires the primary data <code class="code highlight python docutils literal highlight-python"><span class="n">X_test</span></code>. Below we show an example of
+how to fit a SAPCA model with encoded approximate inference strategy to training data and obtain factors for test data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy</span>
+<span class="n">sapca</span> <span class="o">=</span> <span class="n">SAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;encoded&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fit supervised AugmentedPCA model</span>
+<span class="c1"># Note: both primary and augmenting data are required to fit the model</span>
+<span class="n">sapca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+<span class="c1"># Generate components for test set</span>
+<span class="c1"># Note: only primary data are needed to obtain factors</span>
+<span class="n">S_test</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For a more in-depth description of the encoded approximate inference strategy, see the paper introducing the
+AugmentedPCA package.</p>
+</section>
+<section id="jointly-encoded">
+<h3>Jointly-Encoded<a class="headerlink" href="#jointly-encoded" title="Link to this heading"></a></h3>
+<p>The jointly-encoded approximate inference strategy is similar to the encoded in that the augmenting objective is
+enforced through a linear encoding matrix. However, in the jointly-encoded inference strategy both the primary and
+augmenting data are required for computing factors, similar to the local inference strategy. Below is a diagram
+depicting the jointly-encoded inference strategy.</p>
+<img alt="jointly-encoded inference diagram" src="../_images/joint_inference_diagram.png" />
+<p>Similar to the local inference strategy, when factors are generated for the test set under the jointly-encoded
+inference strategy the <code class="code highlight python docutils literal highlight-python"><span class="n">transform</span><span class="p">()</span></code> method requires both the primary data <code class="code highlight python docutils literal highlight-python"><span class="n">X_test</span></code> and augmenting data
+<code class="code highlight python docutils literal highlight-python"><span class="n">Y_test</span></code>. Below we show an example of how to fit a SAPCA model with jointly-encoded approximate inference
+strategy to training data and obtain factors for test data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate supervised AugmentedPCA model model with encoded approximate inference strategy</span>
+<span class="n">sapca</span> <span class="o">=</span> <span class="n">SAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;joint&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fit supervised AugmentedPCA model</span>
+<span class="c1"># Note: both primary and augmenting data are required to fit the model</span>
+<span class="n">sapca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">)</span>
+
+<span class="c1"># Generate components for test set</span>
+<span class="c1"># Note: both primary and augmenting data are needed to obtain factors</span>
+<span class="n">S_test</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The jointly-encoded approximate inference strategy requires both primary and augmenting data at test time.
+Therefore, when  factors are generated for the test set, the <code class="code highlight python docutils literal highlight-python"><span class="n">transform</span><span class="p">()</span></code> method requires both the
+primary data <code class="code highlight python docutils literal highlight-python"><span class="n">X_test</span></code> and augmenting data <code class="code highlight python docutils literal highlight-python"><span class="n">Y_test</span></code> be passed as parameters.</p>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Billy Carson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+    <link rel="stylesheet" type="text/css" href="_static/custom.css">
+
+
+</body>
+</html>

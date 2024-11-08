@@ -1,0 +1,634 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; AugmentedPCA 0.3.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=88289265" />
+
+  
+    <link rel="shortcut icon" href="../_static/apca_logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=e259d695"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Citation" href="citation.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/apca_logo_full.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sapca-example-gene-expression-clustering">SAPCA Example - Gene Expression Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#aapca-example-removal-of-image-nuisance">AAPCA Example - Removal of Image Nuisance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="citation.html">Citation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Package Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../package_ref/models.html">apca.models</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">AugmentedPCA</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/wecarsoniv/augmented-pca" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<p>Here, usage and efficacy of AugmentedPCA models is demonstrated on real world, open-source datasets.</p>
+<section id="sapca-example-gene-expression-clustering">
+<h2>SAPCA Example - Gene Expression Clustering<a class="headerlink" href="#sapca-example-gene-expression-clustering" title="Link to this heading"></a></h2>
+<p>The ability of SAPCA to create representations with greater class fidelity is demonstrated using a
+<a class="reference external" href="https://archive.ics.uci.edu/ml/datasets/gene+expression+cancer+RNA-Seq">gene expression dataset from the UCI machine learning repository</a>. This dataset contains RNA-Seq gene
+expression samples from patients with five different typesof tumors. Dimensionality reduction techniques, such as PCA,
+are often used in gene expression analysis to visualize clustering of samples in 2-dimensional(2D) space or as a
+preprocessing step for downstream classification. However, sometimes principal axes of variance may represent
+patient-specific gene expression variance rather than variance specific to condition or disease. Here, SAPCA is used to
+create representations that, in addition to representing the variance in the gene expression data, are aligned with the
+data labels.</p>
+<p>First, Python functions, modules, and libraries used in this example are imported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import functions, modules, and libraries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span><span class="p">,</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">TSNE</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<p>Next, AugmentedPCA factor models are imported from the <code class="code highlight python docutils literal highlight-python"><span class="n">apca</span><span class="o">.</span><span class="n">models</span></code> module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import AugmentedPCA models</span>
+<span class="kn">from</span> <span class="nn">apca.models</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Gene expression data is loaded and formatted into a matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code>, where each row represents a different tumor
+gene expression sample and each column represents a different gene. Labels are store in an array and tumor samples are
+assigned an integer label of either 0, 1, 2, 3, or 4. Labels are then one-hot encoded to create a matrix <code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code>
+of augmenting supervision data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display data dimensionality</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cancer gene expression dataset dimensions:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Gene expression data:  (</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Supervision data:  (</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Labels:  (</span><span class="si">%d</span><span class="s1">,)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Cancer</span> <span class="n">gene</span> <span class="n">expression</span> <span class="n">dataset</span> <span class="n">dimensions</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Gene</span> <span class="n">expression</span> <span class="n">data</span><span class="p">:</span>  <span class="p">(</span><span class="mi">801</span><span class="p">,</span> <span class="mi">20531</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Supervision</span> <span class="n">data</span><span class="p">:</span>  <span class="p">(</span><span class="mi">801</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Labels</span><span class="p">:</span>  <span class="p">(</span><span class="mi">801</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>Instead of using all gene expression data, only a subset of the gene expression data will be used. This is because the
+process of fitting AugmentedPCA models require matrix inversions as well as eigendecompositions. This process gets
+prohibitively expensive for larger feature dimensions. Thus, it is recommended to keep the feature dimensions to around
+~1,000 features, give or take.</p>
+<p>Next, scikit-learn’s <code class="code highlight python docutils literal highlight-python"><span class="n">train_test_split</span><span class="p">()</span></code> function is used to split the data into train and test splits
+(roughly 50% and 50% of the data, respectively).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Subset of original data</span>
+<span class="n">X_subset</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2000</span><span class="p">]</span>
+
+<span class="c1"># Split data</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_subset</span><span class="p">,</span>
+                                                                     <span class="n">Y</span><span class="p">,</span>
+                                                                     <span class="n">y</span><span class="p">,</span>
+                                                                     <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                                                     <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Gene expression training features are scaled such that each feature has mean zero and unit variance. Then, test data is
+scaled according to the population statistics of the training features. Supervision data isn’t scaled since the data is
+one-hot encodings.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate standard scaler</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+
+<span class="c1"># Scale gene expression data</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For evaluating the classification performance achieved using AugmentedPCA components, a simple logistic regression
+classifier with no penalty is used, since only two components will be used for prediction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate logistic regression model</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                           <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;lbfgs&#39;</span>
+                           <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+                           <span class="n">multi_class</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, two PCA components of the decomposed gene expression data is used to predict tumor type. Logistic regression only
+achieves 71% accuracy on the test set. This is because PCA finds independent sets  of features (orthogonal components)
+that maximize the explained variance of the data. If the majority of the variance of the gene expression data is not
+aligned with class labels then class separation will not be achieved from the first few principle components. This is
+reflected in the visualization of the 2-dimensional (2D) clustering. There is clear separation of KIRC from the other
+cancers, but the other cancers still have significant overlap.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># PCA decomposition</span>
+<span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">)</span>
+<span class="n">S_train</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">S_test</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Fit model to training data</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">S_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+<span class="c1"># Get model predictions</span>
+<span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_train</span><span class="p">)</span>
+<span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_test</span><span class="p">)</span>
+<span class="n">train_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_pred_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">test_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_pred_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+
+<span class="c1"># Model prediction accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Model performance using PCA components (# components = </span><span class="si">%d</span><span class="s1">):&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n_components</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Train set:  </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">train_acc</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Test set:  </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_acc</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Model</span> <span class="n">performance</span> <span class="n">using</span> <span class="n">PCA</span> <span class="n">components</span> <span class="p">(</span><span class="c1"># components = 2):</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Train</span> <span class="nb">set</span><span class="p">:</span>  <span class="mf">0.7300</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Test</span> <span class="nb">set</span><span class="p">:</span>  <span class="mf">0.7132</span>
+
+<span class="c1"># Plot PCA components of samples in 2D space</span>
+<span class="n">color_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deeppink&#39;</span><span class="p">,</span> <span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;lightseagreen&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumorchid&#39;</span><span class="p">]</span>
+<span class="n">marker_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">]</span>
+<span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_test</span><span class="p">))):</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">S_test</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span><span class="o">==</span><span class="n">label</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span> <span class="n">S_test</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span><span class="o">==</span><span class="n">label</span><span class="p">),</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">c</span><span class="o">=</span><span class="n">color_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">class_dict</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;PCA Component 1&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PCA Component 2&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/gene_express_pca_cluster_docs.svg"><img alt="gene expression PCA clustering" src="../_images/gene_express_pca_cluster_docs.svg" width="400" /></a>
+<p>Now, instead of PCA, SAPCA is used to find components that, in addition to maximizing the explained variance of the
+data, find components that have greater fidelity to class labels. Ideally, this will help separate the different
+clusters of the gene expression data.</p>
+<p>Like scikit-learn’s PCA implementation, SAPCA models are fit using the <code class="code highlight python docutils literal highlight-python"><span class="n">fit</span><span class="p">()</span></code> and <code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code>
+methods, with <code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code> returning a matrix of components or factors. The <code class="code highlight python docutils literal highlight-python"><span class="n">fit</span><span class="p">()</span></code> and
+<code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code> methods of AugmentedPCA models require both a primary data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code> and an
+augmenting data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code> as parameters. For SAPCA models, the augmenting data is the supervision data matrix
+<code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code>. In this case, this matrix corresponds to the matrix of one-hot encoded class labels.</p>
+<p>AugmentedPCA models have a tuning parameter <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, which represents the relative strength of the augmenting
+objective. At lower values of <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, AugmentedPCA models will prioritize maximizing explained variance in
+learned components, and this will produce components similar to that produced by regular PCA. At higher values of
+<code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, the augmenting objective is prioritized. Here, since SAPCA is being used, at higher <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code> values
+the components will have greater clustering according to class.</p>
+<p>Since SAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this
+value will depend on the dataset, the scale of the features, and the dimensionality of the features. Here, a
+supervision strength in the thousands is reasonable. For a smaller number of features, these values may be much too
+large.</p>
+<p>AugmentedPCA models offer multiple “approximate inference strategies.” For supervised applications of AugmentedPCA,
+it’s recommended one often chooses the <code class="code highlight python docutils literal highlight-python"><span class="s1">&#39;encoded&#39;</span></code> option, as done below. Essentially, this ensures that the
+model doesn’t need to use the supervision data at test time to create components and instead only relies upon the
+variance explained in the features or primary data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Number of SAPCA components</span>
+<span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># List of supervision strength values</span>
+<span class="n">mu_lo</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">mu_hi</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">mu_step</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="n">mu_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mu_lo</span><span class="p">,</span> <span class="n">mu_hi</span> <span class="o">+</span> <span class="n">mu_step</span><span class="p">,</span> <span class="n">mu_step</span><span class="p">))</span>
+
+<span class="c1"># Initialize test accuracy list</span>
+<span class="n">train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">test_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Iterate over supervision strengths</span>
+<span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">mu_list</span><span class="p">:</span>
+    <span class="c1"># PCA decomposition</span>
+    <span class="n">sapca</span> <span class="o">=</span> <span class="n">SAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;encoded&#39;</span><span class="p">)</span>
+    <span class="n">S_train</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_train</span><span class="p">)</span>
+    <span class="n">S_test</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Fit model to training data</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">S_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+
+    <span class="c1"># Predict on training data</span>
+    <span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_train</span><span class="p">)</span>
+    <span class="n">train_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_pred_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="n">train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span>
+
+    <span class="c1"># Predict on test data</span>
+    <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_test</span><span class="p">)</span>
+    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_pred_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span>
+    <span class="n">test_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_acc</span><span class="p">)</span>
+
+<span class="c1"># Model prediction accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Max model performance using SAPCA components (# components = </span><span class="si">%d</span><span class="s1">):&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n_components</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Train set:  </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">train_acc_list</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Test set:  </span><span class="si">%.4f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">test_acc_list</span><span class="p">)))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Max</span> <span class="n">model</span> <span class="n">performance</span> <span class="n">using</span> <span class="n">SAPCA</span> <span class="n">components</span> <span class="p">(</span><span class="c1"># components = 2):</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Train</span> <span class="nb">set</span><span class="p">:</span>  <span class="mf">1.0000</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Test</span> <span class="nb">set</span><span class="p">:</span>  <span class="mf">0.9027</span>
+
+<span class="c1"># Plot model performance as a function of adversary strength</span>
+<span class="n">fig2</span><span class="p">,</span> <span class="n">ax2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">3.8</span><span class="p">))</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">train_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;train acc.&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">train_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;orangered&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">test_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;test acc.&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">test_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Supervision Strength $\mu$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Classification Accuracy&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/gene_express_class_pred_docs.svg"><img alt="gene expression classification" src="../_images/gene_express_class_pred_docs.svg" width="520" /></a>
+<p>Finally, SAPCA components are visualized in 2D space. There is much greater separation/clustering according to class,
+which demonstrates that SAPCA successfully learned components that both a) maximized explain variance of the original
+gene expression data in learned components and b) made sure these components also had greater fidelity with respects to
+class labels, thus ensuring cleaner clustering according to tumor type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># SAPCA decomposition</span>
+<span class="n">sapca</span> <span class="o">=</span> <span class="n">SAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">2500</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;encoded&#39;</span><span class="p">)</span>
+<span class="n">S_train</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_train</span><span class="p">)</span>
+<span class="n">S_test</span> <span class="o">=</span> <span class="n">sapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># Plot PCA components of samples in 2D space</span>
+<span class="n">color_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deeppink&#39;</span><span class="p">,</span> <span class="s1">&#39;dodgerblue&#39;</span><span class="p">,</span> <span class="s1">&#39;lightseagreen&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="s1">&#39;mediumorchid&#39;</span><span class="p">]</span>
+<span class="n">marker_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">]</span>
+<span class="n">fig3</span><span class="p">,</span> <span class="n">ax3</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">y_test</span><span class="p">))):</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">S_test</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span><span class="o">==</span><span class="n">label</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span> <span class="n">S_test</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_test</span><span class="o">==</span><span class="n">label</span><span class="p">),</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">c</span><span class="o">=</span><span class="n">color_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">class_dict</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SAPCA Component 1&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;SAPCA Component 2&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/gene_express_sapca_cluster_docs.svg"><img alt="gene expression SAPCA clustering" src="../_images/gene_express_sapca_cluster_docs.svg" width="400" /></a>
+</section>
+<section id="aapca-example-removal-of-image-nuisance">
+<h2>AAPCA Example - Removal of Image Nuisance<a class="headerlink" href="#aapca-example-removal-of-image-nuisance" title="Link to this heading"></a></h2>
+<p>The ability of AAPCA to create representations invariant to concomitant data or nuisance variables is demonstrated
+using images from the <a class="reference external" href="http://vision.ucsd.edu/~leekc/ExtYaleDatabase/ExtYaleB.html">Extended Yale Face Database B</a>.
+This dataset contains facial images of 38 human subjects taken with the light source at varying angles of azimuth and
+elevation, resulting in shadows cast across subject faces. Here, the nuisance variable is the variable lighting angles
+resulting in shadows that obscure parts of the image, and by extension features of subject identity. Here, AAPCA is
+used to create representations that, in addition to representing the variance in the image data, are invariant to this
+shadow nuisance variable.</p>
+<p>First, Python functions, modules, and libraries used in this example are imported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import functions, modules, and libraries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.gridspec</span> <span class="k">as</span> <span class="nn">gridspec</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+</pre></div>
+</div>
+<p>Next, AugmentedPCA factor models are imported from the <code class="code highlight python docutils literal highlight-python"><span class="n">apca</span><span class="o">.</span><span class="n">models</span></code> module.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import all AugmentedPCA models</span>
+<span class="kn">from</span> <span class="nn">apca.models</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>For this example, a subset of 411 images is selected in which only azimuth of the light source is varied (elevation
+remains at a neutral 0 degrees above horizontal) and azimuth angle is not greater than 95 degrees in either direction
+(this avoids angles that result in shadows that completely obscure features of a subject’s identity). Images are
+downsampled to 0.25 their original resolution, resulting in images of size 42x48.</p>
+<p>Facial images are loaded and formatted into a matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code>, where each row represents a flattened image vector,
+each column represents a pixel in the image, and an entry in <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code> is a pixel intensity for a given image. This
+results in a primary data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code> of size 411x2016. Concomitant data is the azimuth angle of the light
+source, resulting in a concomitant data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code> of size 411x1. Labels are stored in an array and images are
+assigned an integer label 0, 1, …, 37.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Display dataset dimensions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Yale face dataset dimensions:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  X shape:  (</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Y shape:  (</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  labels shape:  (</span><span class="si">%d</span><span class="s1">,)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">labels_id</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Yale</span> <span class="n">face</span> <span class="n">dataset</span> <span class="n">dimensions</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">X</span> <span class="n">shape</span><span class="p">:</span>  <span class="p">(</span><span class="mi">411</span><span class="p">,</span> <span class="mi">2016</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Y</span> <span class="n">shape</span><span class="p">:</span>  <span class="p">(</span><span class="mi">411</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">labels</span> <span class="n">shape</span><span class="p">:</span>  <span class="p">(</span><span class="mi">411</span><span class="p">,)</span>
+</pre></div>
+</div>
+<p>Next, scikit-learn’s <code class="code highlight python docutils literal highlight-python"><span class="n">train_test_split</span><span class="p">()</span></code> function is used to split the data into train and test splits
+(roughly 50% and 50% of the data, respectively). Training image data is scaled to be between 0 and 1 instead of 0 and
+255. Then, test image data is scaled according to the population statistics of the training data. Concomitant data is
+scaled similarly, such that the training concomitant data is scaled to be between and then test concomitant data is
+scaled according to the population statistics of the training concomitant data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Range scaler object</span>
+<span class="k">class</span> <span class="nc">RangeScaler</span><span class="p">():</span>
+    <span class="c1"># Instantiation method</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="c1"># Assign attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span> <span class="o">=</span> <span class="n">feature_range</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_max_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_mean_</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_scaled_mean_</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Fit method</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Extract data min, max, and mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_max_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_mean_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+    <span class="c1"># Transform method</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># Deep copy of data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Scale data to be between 0 and 1</span>
+        <span class="n">X_scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_max_</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span><span class="p">)</span>
+        <span class="n">X_scaled</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_scaled</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_scaled_mean_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">X_scaled</span><span class="p">)</span>
+
+        <span class="c1"># Return scaled data</span>
+        <span class="k">return</span> <span class="n">X_scaled</span>
+
+    <span class="c1"># Fit-transform method</span>
+    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">X_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">X_scaled</span>
+
+    <span class="c1"># Inverse transform method</span>
+    <span class="k">def</span> <span class="nf">inverse_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># Deep copy of data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Scale data back to original feature range</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_max_</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_min_</span>
+
+        <span class="c1"># Return inverse-transformed data</span>
+        <span class="k">return</span> <span class="n">X</span>
+
+<span class="c1"># Split data</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">Y_train</span><span class="p">,</span> <span class="n">Y_test</span><span class="p">,</span> <span class="n">labels_id_train</span><span class="p">,</span> <span class="n">labels_id_test</span><span class="p">,</span> \
+<span class="n">labels_shadow_train</span><span class="p">,</span> <span class="n">labels_shadow_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span>
+                                                           <span class="n">Y</span><span class="p">,</span>
+                                                           <span class="n">labels_id</span><span class="p">,</span>
+                                                           <span class="n">labels_shadow</span><span class="p">,</span>
+                                                           <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                                                           <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Display split details</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test/train split details:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Training samples:  </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Test samples:  </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Test</span><span class="o">/</span><span class="n">train</span> <span class="n">split</span> <span class="n">details</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Training</span> <span class="n">samples</span><span class="p">:</span>  <span class="mi">206</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Test</span> <span class="n">samples</span><span class="p">:</span>  <span class="mi">206</span>
+
+<span class="c1"># Instantiate scaler objects</span>
+<span class="n">feature_range</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">scaler_X</span> <span class="o">=</span> <span class="n">RangeScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="n">feature_range</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">scaler_Y</span> <span class="o">=</span> <span class="n">RangeScaler</span><span class="p">(</span><span class="n">feature_range</span><span class="o">=</span><span class="n">feature_range</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Scale primary data to between 0 and 1</span>
+<span class="n">X_train_scaled</span> <span class="o">=</span> <span class="n">scaler_X</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">X_test_scaled</span> <span class="o">=</span> <span class="n">scaler_X</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1"># Scale concomitant data to between 0 and 1</span>
+<span class="n">Y_train_scaled</span> <span class="o">=</span> <span class="n">scaler_Y</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">Y_train</span><span class="p">)</span>
+<span class="n">Y_test_scaled</span> <span class="o">=</span> <span class="n">scaler_Y</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">Y_test</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, AAPCA is used to find components that, in addition to maximizing the explained variance of the image data, find
+components that are invariant to shadow/variable lighting condition. Ideally, this will help remove this confound and
+ultimately improve classification performance with respects to classifying identity.</p>
+<p>Like scikit-learn’s PCA implementation, AAPCA models are fit using the <code class="code highlight python docutils literal highlight-python"><span class="n">fit</span><span class="p">()</span></code> and <code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code>
+methods, with <code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code> returning a matrix of components or factors. The <code class="code highlight python docutils literal highlight-python"><span class="n">fit</span><span class="p">()</span></code> and
+<code class="code highlight python docutils literal highlight-python"><span class="n">fit_transform</span><span class="p">()</span></code> methods of AugmentedPCA models require both a primary data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">X</span></code> and an
+augmenting data matrix <code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code> as parameters. For AAPCA models, the augmenting data is the concomitant data matrix
+<code class="code highlight python docutils literal highlight-python"><span class="n">Y</span></code>. In this case, this matrix corresponds to the matrix of scaled azimuth lighting angles.</p>
+<p>AugmentedPCA models have a tuning parameter <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, which represents the relative strength of the augmenting
+objective. At lower values of <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, AugmentedPCA models will prioritize maximizing explained variance in
+learned components, and this will produce components similar to that produced by regular PCA. At higher values of
+<code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code>, the augmenting objective is prioritized. Here, since AAPCA is being used, at higher <code class="code highlight python docutils literal highlight-python"><span class="n">mu</span></code> values
+the components will have greater invariance to the shadow confound.</p>
+<p>Since AAPCA has a tuning hyperparameter, we can do a search over the supervision strength space. The magnitude of this
+value will depend on the dataset, the scale of the features, and the dimensionality of the features. Here, a
+supervision strength in the thousands is reasonable. For a smaller number of features, these values may be much too
+large.</p>
+<p>AugmentedPCA models offer multiple “approximate inference strategies.” For adversarial applications of AugmentedPCA,
+the <code class="code highlight python docutils literal highlight-python"><span class="s1">&#39;local&#39;</span></code> option is commonly chosen, as done below. This is because typically one has access to both
+primary data and concomitant data at test time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Number of components</span>
+<span class="n">n_components</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Adversary strength list</span>
+<span class="n">mu_lo</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">mu_hi</span> <span class="o">=</span> <span class="mf">16000.0</span>
+<span class="n">mu_step</span> <span class="o">=</span> <span class="mf">500.0</span>
+<span class="n">mu_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mu_lo</span><span class="p">,</span> <span class="n">mu_hi</span> <span class="o">+</span> <span class="n">mu_step</span><span class="p">,</span> <span class="n">mu_step</span><span class="p">))</span>
+
+<span class="c1"># Initialize and instantiate</span>
+<span class="n">scaler_S</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">penalty</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+                           <span class="n">solver</span><span class="o">=</span><span class="s1">&#39;lbfgs&#39;</span><span class="p">,</span>
+                           <span class="n">max_iter</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="n">id_train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">id_test_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">shadow_train_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">shadow_test_acc_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># Data prediction</span>
+<span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">labels_id_train</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_scaled</span><span class="p">)</span>
+<span class="n">test_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">labels_id_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Logistic regression on orginal image data:  </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">test_acc</span><span class="p">))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Logistic</span> <span class="n">regression</span> <span class="n">classification</span> <span class="n">peformance</span> <span class="n">on</span> <span class="n">orginal</span> <span class="n">image</span> <span class="n">data</span><span class="p">:</span>  <span class="mf">0.636</span>
+
+<span class="c1"># Iterate over increasing adversary strengths</span>
+<span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">mu_list</span><span class="p">):</span>
+    <span class="c1"># Instantiate AugmentedPCA model with new adversary strength value</span>
+    <span class="n">aapca</span> <span class="o">=</span> <span class="n">AAPCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">inference</span><span class="o">=</span><span class="s1">&#39;joint&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Decompose with AugmentedPCA</span>
+    <span class="n">S_train</span> <span class="o">=</span> <span class="n">aapca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_train_scaled</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_train_scaled</span><span class="p">)</span>
+    <span class="n">S_test</span> <span class="o">=</span> <span class="n">aapca</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X_test_scaled</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y_test_scaled</span><span class="p">)</span>
+    <span class="n">S_train_scaled</span> <span class="o">=</span> <span class="n">scaler_S</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">S_train</span><span class="p">)</span>
+    <span class="n">S_test_scaled</span> <span class="o">=</span> <span class="n">scaler_S</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">S_test</span><span class="p">)</span>
+
+    <span class="c1"># Predict ID</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">S_train_scaled</span><span class="p">,</span> <span class="n">labels_id_train</span><span class="p">)</span>
+    <span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_train_scaled</span><span class="p">)</span>
+    <span class="n">train_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">labels_id_train</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred_train</span><span class="p">)</span>
+    <span class="n">id_train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span>
+    <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_test_scaled</span><span class="p">)</span>
+    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">labels_id_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred_test</span><span class="p">)</span>
+    <span class="n">id_test_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_acc</span><span class="p">)</span>
+
+    <span class="c1"># Predict shadow location</span>
+    <span class="n">no_shadow_idx_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels_shadow_train</span><span class="o">!=</span><span class="mf">0.5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">no_shadow_idx_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels_shadow_test</span><span class="o">!=</span><span class="mf">0.5</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">S_train_scaled</span><span class="p">[</span><span class="n">no_shadow_idx_train</span><span class="p">,</span> <span class="p">:],</span>
+              <span class="n">labels_shadow_train</span><span class="p">[</span><span class="n">no_shadow_idx_train</span><span class="p">])</span>
+    <span class="n">y_pred_train</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_train_scaled</span><span class="p">[</span><span class="n">no_shadow_idx_train</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">train_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">labels_shadow_train</span><span class="p">[</span><span class="n">no_shadow_idx_train</span><span class="p">],</span>
+                               <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred_train</span><span class="p">)</span>
+    <span class="n">shadow_train_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">train_acc</span><span class="p">)</span>
+    <span class="n">y_pred_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">S_test_scaled</span><span class="p">[</span><span class="n">no_shadow_idx_test</span><span class="p">,</span> <span class="p">:])</span>
+    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">labels_shadow_test</span><span class="p">[</span><span class="n">no_shadow_idx_test</span><span class="p">],</span>
+                              <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred_test</span><span class="p">)</span>
+    <span class="n">shadow_test_acc_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_acc</span><span class="p">)</span>
+
+<span class="c1"># Display baseline PCA accuracy and max AugmentedPCA accuracy</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Logistic regression classification performance:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  ID classification:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    PCA components:  </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">id_test_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    AAPCA components (max acc.):  </span><span class="si">%.3f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">id_test_acc_list</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  Shadow location (left/right) classification:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    PCA components:  </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">shadow_test_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    AAPCA components (min acc.):  </span><span class="si">%.3f</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">shadow_test_acc_list</span><span class="p">)))</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">Logistic</span> <span class="n">regression</span> <span class="n">classification</span> <span class="n">performance</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">ID</span> <span class="n">classification</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>     <span class="n">PCA</span> <span class="n">components</span><span class="p">:</span>  <span class="mf">0.704</span>
+<span class="o">&gt;&gt;&gt;</span>     <span class="n">AAPCA</span> <span class="n">components</span> <span class="p">(</span><span class="nb">max</span> <span class="n">acc</span><span class="o">.</span><span class="p">):</span>  <span class="mf">0.825</span>
+<span class="o">&gt;&gt;&gt;</span>   <span class="n">Shadow</span> <span class="n">location</span> <span class="p">(</span><span class="n">left</span><span class="o">/</span><span class="n">right</span><span class="p">)</span> <span class="n">classification</span><span class="p">:</span>
+<span class="o">&gt;&gt;&gt;</span>     <span class="n">PCA</span> <span class="n">components</span><span class="p">:</span>  <span class="mf">0.979</span>
+<span class="o">&gt;&gt;&gt;</span>     <span class="n">AAPCA</span> <span class="n">components</span> <span class="p">(</span><span class="nb">min</span> <span class="n">acc</span><span class="o">.</span><span class="p">):</span>  <span class="mf">0.656</span>
+</pre></div>
+</div>
+<p>Model performance when using shadow-invariant AAPCA components to classify identity and shadow location as a function
+of adversary strength is now plotted. As the adversarial strength is increased, both training and test set
+classification accuracy of the nuisance variable (shadow location) decreases. For all adversary strengths, training set
+identity classification is 100%. Initially, training on PCA representations results in a test set identity
+classification accuracy of 70%. As adversary strength is increased, test set identity classification accuracy increases
+to 82%, thus demonstrating the ability of AAPCA to mitigate the effects of domain shift due to concomitant influence.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot accuracy as a function of adversary strength</span>
+<span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">3.8</span><span class="p">))</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">id_train_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;identity train acc.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">id_train_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">id_test_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;identity test acc.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">id_test_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">shadow_train_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;shadow location train acc.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shadow_train_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mu_list</span><span class="p">,</span> <span class="n">shadow_test_acc_list</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;shadow location test acc.&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">mu_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shadow_test_acc_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">8000</span><span class="p">,</span> <span class="mi">12000</span><span class="p">,</span> <span class="mi">16000</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mf">0.60</span><span class="p">,</span> <span class="mf">0.70</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Identity Classification&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Adversary Strength $\mu$&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Test Accuracy&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_axisbelow</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.94</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../_images/yale_face_classification_docs.svg"><img alt="Yale Face dataset identity and shadow location classification" src="../_images/yale_face_classification_docs.svg" width="520" /></a>
+<p>Since AugmentedPCA models are linear factor models similar to PCA, both the primary and concomitant data can be
+reconstructed from the generated components. AugmentedPCA models have a <code class="code highlight python docutils literal highlight-python"><span class="n">reconstruct</span><span class="p">()</span></code> method that
+returns the reconstructed primary and concomitant data. For this example, the shadow-invariant images reconstructed
+from AAPCA components are visualized and compare these images to the original images as well as images recontructed
+from regular PCA components. AAPCA  reconstructions  display  notice-able shadow removal when compared to the original
+images and images reconstructed from PCA components. This demonstrates AAPCA’s ability to produce nuisance-invariant
+representations.</p>
+<a class="reference internal image-reference" href="../_images/yale_face_recon_supp_docs.svg"><img alt="Yale Face dataset image reconstructions" src="../_images/yale_face_recon_supp_docs.svg" width="700" /></a>
+<p>Finally, clustering of AAPCA-reconstructed images is compared to clustering of PCA-reconstructed images. PCA
+reconstructions are grouped almost exclusively according to  shadow  location (left-side or right-side) in 2D space,
+while AAPCA-reconstructed images are grouped in a more shadow-invariant manner.</p>
+<a class="reference internal image-reference" href="../_images/yale_face_tsne_cluster_docs.svg"><img alt="Yale Face dataset image reconstruction t-SNE clustering" src="../_images/yale_face_tsne_cluster_docs.svg" width="650" /></a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="models.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="citation.html" class="btn btn-neutral float-right" title="Citation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Billy Carson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+    <link rel="stylesheet" type="text/css" href="_static/custom.css">
+
+
+</body>
+</html>
