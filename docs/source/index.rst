@@ -30,7 +30,6 @@ the package, models provided, and examples of how to use different provided mode
     :caption: Package Reference
 
     package_ref/models
-    package_ref/metrics
 
 
 Indices and Tables
