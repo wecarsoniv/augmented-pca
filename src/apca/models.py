@@ -5,7 +5,7 @@
 # File:  models.py
 # Author:  Billy Carson
 # Date written:  04-14-2021
-# Last modified:  11-07-2024
+# Last modified:  11-08-2024
 
 """
 Description:  AugmentedPCA model definitions file. Class definitions for adversarial AugmentedPCA (AAPCA), supervised
@@ -20,6 +20,7 @@ AugmentedPCA (SAPCA), and combined AugmentedPCA (CAPCA).
 # Import statements
 from abc import ABC, abstractmethod
 from warnings import warn
+from typing import Union
 import numpy
 from numpy import mean, real, real_if_close, concatenate, identity
 from numpy.random import default_rng
@@ -44,7 +45,7 @@ class _APCA(ABC):
     mu : float or tuple or list
         Augmenting objective strength(s).
     inference : str
-        Model approximate inference strategy.
+        Model inference strategy.
     decomp : str
         Decomposition approach.
     pow_iter : int
@@ -115,7 +116,7 @@ class _APCA(ABC):
     def __init__(
         self,
         n_components: int,
-        mu: float | tuple | list,
+        mu: Union[float, tuple, list],
         inference: str,
         decomp: str,
         pow_iter: int,
@@ -136,7 +137,7 @@ class _APCA(ABC):
         n_oversamp : int
             Oversampling parameter for randomized approximation.
         inference : str
-            Model approximate inference strategy.
+            Model inference strategy.
         decomp : str
             Decomposition approach.
         diag_const : float
@@ -257,7 +258,7 @@ class _APCA(ABC):
         self.is_fitted_ = False
     
     # Fits AugmentedPCA model to data
-    def fit(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list):
+    def fit(self, X: numpy.ndarray, Y: Union[numpy.ndarray, tuple, list]):
         r"""
         Fits AugmentedPCA model to data.
         
@@ -270,15 +271,19 @@ class _APCA(ABC):
             data matrices.
         """
         
-        # Check for proper type / value of primary data
+        # Check for proper type and shape of primary data matrix
         if not isinstance(X, numpy.ndarray):
-            raise TypeError('X must be of type numpy.ndarray.')
+            raise TypeError('Primary data matrix X must be of type numpy.ndarray.')
+        if len(X.shape) != 2:
+            raise ValueError('Primary data matrix X must be a 2-dimensional numpy.ndarray.')
         
-        # Check for correct number of elements of augmenting data
+        # Check for proper type and shape of augmenting data matrix / matrices
         if self.__class__.__name__ == 'CAPCA':
             if not isinstance(Y, tuple) and not isinstance(Y, list):
                 raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing two ' +
                                 'numpy.ndarrays.')
+                if len(Y.shape) != 2:
+                    raise ValueError('Augmenting data matrix Y must be a 2-dimensional numpy.ndarray.')
             else:
                 if len(Y) != 2:
                     raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing ' +
@@ -286,6 +291,8 @@ class _APCA(ABC):
                 for Y_ in Y:
                     if not isinstance(Y_, numpy.ndarray):
                         raise TypeError('Y must be of type numpy.ndarray or a tuple / list of numpy.ndarrays.')
+                    if len(Y_.shape) != 2:
+                        raise ValueError('All augmenting data matrices Y must be a 2-dimensional numpy.ndarrays.')
         else:
             if not isinstance(Y, numpy.ndarray):
                 raise TypeError('Y must be of type numpy.ndarray.')
@@ -497,7 +504,7 @@ class _APCA(ABC):
         return self
     
     # Transforms data into scores using AugmentedPCA model formulation
-    def transform(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
+    def transform(self, X: numpy.ndarray, Y: Union[numpy.ndarray, tuple, list]) -> numpy.ndarray:
         r"""
         Transforms data into scores using AugmentedPCA model formulation.
         
@@ -521,23 +528,29 @@ class _APCA(ABC):
                          'appropriate arguments before using this method.')
             raise NotFittedError(error_msg % {'name': self.__class__.__name__})
         
-        # Check for proper type / value of primary data
+        # Check for proper type and shape of primary data matrix
         if not isinstance(X, numpy.ndarray):
-            raise TypeError('X must be of type numpy.ndarray.')
+            raise TypeError('Primary data matrix X must be of type numpy.ndarray.')
+        if len(X.shape) != 2:
+            raise ValueError('Primary data matrix X must be a 2-dimensional numpy.ndarray.')
         
-        # Check for correct number of elements of augmenting data
+        # Check for proper type and shape of augmenting data matrix / matrices
         if self._inference == 'local' or self._inference == 'joint':
             if self.__class__.__name__ == 'CAPCA':
                 if not isinstance(Y, tuple) and not isinstance(Y, list):
-                    raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing ' +
-                                    'two numpy.ndarrays.')
+                    raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing two ' +
+                                    'numpy.ndarrays.')
+                    if len(Y.shape) != 2:
+                        raise ValueError('Augmenting data matrix Y must be a 2-dimensional numpy.ndarray.')
                 else:
                     if len(Y) != 2:
-                        raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list ' +
-                                        'containing two numpy.ndarrays.')
+                        raise TypeError('For Combined AugmentedPCA, Y must be provided as a tuple or list containing ' +
+                                        'two numpy.ndarrays.')
                     for Y_ in Y:
                         if not isinstance(Y_, numpy.ndarray):
                             raise TypeError('Y must be of type numpy.ndarray or a tuple / list of numpy.ndarrays.')
+                        if len(Y_.shape) != 2:
+                            raise ValueError('All augmenting data matrices Y must be a 2-dimensional numpy.ndarrays.')
             else:
                 if not isinstance(Y, numpy.ndarray):
                     raise TypeError('Y must be of type numpy.ndarray.')
@@ -594,7 +607,7 @@ class _APCA(ABC):
         return S
     
     # Fit AugmentedPCA model to data and transform data into scores
-    def fit_transform(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
+    def fit_transform(self, X: numpy.ndarray, Y: Union[numpy.ndarray, tuple, list]) -> numpy.ndarray:
         r"""
         Fits AugumentedPCA model to data and transforms data into scores.
         
@@ -622,7 +635,7 @@ class _APCA(ABC):
         return S
     
     # Reconstruct primary and augmenting data
-    def reconstruct(self, X: numpy.ndarray, Y: numpy.ndarray | tuple | list) -> numpy.ndarray:
+    def reconstruct(self, X: numpy.ndarray, Y: Union[numpy.ndarray, tuple, list]) -> numpy.ndarray:
         r"""
         Reconstruct primary and augmenting data.
         
@@ -776,7 +789,7 @@ class SAPCA(_APCA):
     mu : float; optional, default is 1.0
         Supervision strength.
     inference : str; optional, default is 'encoded'
-        Model approximate inference strategy.
+        Model inference strategy.
     decomp : str; optional, default is 'approx'
         Decomposition approach.
     pow_iter : int; optional, default is 5
@@ -864,7 +877,7 @@ class SAPCA(_APCA):
         mu : float; optional, default is 1.0
             Supervision strength.
         inference : str; optional, default is 'encoded'
-            Model approximate inference strategy.
+            Model inference strategy.
         decomp : str; optional, default is 'approx'
             Decomposition approach.
         pow_iter : int; optional, default is 5
@@ -973,7 +986,7 @@ class AAPCA(_APCA):
     mu : float; optional, default is 1.0
         Adversary strength.
     inference : str; optional, default is 'encoded'
-        Model approximate inference strategy.
+        Model inference strategy.
     decomp : str; optional, default is 'approx'
         Decomposition approach.
     pow_iter : int; optional, default is 5
@@ -1043,7 +1056,7 @@ class AAPCA(_APCA):
     # Instantiation method of adversarial AugmentedPCA model base class
     def __init__(
         self,
-        n_components: int=None,
+        n_components=None,
         mu=1.0,
         inference='encoded',
         decomp='approx',
@@ -1061,7 +1074,7 @@ class AAPCA(_APCA):
         mu : float; optional, default is 1.0
             Adversary strength
         inference : str; optional, default is 'encoded'
-            Model approximate inference strategy.
+            Model inference strategy.
         decomp : str; optional, default is 'approx'
             Decomposition approach.
         pow_iter : int; optional, default is 5
@@ -1171,7 +1184,7 @@ class CAPCA(_APCA):
     mu : float or tuple or list; optional, default is 1.0
         Augmenting objective strength(s).
     inference : str; optional, default is 'encoded'
-        Model approximate inference strategy.
+        Model inference strategy.
     decomp : str; optional, default is 'approx'
         Decomposition approach.
     pow_iter : int; optional, default is 5
@@ -1259,7 +1272,7 @@ class CAPCA(_APCA):
         mu : float or tuple or list; optional, default is 1.0
             Augmenting ojective strength(s).
         inference : str; optional, default is 'encoded'
-            Model approximate inference strategy.
+            Model inference strategy.
         decomp : str; optional, default is 'approx'
             Decomposition approach.
         pow_iter : int; optional, default is 5
