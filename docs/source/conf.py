@@ -81,11 +81,11 @@ exclude_patterns = []
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
 # html_theme_options = {
 #     'display_version': True,
 #     'logo_only': True,
 # }
+html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     'logo_only': True,
 }
